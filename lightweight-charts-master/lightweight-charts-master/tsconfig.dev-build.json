@@ -1,0 +1,10 @@
+{
+	"extends": "./tsconfig.options.json",
+	"compilerOptions": {
+		"outDir": "lib/dev",
+		"stripInternal": false
+	},
+	"include": [
+		"src/**/*.ts"
+	]
+}

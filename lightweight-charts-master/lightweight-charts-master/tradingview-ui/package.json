@@ -1,0 +1,14 @@
+{
+  "name": "tradingview-ui",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5174",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "lightweight-charts": "file:.."
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

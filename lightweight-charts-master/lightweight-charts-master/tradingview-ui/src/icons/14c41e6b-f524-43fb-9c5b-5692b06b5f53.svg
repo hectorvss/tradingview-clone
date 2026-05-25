@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 26 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group">
+<path id="Vector" d="M2 1H24V0H2V1Z" fill="var(--fill-0, #DBDBDB)"/>
+<path id="Vector_2" d="M2 13H24V12H2V13Z" fill="var(--fill-0, #DBDBDB)"/>
+<path id="Vector_3" d="M2 7H21.5V6H2V7Z" fill="var(--fill-0, #DBDBDB)"/>
+<path id="Vector_4" d="M4.5 19H24V18H4.5V19Z" fill="var(--fill-0, #DBDBDB)"/>
+<path id="Vector_5" d="M2.5 20C3.328 20 4 19.328 4 18.5C4 17.672 3.328 17 2.5 17C1.672 17 1 17.672 1 18.5C1 19.328 1.672 20 2.5 20ZM2.5 21C1.119 21 0 19.881 0 18.5C0 17.119 1.119 16 2.5 16C3.881 16 5 17.119 5 18.5C5 19.881 3.881 21 2.5 21ZM23.5 8C24.328 8 25 7.328 25 6.5C25 5.672 24.328 5 23.5 5C22.672 5 22 5.672 22 6.5C22 7.328 22.672 8 23.5 8ZM23.5 9C22.119 9 21 7.881 21 6.5C21 5.119 22.119 4 23.5 4C24.881 4 26 5.119 26 6.5C26 7.881 24.881 9 23.5 9Z" fill="var(--fill-0, #DBDBDB)"/>
+</g>
+</svg>

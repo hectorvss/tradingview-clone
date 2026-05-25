@@ -1,0 +1,2174 @@
+﻿<section id="1:41645" name="https://es.tradingview.com/ - es_tradingview_com_1440w_default.h2d - 24/05/2026, 12:25:44 CEST" x="1033" y="7" width="1640" height="1100">
+  <frame id="1:31018" name="1440w default" x="100" y="100" width="1440" height="900">
+    <frame id="1:31020" name="div.tv-main" x="0" y="0" width="1395" height="14888.9501953125">
+      <frame id="1:31021" name="Contenido principal" x="0" y="64" width="1395" height="13852.48046875">
+        <frame id="1:31022" name="div.container-hlm3yPqK" x="0" y="80" width="1395" height="13652.48046875">
+          <frame id="1:31023" name="div.container-ZazqFM2n" x="0" y="0" width="1395" height="13652.48046875">
+            <frame id="1:31025" name="section.section-jIcZQl74" x="40" y="0" width="1315" height="2493.090087890625">
+              <frame id="1:31026" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="2493.090087890625">
+                <frame id="1:31027" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                  <frame id="1:31028" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                    <frame id="1:31029" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                      <frame id="1:31030" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="298.30999755859375" height="36">
+                        <instance id="1:31031" name="Component 2" x="0" y="15" width="298.30999755859375" height="16" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:31037" name="div.content-Gvxnai7n" x="0" y="60" width="1315" height="2433.090087890625">
+                  <frame id="1:31038" name="div.widgets-jIcZQl74" x="0" y="0" width="1315" height="2433.10009765625">
+                    <frame id="1:31039" name="div#main-market-summary" x="0" y="0" width="1315" height="1184">
+                      <frame id="1:31040" name="div.content-Gvxnai7n" x="0" y="0" width="1315" height="1184">
+                        <frame id="1:31041" name="div.dashboardContainer-_oAbobiD" x="0" y="0" width="1315" height="1184">
+                          <frame id="1:31042" name="div.primaryChartContainer-_oAbobiD" x="0" y="0" width="868.6666870117188" height="567">
+                            <frame id="1:31043" name="div.container-Z_u6vc3Y" x="17" y="17" width="834.6666870117188" height="533">
+                              <frame id="1:31044" name="div.wrapper-NytrMZaI" x="0" y="0" width="834.6666870117188" height="64">
+                                <frame id="1:31045" name="span.logo-NytrMZaI:margin" x="0" y="0" width="68" height="64">
+                                  <frame id="1:31046" name="span.logo-NytrMZaI" x="0" y="0" width="56" height="64">
+                                    <frame id="1:31047" name="ibex-35.svg" x="0" y="0" width="56" height="56">
+                                      <instance id="1:31048" name="Component 1" x="0" y="0" width="56" height="56" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                                <frame id="1:31051" name="div.symbolInfo-NytrMZaI" x="68" y="0" width="766.6666870117188" height="28">
+                                  <frame id="1:31052" name="a.linkContainer-NytrMZaI:margin" x="0" y="2" width="110" height="24">
+                                    <instance id="1:31053" name="Component 3" x="0" y="0" width="102" height="24" />
+                                  </frame>
+                                  <frame id="1:31061" name="button.button-lfyKJI2Q" x="110" y="0" width="28" height="28">
+                                    <frame id="1:31062" name="div.statusesWrap-Lgtz1OtS" x="0" y="0" width="28" height="28">
+                                      <instance id="1:31063" name="Component 4" x="0" y="0" width="28" height="28" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                                <frame id="1:31068" name="div.priceInfo-NytrMZaI" x="68" y="28" width="766.6666870117188" height="36">
+                                  <frame id="1:31069" name="div.lastPrice-NytrMZaI" x="0" y="0" width="169.4199981689453" height="36">
+                                    <text id="1:31070" name="17.985,30" x="0" y="0" width="136.10348510742188" height="36" />
+                                    <frame id="1:31071" name="div.currency-NytrMZaI" x="139.41000366210938" y="3" width="31" height="28">
+                                      <text id="1:31072" name="D" x="0" y="0" width="7" height="14" />
+                                      <text id="1:31075" name="POINT" x="0" y="14" width="31" height="14" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:31077" name="div.change-NytrMZaI:margin" x="177.4199981689453" y="2" width="62" height="32">
+                                    <text id="1:31078" name="+0,06%" x="0" y="8" width="62" height="24" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                              <frame id="1:31079" name="div.chartContainer-Z_u6vc3Y" x="0" y="92" width="834.6666870117188" height="441">
+                                <frame id="1:31081" name="div.chart-c1ISUkzB" x="0" y="0" width="1114" height="441">
+                                  <frame id="1:31082" name="div.tv-lightweight-charts" x="0" y="0" width="1114" height="441">
+                                    <frame id="1:31083" name="table" x="0" y="0" width="1130" height="440">
+                                      <frame id="1:31084" name="td" x="0" y="0" width="1130" height="412">
+                                        <frame id="1:31085" name="div" x="0" y="0" width="1130" height="412">
+                                          <frame id="1:31086" name="image" x="0" y="0" width="1130" height="412" />
+                                        </frame>
+                                      </frame>
+                                      <frame id="1:31087" name="td" x="0" y="412" width="1130" height="28">
+                                        <frame id="1:31088" name="div" x="0" y="0" width="1130" height="28">
+                                          <frame id="1:31089" name="image" x="0" y="0" width="1130" height="28" />
+                                        </frame>
+                                      </frame>
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:31090" name="div.indicesContainer-_oAbobiD" x="892.6666870117188" y="0" width="422.3333435058594" height="567">
+                            <frame id="1:31091" name="div.indicesHeader-_oAbobiD" x="17" y="17" width="388.3333435058594" height="24">
+                              <text id="1:31092" name="Principales Ã­ndices" x="0" y="0" width="388.3333435058594" height="24" />
+                            </frame>
+                            <frame id="1:31093" name="ul.list-j0VnvhRy" x="17" y="57" width="388.3333435058594" height="453">
+                              <instance id="1:31094" name="Component 5" x="-12.003326416015625" y="0" width="412.3399963378906" height="68" />
+                              <frame id="1:31126" name="li.item-j0VnvhRy" x="0" y="72" width="388.3333435058594" height="73">
+                                <instance id="1:31127" name="Component 5" x="-12" y="5" width="412.3399963378906" height="68" />
+                              </frame>
+                              <frame id="1:31153" name="li.item-j0VnvhRy" x="0" y="149" width="388.3333435058594" height="73">
+                                <instance id="1:31154" name="Component 5" x="-12" y="5" width="412.3399963378906" height="68" />
+                              </frame>
+                              <frame id="1:31186" name="li.item-j0VnvhRy" x="0" y="226" width="388.3333435058594" height="73">
+                                <instance id="1:31187" name="Component 5" x="-12" y="5" width="412.3399963378906" height="68" />
+                              </frame>
+                              <frame id="1:31213" name="li.item-j0VnvhRy" x="0" y="303" width="388.3333435058594" height="73">
+                                <instance id="1:31214" name="Component 5" x="-12" y="5" width="412.3399963378906" height="68" />
+                              </frame>
+                              <frame id="1:31246" name="li.item-j0VnvhRy" x="0" y="380" width="388.3333435058594" height="73">
+                                <instance id="1:31247" name="Component 5" x="-12" y="5" width="412.3399963378906" height="68" />
+                              </frame>
+                            </frame>
+                            <instance id="1:31279" name="Component 6" x="17" y="526" width="212.77000427246094" height="24" />
+                          </frame>
+                          <frame id="1:31286" name="div.cryptoContainer-_oAbobiD" x="0" y="591" width="422.3333435058594" height="513">
+                            <frame id="1:31287" name="div.flexContainer-_oAbobiD" x="17" y="17" width="388.3333435058594" height="479">
+                              <frame id="1:31289" name="div.tickerCardWithChartContainer-_oAbobiD:margin" x="0" y="0" width="388.3333435058594" height="204">
+                                <frame id="1:31290" name="div.wrapper-uAtw2F8c" x="-12" y="-12" width="412.3299865722656" height="216">
+                                  <frame id="1:31292" name="div.container-Nt5iBa6X" x="16" y="16" width="380.3299865722656" height="196">
+                                    <frame id="1:31293" name="div.container-uAtw2F8c" x="0" y="0" width="380.3299865722656" height="196">
+                                      <frame id="1:31294" name="div.header-uAtw2F8c" x="0" y="0" width="380.3280029296875" height="24">
+                                        <frame id="1:31295" name="crypto-total-market-cap.svg" x="0" y="0" width="24" height="24">
+                                          <instance id="1:31296" name="Component 1" x="0" y="0" width="24" height="24" />
+                                        </frame>
+                                        <instance id="1:31300" name="Component 7" x="28" y="0" width="226" height="24" />
+                                      </frame>
+                                      <frame id="1:31307" name="div.valueAndChange-uAtw2F8c:margin" x="0" y="24" width="380.3280029296875" height="60">
+                                        <frame id="1:31308" name="div.valueAndChange-uAtw2F8c" x="0" y="12" width="380.3280029296875" height="48">
+                                          <frame id="1:31309" name="span.container-ItI7saAL" x="0" y="0" width="380.3280029296875" height="24">
+                                            <text id="1:31310" name="2,55â€¯T" x="0" y="0" width="43" height="24" />
+                                            <text id="1:31311" name="USD" x="45" y="6" width="20" height="16" />
+                                          </frame>
+                                          <frame id="1:31312" name="div.change-uAtw2F8c" x="0" y="24" width="380.3280029296875" height="24">
+                                            <text id="1:31313" name="âˆ’1,52%" x="0" y="0" width="380.3280029296875" height="24" />
+                                          </frame>
+                                        </frame>
+                                      </frame>
+                                      <frame id="1:31314" name="div.chart-XFO6dHFd:margin" x="0" y="84" width="380.3299865722656" height="96">
+                                        <frame id="1:31315" name="div.chart-XFO6dHFd" x="-20" y="8" width="420.3299865722656" height="88">
+                                          <frame id="1:31316" name="div.tv-lightweight-charts" x="0" y="0" width="420.3299865722656" height="88">
+                                            <frame id="1:31317" name="table" x="0" y="0" width="414" height="88">
+                                              <frame id="1:31318" name="td" x="0" y="0" width="414" height="88">
+                                                <frame id="1:31319" name="div" x="0" y="0" width="414" height="88">
+                                                  <frame id="1:31320" name="image" x="0" y="0" width="414" height="88" />
+                                                  <frame id="1:31321" name="image" x="0" y="0" width="414" height="88" />
+                                                </frame>
+                                              </frame>
+                                            </frame>
+                                          </frame>
+                                        </frame>
+                                      </frame>
+                                      <frame id="1:31322" name="span.timeframe-XFO6dHFd" x="0" y="180" width="380.3280029296875" height="16">
+                                        <text id="1:31323" name="1 mes" x="174.16400146484375" y="0" width="32" height="16" />
+                                      </frame>
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                              <frame id="1:31324" name="a.link-_oAbobiD:margin" x="0" y="204" width="388.3333435058594" height="106">
+                                <instance id="1:31325" name="Component 8" x="-12" y="-12" width="412.3299865722656" height="130" />
+                              </frame>
+                              <frame id="1:31357" name="ul.list-j0VnvhRy" x="0" y="310" width="388.3333435058594" height="145">
+                                <instance id="1:31358" name="Component 5" x="-11.998321533203125" y="0" width="412.3299865722656" height="68" />
+                                <frame id="1:31378" name="li.item-j0VnvhRy" x="0" y="72" width="388.3333435058594" height="73">
+                                  <instance id="1:31379" name="Component 5" x="-12" y="5" width="412.3299865722656" height="68" />
+                                </frame>
+                              </frame>
+                              <instance id="1:31406" name="Component 6" x="0" y="455" width="228.47000122070312" height="24" />
+                            </frame>
+                          </frame>
+                          <frame id="1:31413" name="div.futuresContainer-_oAbobiD" x="446.3333435058594" y="591" width="422.3333435058594" height="593">
+                            <frame id="1:31414" name="div.flexContainer-_oAbobiD" x="17" y="17" width="388.3333435058594" height="559">
+                              <frame id="1:31415" name="div.tickerCardWithChartContainer-_oAbobiD:margin" x="0" y="0" width="388.3333435058594" height="204">
+                                <frame id="1:31416" name="div.wrapper-uAtw2F8c" x="-12" y="-12" width="412.3299865722656" height="216">
+                                  <frame id="1:31417" name="div.container-Nt5iBa6X" x="16" y="16" width="380.3299865722656" height="196">
+                                    <frame id="1:31418" name="div.container-uAtw2F8c" x="0" y="0" width="380.3299865722656" height="196">
+                                      <frame id="1:31419" name="div.header-uAtw2F8c" x="0" y="0" width="380.3280029296875" height="24">
+                                        <frame id="1:31420" name="euro-currency-index.svg" x="0" y="0" width="24" height="24">
+                                          <instance id="1:31421" name="Component 1" x="0" y="0" width="24" height="24" />
+                                        </frame>
+                                        <instance id="1:31424" name="Component 7" x="28" y="0" width="224.99000549316406" height="24" />
+                                      </frame>
+                                      <frame id="1:31431" name="div.valueAndChange-uAtw2F8c:margin" x="0" y="24" width="380.3280029296875" height="60">
+                                        <frame id="1:31432" name="div.valueAndChange-uAtw2F8c" x="0" y="12" width="380.3280029296875" height="48">
+                                          <frame id="1:31433" name="span.container-ItI7saAL" x="0" y="0" width="380.3280029296875" height="24">
+                                            <text id="1:31434" name="116,02" x="0" y="0" width="48" height="24" />
+                                            <text id="1:31435" name="USD" x="50" y="6" width="20" height="16" />
+                                          </frame>
+                                          <frame id="1:31436" name="div.change-uAtw2F8c" x="0" y="24" width="380.3280029296875" height="24">
+                                            <text id="1:31437" name="âˆ’1,13%" x="0" y="0" width="380.3280029296875" height="24" />
+                                          </frame>
+                                        </frame>
+                                      </frame>
+                                      <frame id="1:31438" name="div.chart-XFO6dHFd:margin" x="0" y="84" width="380.3299865722656" height="96">
+                                        <frame id="1:31439" name="div.chart-XFO6dHFd" x="-20" y="8" width="420.3299865722656" height="88">
+                                          <frame id="1:31440" name="div.tv-lightweight-charts" x="0" y="0" width="420.3299865722656" height="88">
+                                            <frame id="1:31441" name="table" x="0" y="0" width="414" height="88">
+                                              <frame id="1:31442" name="td" x="0" y="0" width="414" height="88">
+                                                <frame id="1:31443" name="div" x="0" y="0" width="414" height="88">
+                                                  <frame id="1:31444" name="image" x="0" y="0" width="414" height="88" />
+                                                </frame>
+                                              </frame>
+                                            </frame>
+                                          </frame>
+                                        </frame>
+                                      </frame>
+                                      <frame id="1:31445" name="span.timeframe-XFO6dHFd" x="0" y="180" width="380.3280029296875" height="16">
+                                        <text id="1:31446" name="1 mes" x="174.16400146484375" y="0" width="32" height="16" />
+                                      </frame>
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                              <frame id="1:31447" name="ul.list-j0VnvhRy" x="0" y="220" width="388.3333435058594" height="299">
+                                <instance id="1:31448" name="Component 5" x="-11.998321533203125" y="0" width="412.3299865722656" height="68" />
+                                <frame id="1:31480" name="li.item-j0VnvhRy" x="0" y="72" width="388.3333435058594" height="73">
+                                  <instance id="1:31481" name="Component 5" x="-12" y="5" width="412.3299865722656" height="68" />
+                                </frame>
+                                <frame id="1:31513" name="li.item-j0VnvhRy" x="0" y="149" width="388.3333435058594" height="73">
+                                  <instance id="1:31514" name="Component 5" x="-12" y="5" width="412.3299865722656" height="68" />
+                                </frame>
+                                <frame id="1:31546" name="li.item-j0VnvhRy" x="0" y="226" width="388.3333435058594" height="73">
+                                  <instance id="1:31547" name="Component 5" x="-12" y="5" width="412.3299865722656" height="68" />
+                                </frame>
+                              </frame>
+                              <instance id="1:31579" name="Component 6" x="0" y="535" width="172.80999755859375" height="24" />
+                            </frame>
+                          </frame>
+                          <frame id="1:31586" name="div.economyContainer-_oAbobiD" x="892.6666870117188" y="591" width="422.3333435058594" height="593">
+                            <frame id="1:31587" name="div.flexContainer-_oAbobiD" x="17" y="17" width="388.3333435058594" height="559">
+                              <frame id="1:31588" name="div.block-_oAbobiD:margin" x="0" y="228" width="388.3399963378906" height="179">
+                                <frame id="1:31589" name="div.block-_oAbobiD" x="-12" y="-12" width="412.3399963378906" height="203">
+                                  <instance id="1:31590" name="Component 7" x="12" y="12" width="388.3399963378906" height="24" />
+                                  <frame id="1:31597" name="div.prettyHistogramChartContainer-_oAbobiD:margin" x="12" y="48" width="388.3399963378906" height="143">
+                                    <frame id="1:31598" name="div.chart-xBNJX2CY" x="0" y="0" width="400.3399963378906" height="143">
+                                      <frame id="1:31599" name="div.tv-lightweight-charts" x="0" y="0" width="400.3399963378906" height="143">
+                                        <frame id="1:31600" name="table" x="0" y="0" width="394" height="142">
+                                          <frame id="1:31601" name="tr" x="0" y="0" width="394" height="114">
+                                            <frame id="1:31602" name="td" x="0" y="0" width="358" height="114">
+                                              <frame id="1:31603" name="div" x="0" y="0" width="358" height="114">
+                                                <frame id="1:31604" name="image" x="0" y="0" width="358" height="114" />
+                                              </frame>
+                                            </frame>
+                                            <frame id="1:31605" name="td" x="358" y="0" width="36" height="114">
+                                              <frame id="1:31606" name="image" x="0" y="0" width="36" height="114" />
+                                            </frame>
+                                          </frame>
+                                          <frame id="1:31607" name="td" x="0" y="114" width="358" height="28">
+                                            <frame id="1:31608" name="div" x="0" y="0" width="358" height="28">
+                                              <frame id="1:31609" name="image" x="0" y="0" width="358" height="28" />
+                                            </frame>
+                                          </frame>
+                                        </frame>
+                                      </frame>
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                              <frame id="1:31610" name="a.link-_oAbobiD:margin" x="0" y="431" width="388.3399963378906" height="80">
+                                <instance id="1:31611" name="Component 8" x="-12" y="-12" width="412.3399963378906" height="165.5" />
+                              </frame>
+                              <instance id="1:31632" name="Component 6" x="0" y="535" width="297.5299987792969" height="24" />
+                              <frame id="1:31639" name="div.tickerCardWithChartContainer-_oAbobiD:margin" x="0" y="0" width="388.3399963378906" height="204">
+                                <frame id="1:31640" name="div.wrapper-uAtw2F8c" x="-12" y="-12" width="412.3399963378906" height="216">
+                                  <frame id="1:31641" name="div.container-Nt5iBa6X" x="16" y="16" width="380.3399963378906" height="196">
+                                    <frame id="1:31642" name="div.container-uAtw2F8c" x="0" y="0" width="380.3399963378906" height="196">
+                                      <frame id="1:31643" name="div.header-uAtw2F8c" x="0" y="0" width="380.343994140625" height="24">
+                                        <frame id="1:31644" name="ES.svg" x="0" y="0" width="24" height="24">
+                                          <instance id="1:31645" name="Component 1" x="0" y="0" width="24" height="24" />
+                                        </frame>
+                                        <instance id="1:31649" name="Component 7" x="28" y="0" width="342.989990234375" height="24" />
+                                      </frame>
+                                      <frame id="1:31656" name="div.valueAndChange-uAtw2F8c:margin" x="0" y="24" width="380.343994140625" height="60">
+                                        <frame id="1:31657" name="div.valueAndChange-uAtw2F8c" x="0" y="12" width="380.343994140625" height="48">
+                                          <instance id="1:31658" name="Component 12" x="0" y="0" width="380.343994140625" height="24" />
+                                          <frame id="1:31660" name="div.change-uAtw2F8c" x="0" y="24" width="380.343994140625" height="24">
+                                            <text id="1:31661" name="+0,01%" x="0" y="0" width="380.343994140625" height="24" />
+                                          </frame>
+                                        </frame>
+                                      </frame>
+                                      <frame id="1:31662" name="div.chart-XFO6dHFd:margin" x="0" y="84" width="380.3399963378906" height="96">
+                                        <frame id="1:31663" name="div.chart-XFO6dHFd" x="-20" y="8" width="420.3399963378906" height="88">
+                                          <frame id="1:31664" name="div.tv-lightweight-charts" x="0" y="0" width="420.3399963378906" height="88">
+                                            <frame id="1:31665" name="table" x="0" y="0" width="414" height="88">
+                                              <frame id="1:31666" name="td" x="0" y="0" width="414" height="88">
+                                                <frame id="1:31667" name="div" x="0" y="0" width="414" height="88">
+                                                  <frame id="1:31668" name="image" x="0" y="0" width="414" height="88" />
+                                                </frame>
+                                              </frame>
+                                            </frame>
+                                          </frame>
+                                        </frame>
+                                      </frame>
+                                      <frame id="1:31669" name="span.timeframe-XFO6dHFd" x="0" y="180" width="380.343994140625" height="16">
+                                        <text id="1:31670" name="1 mes" x="174.1719970703125" y="0" width="32" height="16" />
+                                      </frame>
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:31671" name="div" x="0" y="1264" width="1315" height="544.5499877929688">
+                      <frame id="1:31672" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="544.5499877929688">
+                        <frame id="1:31673" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                          <frame id="1:31674" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                            <frame id="1:31675" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                              <frame id="1:31676" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="308.19000244140625" height="36">
+                                <instance id="1:31677" name="Component 2" x="0" y="15" width="308.19000244140625" height="16" />
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                        <frame id="1:31683" name="div.content-Gvxnai7n" x="0" y="60" width="1315" height="484.54998779296875">
+                          <frame id="1:31684" name="div.tabsContainer-pG1AYda9" x="0" y="0" width="1315" height="40">
+                            <frame id="1:31685" name="div.scrollWrap-h5ZKzylb" x="-4" y="-4" width="1323" height="48">
+                              <frame id="1:31686" name="div#community_ideas" x="4" y="4" width="1315" height="40">
+                                <instance id="1:31687" name="Component 9" x="0" y="0" width="235" height="40" />
+                                <frame id="1:31689" name="button#for_you:margin" x="235" y="0" width="122.79000091552734" height="40">
+                                  <instance id="1:31690" name="Component 9" x="12" y="0" width="110.79000091552734" height="40" />
+                                </frame>
+                                <frame id="1:31692" name="button#following:margin" x="357.7900085449219" y="0" width="116.63999938964844" height="40">
+                                  <instance id="1:31693" name="Component 9" x="12" y="0" width="104.63999938964844" height="40" />
+                                </frame>
+                                <frame id="1:31695" name="button#popular:margin" x="474.42999267578125" y="0" width="116.66999816894531" height="40">
+                                  <instance id="1:31696" name="Component 9" x="12" y="0" width="104.66999816894531" height="40" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:31698" name="div.container-VfuW0jXu" x="-8" y="64" width="1323" height="420.54998779296875">
+                            <frame id="1:31699" name="div.items-VfuW0jXu" x="0" y="0" width="1331" height="420.54998779296875">
+                              <instance id="1:31700" name="Component 15" x="0" y="6" width="422.3299865722656" height="408.54998779296875" />
+                              <frame id="1:31767" name="article.card-exterior-GVAqO64h:margin" x="422.3299865722656" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:31769" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:31829" name="article.card-exterior-GVAqO64h:margin" x="876.6599731445312" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:31830" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:31895" name="article.card-exterior-GVAqO64h:margin" x="1330.97998046875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:31896" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:31966" name="article.card-exterior-GVAqO64h:margin" x="1785.31005859375" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:31967" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32032" name="article.card-exterior-GVAqO64h:margin" x="2239.639892578125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32033" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32100" name="article.card-exterior-GVAqO64h:margin" x="2693.969970703125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32101" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32163" name="article.card-exterior-GVAqO64h:margin" x="3148.300048828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32164" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32224" name="article.card-exterior-GVAqO64h:margin" x="3602.6298828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32225" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32287" name="article.card-exterior-GVAqO64h:margin" x="4056.949951171875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32288" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32354" name="a.card-exuF9vc4:margin" x="4511.27978515625" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32355" name="Component 18" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                            </frame>
+                            <frame id="1:32365" name="div.rightScrollButton-VfuW0jXu" x="1291" y="109.2300033569336" width="48" height="48">
+                              <instance id="1:32366" name="Component 19" x="0" y="0" width="48" height="48" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:32370" name="div" x="0" y="1888.550048828125" width="1315" height="544.5499877929688">
+                      <frame id="1:32371" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="544.5499877929688">
+                        <frame id="1:32372" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                          <frame id="1:32373" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                            <frame id="1:32374" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                              <frame id="1:32375" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="341.20001220703125" height="36">
+                                <instance id="1:32376" name="Component 2" x="0" y="15" width="341.20001220703125" height="16" />
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                        <frame id="1:32382" name="div.content-Gvxnai7n" x="0" y="60" width="1315" height="484.54998779296875">
+                          <frame id="1:32383" name="div.tabsContainer-pG1AYda9" x="0" y="0" width="1315" height="40">
+                            <frame id="1:32384" name="div.scrollWrap-h5ZKzylb" x="-4" y="-4" width="1323" height="48">
+                              <frame id="1:32385" name="div#indicators_and_strategies" x="4" y="4" width="1315" height="40">
+                                <instance id="1:32386" name="Component 9" x="0" y="0" width="235" height="40" />
+                                <frame id="1:32388" name="button#following:margin" x="235" y="0" width="116.63999938964844" height="40">
+                                  <instance id="1:32389" name="Component 9" x="12" y="0" width="104.63999938964844" height="40" />
+                                </frame>
+                                <frame id="1:32391" name="button#popular:margin" x="351.6400146484375" y="0" width="116.66999816894531" height="40">
+                                  <instance id="1:32392" name="Component 9" x="12" y="0" width="104.66999816894531" height="40" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:32394" name="div.container-VfuW0jXu" x="-8" y="64" width="1323" height="420.54998779296875">
+                            <frame id="1:32395" name="div.items-VfuW0jXu" x="0" y="0" width="1331" height="420.54998779296875">
+                              <instance id="1:32396" name="Component 15" x="0" y="6" width="422.3299865722656" height="408.54998779296875" />
+                              <frame id="1:32454" name="article.card-exterior-GVAqO64h:margin" x="422.3299865722656" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32455" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32518" name="article.card-exterior-GVAqO64h:margin" x="876.6599731445312" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32519" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32582" name="article.card-exterior-GVAqO64h:margin" x="1330.97998046875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32583" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32646" name="article.card-exterior-GVAqO64h:margin" x="1785.31005859375" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32647" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32710" name="article.card-exterior-GVAqO64h:margin" x="2239.639892578125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32711" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32774" name="article.card-exterior-GVAqO64h:margin" x="2693.969970703125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32775" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32833" name="article.card-exterior-GVAqO64h:margin" x="3148.300048828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32834" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32892" name="article.card-exterior-GVAqO64h:margin" x="3602.6298828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32893" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:32951" name="article.card-exterior-GVAqO64h:margin" x="4056.949951171875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:32952" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33015" name="a.card-exuF9vc4:margin" x="4511.27978515625" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33016" name="Component 18" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33026" name="div.rightScrollButton-VfuW0jXu" x="1291" y="109.2300033569336" width="48" height="48">
+                              <instance id="1:33027" name="Component 19" x="0" y="0" width="48" height="48" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1:33031" name="section.section-jIcZQl74" x="40" y="2613.090087890625" width="1315" height="3267.550048828125">
+              <frame id="1:33032" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="3267.550048828125">
+                <frame id="1:33033" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="68">
+                  <frame id="1:33034" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="44">
+                    <frame id="1:33035" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="44">
+                      <frame id="1:33036" name="div.wrapperLogoAndText-BQZK4DnU" x="0" y="0" width="1315" height="44">
+                        <frame id="1:33037" name="ES.svg" x="0" y="4" width="36" height="36">
+                          <instance id="1:33038" name="Component 1" x="0" y="0" width="36" height="36" />
+                        </frame>
+                        <frame id="1:33042" name="span.titleAndHintWrapper-BQZK4DnU" x="44" y="0" width="344.3800048828125" height="44">
+                          <instance id="1:33043" name="Component 2" x="0" y="22" width="344.3800048828125" height="16" />
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:33049" name="div.content-Gvxnai7n" x="0" y="68" width="1315" height="3199.550048828125">
+                  <frame id="1:33050" name="div.widgets-jIcZQl74" x="0" y="0" width="1315" height="3199.550048828125">
+                    <frame id="1:33052" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="216">
+                      <frame id="1:33054" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                        <frame id="1:33055" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <instance id="1:33056" name="Component 20" x="0" y="0" width="1315" height="36" />
+                        </frame>
+                      </frame>
+                      <frame id="1:33059" name="div.content-Gvxnai7n" x="-8" y="52" width="1323" height="164">
+                        <frame id="1:33060" name="div.container-VfuW0jXu" x="0" y="0" width="1323" height="164">
+                          <frame id="1:33061" name="div.items-VfuW0jXu" x="0" y="0" width="1331" height="164">
+                            <frame id="1:33062" name="div.customTickerCard-Q315hE3L" x="8" y="8" width="237.38999938964844" height="148">
+                              <instance id="1:33063" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                            </frame>
+                            <frame id="1:33093" name="div.customTickerCard-Q315hE3L:margin" x="245.38999938964844" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:33094" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:33095" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33125" name="div.customTickerCard-Q315hE3L:margin" x="514.780029296875" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:33126" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:33127" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33157" name="div.customTickerCard-Q315hE3L:margin" x="784.1699829101562" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:33158" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:33159" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33189" name="div.customTickerCard-Q315hE3L:margin" x="1053.56005859375" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:33190" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:33191" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33221" name="div.customTickerCard-Q315hE3L:margin" x="1322.949951171875" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:33222" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:33223" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33254" name="div.customTickerCard-Q315hE3L:margin" x="1592.3399658203125" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:33255" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:33256" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33286" name="div.customTickerCard-Q315hE3L:margin" x="1861.72998046875" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:33287" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:33288" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33318" name="div.customTickerCard-Q315hE3L:margin" x="2131.1298828125" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:33319" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:33320" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33352" name="div.customTickerCard-Q315hE3L:margin" x="2400.52001953125" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:33353" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:33354" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:33384" name="div.rightScrollButton-VfuW0jXu" x="1291" y="50" width="48" height="48">
+                            <instance id="1:33385" name="Component 19" x="0" y="0" width="48" height="48" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:33389" name="div" x="0" y="288" width="1315" height="480.54998779296875">
+                      <frame id="1:33390" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="480.54998779296875">
+                        <frame id="1:33391" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                          <frame id="1:33392" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                            <frame id="1:33393" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                              <frame id="1:33394" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="225.8000030517578" height="36">
+                                <instance id="1:33395" name="Component 2" x="0" y="15" width="225.8000030517578" height="16" />
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                        <frame id="1:33401" name="div.content-Gvxnai7n" x="-8" y="60" width="1323" height="420.54998779296875">
+                          <frame id="1:33402" name="div.container-VfuW0jXu" x="0" y="0" width="1323" height="420.54998779296875">
+                            <frame id="1:33403" name="div.items-VfuW0jXu" x="0" y="0" width="1331" height="420.54998779296875">
+                              <instance id="1:33404" name="Component 15" x="0" y="6" width="422.3299865722656" height="408.54998779296875" />
+                              <frame id="1:33458" name="article.card-exterior-GVAqO64h:margin" x="422.3299865722656" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33459" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33514" name="article.card-exterior-GVAqO64h:margin" x="876.6599731445312" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33515" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33569" name="article.card-exterior-GVAqO64h:margin" x="1330.97998046875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33570" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33624" name="article.card-exterior-GVAqO64h:margin" x="1785.31005859375" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33625" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33676" name="article.card-exterior-GVAqO64h:margin" x="2239.639892578125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33677" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33727" name="article.card-exterior-GVAqO64h:margin" x="2693.969970703125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33728" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33778" name="article.card-exterior-GVAqO64h:margin" x="3148.300048828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33779" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33833" name="article.card-exterior-GVAqO64h:margin" x="3602.6298828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33834" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33888" name="article.card-exterior-GVAqO64h:margin" x="4056.949951171875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33889" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:33945" name="a.card-exuF9vc4:margin" x="4511.27978515625" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:33946" name="Component 18" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                            </frame>
+                            <frame id="1:33955" name="div.rightScrollButton-VfuW0jXu" x="1291" y="109.23999786376953" width="48" height="48">
+                              <instance id="1:33956" name="Component 19" x="0" y="0" width="48" height="48" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:33960" name="div#hotlist-stocks-widget" x="0" y="840.5499877929688" width="1315" height="338">
+                      <frame id="1:33961" name="div.content-Gvxnai7n" x="0" y="8" width="1315" height="330">
+                        <frame id="1:33962" name="div.container-L_bmEBNr" x="0" y="0" width="1315" height="330">
+                          <frame id="1:33964" name="div.container-Gvxnai7n" x="0" y="0" width="625.5" height="330">
+                            <frame id="1:33965" name="div.header-Gvxnai7n:margin" x="0" y="0" width="625.5" height="60">
+                              <frame id="1:33966" name="div.header-Gvxnai7n" x="0" y="0" width="625.5" height="36">
+                                <frame id="1:33967" name="div.wrapper-BQZK4DnU" x="0" y="0" width="625.5" height="36">
+                                  <frame id="1:33968" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="431.04998779296875" height="36">
+                                    <instance id="1:33969" name="Component 2" x="0" y="15" width="431.04998779296875" height="16" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:33975" name="div.content-Gvxnai7n" x="0" y="60" width="625.5" height="222">
+                              <frame id="1:33976" name="div.container-aPcTuZxR" x="0" y="0" width="625.5" height="222">
+                                <rounded-rectangle id="1:33977" name="::before" x="0" y="-6" width="625.5" height="3" />
+                                <frame id="1:33978" name="div.container-lLGceaUg:margin" x="0" y="0" width="280.75" height="68">
+                                  <instance id="1:33979" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34012" name="div.container-lLGceaUg:margin" x="344.75" y="0" width="280.75" height="68">
+                                  <instance id="1:34013" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34050" name="div.container-lLGceaUg:margin" x="0" y="77" width="280.75" height="68">
+                                  <instance id="1:34051" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34084" name="div.container-lLGceaUg:margin" x="344.75" y="77" width="280.75" height="68">
+                                  <instance id="1:34085" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34118" name="div.container-lLGceaUg:margin" x="0" y="154" width="280.75" height="68">
+                                  <instance id="1:34119" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34153" name="div.container-lLGceaUg:margin" x="344.75" y="154" width="280.75" height="68">
+                                  <instance id="1:34154" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:34187" name="div.footer-Gvxnai7n:margin" x="0" y="282" width="625.5" height="48">
+                              <frame id="1:34188" name="div.footer-Gvxnai7n" x="0" y="24" width="625.5" height="24">
+                                <frame id="1:34189" name="div" x="0" y="0" width="625.5" height="24">
+                                  <instance id="1:34190" name="Component 6" x="0" y="0" width="302.7799987792969" height="24" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:34197" name="div.container-Gvxnai7n" x="689.5" y="0" width="625.5" height="330">
+                            <frame id="1:34198" name="div.header-Gvxnai7n:margin" x="0" y="0" width="625.5" height="60">
+                              <frame id="1:34199" name="div.header-Gvxnai7n" x="0" y="0" width="625.5" height="36">
+                                <frame id="1:34200" name="div.wrapper-BQZK4DnU" x="0" y="0" width="625.5" height="36">
+                                  <frame id="1:34201" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="309.9800109863281" height="36">
+                                    <instance id="1:34202" name="Component 2" x="0" y="15" width="309.9800109863281" height="16" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:34208" name="div.content-Gvxnai7n" x="0" y="60" width="625.5" height="222">
+                              <frame id="1:34209" name="div.container-aPcTuZxR" x="0" y="0" width="625.5" height="222">
+                                <rounded-rectangle id="1:34210" name="::before" x="0" y="-6" width="625.5" height="3" />
+                                <frame id="1:34211" name="div.container-lLGceaUg:margin" x="0" y="0" width="280.75" height="68">
+                                  <instance id="1:34212" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34245" name="div.container-lLGceaUg:margin" x="344.75" y="0" width="280.75" height="68">
+                                  <instance id="1:34246" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34282" name="div.container-lLGceaUg:margin" x="0" y="77" width="280.75" height="68">
+                                  <instance id="1:34283" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34316" name="div.container-lLGceaUg:margin" x="344.75" y="77" width="280.75" height="68">
+                                  <instance id="1:34317" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34351" name="div.container-lLGceaUg:margin" x="0" y="154" width="280.75" height="68">
+                                  <instance id="1:34352" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:34385" name="div.container-lLGceaUg:margin" x="344.75" y="154" width="280.75" height="68">
+                                  <instance id="1:34386" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:34422" name="div.footer-Gvxnai7n:margin" x="0" y="282" width="625.5" height="48">
+                              <frame id="1:34423" name="div.footer-Gvxnai7n" x="0" y="24" width="625.5" height="24">
+                                <frame id="1:34424" name="div" x="0" y="0" width="625.5" height="24">
+                                  <instance id="1:34425" name="Component 6" x="0" y="0" width="446.1300048828125" height="24" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:34432" name="div#gainers-losers" x="0" y="1250.550048828125" width="1315" height="569">
+                      <frame id="1:34433" name="div.content-Gvxnai7n" x="0" y="8" width="1315" height="561">
+                        <frame id="1:34434" name="div.container-L_bmEBNr" x="0" y="0" width="1315" height="561">
+                          <frame id="1:34435" name="div.container-Gvxnai7n" x="0" y="0" width="625.5" height="561">
+                            <frame id="1:34436" name="div.header-Gvxnai7n:margin" x="0" y="0" width="625.5" height="60">
+                              <frame id="1:34437" name="div.header-Gvxnai7n" x="0" y="0" width="625.5" height="36">
+                                <frame id="1:34438" name="div.wrapper-BQZK4DnU" x="0" y="0" width="625.5" height="36">
+                                  <frame id="1:34439" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="271.44000244140625" height="36">
+                                    <instance id="1:34440" name="Component 2" x="0" y="15" width="271.44000244140625" height="16" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:34446" name="div.content-Gvxnai7n" x="0" y="60" width="625.5" height="453">
+                              <frame id="1:34447" name="div.container-mpS130SA" x="0" y="0" width="625.5" height="453">
+                                <frame id="1:34448" name="div.minHeightContainer-mpS130SA" x="0" y="0" width="625.5" height="453">
+                                  <frame id="1:34450" name="div.container-aPcTuZxR" x="0" y="0" width="625.5" height="453">
+                                    <rounded-rectangle id="1:34451" name="::before" x="0" y="-6" width="625.5" height="3" />
+                                    <frame id="1:34452" name="div.container-lLGceaUg:margin" x="0" y="0" width="625.5" height="68">
+                                      <instance id="1:34453" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34487" name="div.container-lLGceaUg:margin" x="0" y="77" width="625.5" height="68">
+                                      <instance id="1:34488" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34520" name="div.container-lLGceaUg:margin" x="0" y="154" width="625.5" height="68">
+                                      <instance id="1:34521" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34556" name="div.container-lLGceaUg:margin" x="0" y="231" width="625.5" height="68">
+                                      <instance id="1:34557" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34591" name="div.container-lLGceaUg:margin" x="0" y="308" width="625.5" height="68">
+                                      <instance id="1:34592" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34626" name="div.container-lLGceaUg:margin" x="0" y="385" width="625.5" height="68">
+                                      <instance id="1:34627" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:34661" name="div.footer-Gvxnai7n:margin" x="0" y="513" width="625.5" height="48">
+                              <frame id="1:34662" name="div.footer-Gvxnai7n" x="0" y="24" width="625.5" height="24">
+                                <frame id="1:34663" name="div" x="0" y="0" width="625.5" height="24">
+                                  <instance id="1:34664" name="Component 6" x="0" y="0" width="407.7200012207031" height="24" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:34671" name="div.container-Gvxnai7n" x="689.5" y="0" width="625.5" height="561">
+                            <frame id="1:34672" name="div.header-Gvxnai7n:margin" x="0" y="0" width="625.5" height="60">
+                              <frame id="1:34673" name="div.header-Gvxnai7n" x="0" y="0" width="625.5" height="36">
+                                <frame id="1:34674" name="div.wrapper-BQZK4DnU" x="0" y="0" width="625.5" height="36">
+                                  <frame id="1:34675" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="287.7300109863281" height="36">
+                                    <instance id="1:34676" name="Component 2" x="0" y="15" width="287.7300109863281" height="16" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:34682" name="div.content-Gvxnai7n" x="0" y="60" width="625.5" height="453">
+                              <frame id="1:34683" name="div.container-mpS130SA" x="0" y="0" width="625.5" height="453">
+                                <frame id="1:34684" name="div.minHeightContainer-mpS130SA" x="0" y="0" width="625.5" height="453">
+                                  <frame id="1:34685" name="div.container-aPcTuZxR" x="0" y="0" width="625.5" height="453">
+                                    <rounded-rectangle id="1:34686" name="::before" x="0" y="-6" width="625.5" height="3" />
+                                    <frame id="1:34687" name="div.container-lLGceaUg:margin" x="0" y="0" width="625.5" height="68">
+                                      <instance id="1:34688" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34722" name="div.container-lLGceaUg:margin" x="0" y="77" width="625.5" height="68">
+                                      <instance id="1:34723" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34759" name="div.container-lLGceaUg:margin" x="0" y="154" width="625.5" height="68">
+                                      <instance id="1:34760" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34794" name="div.container-lLGceaUg:margin" x="0" y="231" width="625.5" height="68">
+                                      <instance id="1:34795" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34829" name="div.container-lLGceaUg:margin" x="0" y="308" width="625.5" height="68">
+                                      <instance id="1:34830" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                    <frame id="1:34868" name="div.container-lLGceaUg:margin" x="0" y="385" width="625.5" height="68">
+                                      <instance id="1:34869" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:34903" name="div.footer-Gvxnai7n:margin" x="0" y="513" width="625.5" height="48">
+                              <frame id="1:34904" name="div.footer-Gvxnai7n" x="0" y="24" width="625.5" height="24">
+                                <frame id="1:34905" name="div" x="0" y="0" width="625.5" height="24">
+                                  <instance id="1:34906" name="Component 6" x="0" y="0" width="356.7300109863281" height="24" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:34913" name="div.container-Gvxnai7n" x="0" y="1891.550048828125" width="1315" height="272">
+                      <frame id="1:34915" name="div.header-Gvxnai7n:margin" x="0" y="8" width="1315" height="60">
+                        <frame id="1:34916" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <frame id="1:34917" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                            <frame id="1:34918" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="340.9200134277344" height="36">
+                              <instance id="1:34919" name="Component 2" x="0" y="15" width="340.9200134277344" height="16" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:34925" name="div.content-Gvxnai7n" x="-24" y="44" width="1339" height="204">
+                        <frame id="1:34926" name="div.container-VfuW0jXu" x="0" y="0" width="1339" height="204">
+                          <frame id="1:34927" name="div.items-VfuW0jXu" x="0" y="0" width="1339" height="204">
+                            <instance id="1:34928" name="Component 21" x="24" y="24" width="304.75" height="156" />
+                            <frame id="1:34963" name="a.card-K5BIPgwx:margin" x="328.75" y="24" width="336.75" height="156">
+                              <instance id="1:34965" name="Component 21" x="32" y="0" width="304.75" height="156" />
+                            </frame>
+                            <frame id="1:35003" name="a.card-K5BIPgwx:margin" x="665.5" y="24" width="336.75" height="156">
+                              <instance id="1:35004" name="Component 21" x="32" y="0" width="304.75" height="156" />
+                            </frame>
+                            <frame id="1:35036" name="a.card-K5BIPgwx:margin" x="1002.25" y="24" width="336.75" height="156">
+                              <instance id="1:35037" name="Component 21" x="32" y="0" width="304.75" height="156" />
+                            </frame>
+                            <frame id="1:35071" name="a.card-exuF9vc4:margin" x="1339" y="24" width="336.75" height="156">
+                              <instance id="1:35072" name="Component 18" x="32" y="0" width="304.75" height="156" />
+                            </frame>
+                          </frame>
+                          <frame id="1:35081" name="div.rightScrollButton-VfuW0jXu" x="1307" y="78" width="48" height="48">
+                            <instance id="1:35082" name="Component 19" x="0" y="0" width="48" height="48" />
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:35086" name="div.footer-Gvxnai7n:margin" x="0" y="224" width="1315" height="48">
+                        <frame id="1:35087" name="div.footer-Gvxnai7n" x="0" y="24" width="1315" height="24">
+                          <frame id="1:35088" name="div" x="0" y="0" width="1315" height="24">
+                            <instance id="1:35089" name="Component 6" x="0" y="0" width="177.4199981689453" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:35096" name="div.container-Gvxnai7n" x="0" y="2235.550048828125" width="1315" height="272">
+                      <frame id="1:35097" name="div.header-Gvxnai7n:margin" x="0" y="8" width="1315" height="60">
+                        <frame id="1:35098" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <frame id="1:35099" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                            <frame id="1:35100" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="303.8299865722656" height="36">
+                              <instance id="1:35101" name="Component 2" x="0" y="15" width="303.8299865722656" height="16" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:35107" name="div.content-Gvxnai7n" x="0" y="68" width="1315" height="156">
+                        <frame id="1:35108" name="div.container-QcG0kDOU" x="0" y="0" width="1315" height="156">
+                          <instance id="1:35109" name="Component 38" x="621.5" y="22.5" width="72" height="87" />
+                          <frame id="1:35112" name="p.description-QcG0kDOU" x="557" y="109.5" width="201" height="24">
+                            <text id="1:35113" name="NingÃºn informe programado" x="0" y="0" width="201" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:35114" name="div.footer-Gvxnai7n:margin" x="0" y="224" width="1315" height="48">
+                        <frame id="1:35115" name="div.footer-Gvxnai7n" x="0" y="24" width="1315" height="24">
+                          <frame id="1:35116" name="div" x="0" y="0" width="1315" height="24">
+                            <instance id="1:35117" name="Component 6" x="0" y="0" width="177.4199981689453" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:35124" name="div.container-Gvxnai7n" x="0" y="2579.550048828125" width="1315" height="620">
+                      <frame id="1:35125" name="div.header-Gvxnai7n:margin" x="0" y="8" width="1315" height="60">
+                        <frame id="1:35126" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <frame id="1:35127" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                            <frame id="1:35128" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="457.7799987792969" height="36">
+                              <instance id="1:35129" name="Component 2" x="0" y="15" width="457.7799987792969" height="16" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:35135" name="div.content-Gvxnai7n" x="-8" y="68" width="1323" height="504">
+                        <frame id="1:35136" name="div.grid-psYqC5VC" x="0" y="0" width="1331" height="504">
+                          <instance id="1:35137" name="Component 22" x="0" y="0" width="401" height="114" />
+                          <instance id="1:35161" name="Component 22" x="465" y="0" width="401" height="114" />
+                          <instance id="1:35208" name="Component 22" x="930" y="0" width="401" height="114" />
+                          <instance id="1:35237" name="Component 22" x="0" y="146" width="401" height="90" />
+                          <instance id="1:35259" name="Component 22" x="465" y="146" width="401" height="90" />
+                          <instance id="1:35279" name="Component 22" x="930" y="146" width="401" height="90" />
+                          <instance id="1:35329" name="Component 22" x="0" y="268" width="401" height="90" />
+                          <instance id="1:35360" name="Component 22" x="465" y="268" width="401" height="90" />
+                          <instance id="1:35412" name="Component 22" x="930" y="268" width="401" height="90" />
+                          <instance id="1:35462" name="Component 22" x="0" y="390" width="401" height="114" />
+                          <instance id="1:35486" name="Component 22" x="465" y="390" width="401" height="114" />
+                          <instance id="1:35506" name="Component 22" x="930" y="390" width="401" height="114" />
+                        </frame>
+                      </frame>
+                      <frame id="1:35519" name="div.footer-Gvxnai7n:margin" x="0" y="572" width="1315" height="48">
+                        <frame id="1:35520" name="div.footer-Gvxnai7n" x="0" y="24" width="1315" height="24">
+                          <frame id="1:35521" name="div" x="0" y="0" width="1315" height="24">
+                            <instance id="1:35522" name="Component 6" x="0" y="0" width="128.72999572753906" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1:35529" name="section.section-jIcZQl74" x="40" y="6000.64013671875" width="1315" height="2169.550048828125">
+              <frame id="1:35530" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="2169.550048828125">
+                <frame id="1:35531" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="68">
+                  <frame id="1:35532" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="44">
+                    <frame id="1:35533" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="44">
+                      <frame id="1:35534" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="125.83000183105469" height="44">
+                        <instance id="1:35535" name="Component 2" x="0" y="22" width="125.83000183105469" height="16" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:35541" name="div.content-Gvxnai7n" x="0" y="68" width="1315" height="2101.550048828125">
+                  <frame id="1:35542" name="div.widgets-jIcZQl74" x="0" y="0" width="1315" height="2101.550048828125">
+                    <frame id="1:35543" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="216">
+                      <frame id="1:35544" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                        <frame id="1:35545" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <instance id="1:35546" name="Component 20" x="0" y="0" width="1315" height="36" />
+                        </frame>
+                      </frame>
+                      <frame id="1:35549" name="div.content-Gvxnai7n" x="-8" y="52" width="1323" height="164">
+                        <frame id="1:35550" name="div.container-VfuW0jXu" x="0" y="0" width="1323" height="164">
+                          <frame id="1:35551" name="div.items-VfuW0jXu" x="0" y="0" width="1331" height="164">
+                            <frame id="1:35552" name="div.customTickerCard-Q315hE3L" x="8" y="8" width="237.38999938964844" height="148">
+                              <instance id="1:35553" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                            </frame>
+                            <frame id="1:35572" name="div.customTickerCard-Q315hE3L:margin" x="245.38999938964844" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:35573" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:35574" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:35598" name="div.customTickerCard-Q315hE3L:margin" x="514.780029296875" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:35599" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:35600" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:35627" name="div.customTickerCard-Q315hE3L:margin" x="784.1699829101562" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:35628" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:35629" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:35648" name="div.customTickerCard-Q315hE3L:margin" x="1053.56005859375" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:35649" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:35650" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:35671" name="div.customTickerCard-Q315hE3L:margin" x="1322.949951171875" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:35672" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:35673" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:35692" name="div.customTickerCard-Q315hE3L:margin" x="1592.3399658203125" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:35693" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:35694" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:35713" name="div.customTickerCard-Q315hE3L:margin" x="1861.72998046875" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:35714" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:35715" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:35736" name="div.customTickerCard-Q315hE3L:margin" x="2131.1298828125" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:35737" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:35738" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                            <frame id="1:35761" name="div.customTickerCard-Q315hE3L:margin" x="2400.52001953125" y="8" width="269.3900146484375" height="148">
+                              <frame id="1:35762" name="div.customTickerCard-Q315hE3L" x="32" y="0" width="237.38999938964844" height="148">
+                                <instance id="1:35763" name="Component 5" x="0" y="0" width="237.38999938964844" height="148" />
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:35782" name="div.rightScrollButton-VfuW0jXu" x="1291" y="50" width="48" height="48">
+                            <instance id="1:35783" name="Component 19" x="0" y="0" width="48" height="48" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:35787" name="div" x="0" y="288" width="1315" height="480.54998779296875">
+                      <frame id="1:35788" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="480.54998779296875">
+                        <frame id="1:35789" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                          <frame id="1:35790" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                            <frame id="1:35791" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                              <frame id="1:35792" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="225.8000030517578" height="36">
+                                <instance id="1:35793" name="Component 2" x="0" y="15" width="225.8000030517578" height="16" />
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                        <frame id="1:35799" name="div.content-Gvxnai7n" x="-8" y="60" width="1323" height="420.54998779296875">
+                          <frame id="1:35800" name="div.container-VfuW0jXu" x="0" y="0" width="1323" height="420.54998779296875">
+                            <frame id="1:35801" name="div.items-VfuW0jXu" x="0" y="0" width="1331" height="420.54998779296875">
+                              <instance id="1:35802" name="Component 15" x="0" y="6" width="422.3299865722656" height="408.54998779296875" />
+                              <frame id="1:35852" name="article.card-exterior-GVAqO64h:margin" x="422.3299865722656" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:35853" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:35909" name="article.card-exterior-GVAqO64h:margin" x="876.6599731445312" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:35910" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:35964" name="article.card-exterior-GVAqO64h:margin" x="1330.97998046875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:35965" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:36028" name="article.card-exterior-GVAqO64h:margin" x="1785.31005859375" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:36029" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:36083" name="article.card-exterior-GVAqO64h:margin" x="2239.639892578125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:36084" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:36143" name="article.card-exterior-GVAqO64h:margin" x="2693.969970703125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:36144" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:36194" name="article.card-exterior-GVAqO64h:margin" x="3148.300048828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:36195" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:36249" name="article.card-exterior-GVAqO64h:margin" x="3602.6298828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:36250" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:36304" name="article.card-exterior-GVAqO64h:margin" x="4056.949951171875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:36305" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:36359" name="a.card-exuF9vc4:margin" x="4511.27978515625" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:36360" name="Component 18" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                            </frame>
+                            <frame id="1:36370" name="div.rightScrollButton-VfuW0jXu" x="1291" y="109.23999786376953" width="48" height="48">
+                              <instance id="1:36371" name="Component 19" x="0" y="0" width="48" height="48" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:36375" name="div#coin-ranking" x="0" y="840.5499877929688" width="1315" height="569">
+                      <frame id="1:36376" name="div.content-Gvxnai7n" x="0" y="8" width="1315" height="561">
+                        <frame id="1:36377" name="div.container-L_bmEBNr" x="0" y="0" width="1315" height="561">
+                          <frame id="1:36378" name="div.container-Gvxnai7n" x="0" y="0" width="625.5" height="561">
+                            <frame id="1:36379" name="div.header-Gvxnai7n:margin" x="0" y="0" width="625.5" height="60">
+                              <frame id="1:36380" name="div.header-Gvxnai7n" x="0" y="0" width="625.5" height="36">
+                                <frame id="1:36381" name="div.wrapper-BQZK4DnU" x="0" y="0" width="625.5" height="36">
+                                  <frame id="1:36382" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="352.6400146484375" height="36">
+                                    <instance id="1:36383" name="Component 2" x="0" y="15" width="352.6400146484375" height="16" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:36389" name="div.content-Gvxnai7n" x="0" y="60" width="625.5" height="453">
+                              <frame id="1:36390" name="div.container-aPcTuZxR" x="0" y="0" width="625.5" height="453">
+                                <rounded-rectangle id="1:36391" name="::before" x="0" y="-6" width="625.5" height="3" />
+                                <frame id="1:36392" name="div.container-lLGceaUg:margin" x="0" y="0" width="625.5" height="68">
+                                  <instance id="1:36393" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36461" name="div.container-lLGceaUg:margin" x="0" y="77" width="625.5" height="68">
+                                  <instance id="1:36462" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36484" name="div.container-lLGceaUg:margin" x="0" y="154" width="625.5" height="68">
+                                  <instance id="1:36485" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36507" name="div.container-lLGceaUg:margin" x="0" y="231" width="625.5" height="68">
+                                  <instance id="1:36508" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36532" name="div.container-lLGceaUg:margin" x="0" y="308" width="625.5" height="68">
+                                  <instance id="1:36533" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36555" name="div.container-lLGceaUg:margin" x="0" y="385" width="625.5" height="68">
+                                  <instance id="1:36556" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:36578" name="div.footer-Gvxnai7n:margin" x="0" y="513" width="625.5" height="48">
+                              <frame id="1:36579" name="div.footer-Gvxnai7n" x="0" y="24" width="625.5" height="24">
+                                <frame id="1:36580" name="div" x="0" y="0" width="625.5" height="24">
+                                  <instance id="1:36581" name="Component 6" x="0" y="0" width="409.6099853515625" height="24" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:36588" name="div.container-Gvxnai7n" x="689.5" y="0" width="625.5" height="561">
+                            <frame id="1:36589" name="div.header-Gvxnai7n:margin" x="0" y="0" width="625.5" height="60">
+                              <frame id="1:36590" name="div.header-Gvxnai7n" x="0" y="0" width="625.5" height="36">
+                                <frame id="1:36591" name="div.wrapper-BQZK4DnU" x="0" y="0" width="625.5" height="36">
+                                  <frame id="1:36592" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="368.94000244140625" height="36">
+                                    <instance id="1:36593" name="Component 2" x="0" y="15" width="368.94000244140625" height="16" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:36599" name="div.content-Gvxnai7n" x="0" y="60" width="625.5" height="453">
+                              <frame id="1:36600" name="div.container-aPcTuZxR" x="0" y="0" width="625.5" height="453">
+                                <rounded-rectangle id="1:36601" name="::before" x="0" y="-6" width="625.5" height="3" />
+                                <frame id="1:36602" name="div.container-lLGceaUg:margin" x="0" y="0" width="625.5" height="68">
+                                  <instance id="1:36603" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36630" name="div.container-lLGceaUg:margin" x="0" y="77" width="625.5" height="68">
+                                  <instance id="1:36631" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36653" name="div.container-lLGceaUg:margin" x="0" y="154" width="625.5" height="68">
+                                  <instance id="1:36654" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36676" name="div.container-lLGceaUg:margin" x="0" y="231" width="625.5" height="68">
+                                  <instance id="1:36677" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36699" name="div.container-lLGceaUg:margin" x="0" y="308" width="625.5" height="68">
+                                  <instance id="1:36700" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                                <frame id="1:36722" name="div.container-lLGceaUg:margin" x="0" y="385" width="625.5" height="68">
+                                  <instance id="1:36723" name="Component 5" x="-12" y="0" width="649.5" height="68" />
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:36745" name="div.footer-Gvxnai7n:margin" x="0" y="513" width="625.5" height="48">
+                              <frame id="1:36746" name="div.footer-Gvxnai7n" x="0" y="24" width="625.5" height="24">
+                                <frame id="1:36747" name="div" x="0" y="0" width="625.5" height="24">
+                                  <instance id="1:36748" name="Component 6" x="0" y="0" width="358.6300048828125" height="24" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:36755" name="div.container-Gvxnai7n" x="0" y="1481.550048828125" width="1315" height="620">
+                      <frame id="1:36756" name="div.header-Gvxnai7n:margin" x="0" y="8" width="1315" height="60">
+                        <frame id="1:36757" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <frame id="1:36758" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                            <frame id="1:36759" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="403.5799865722656" height="36">
+                              <instance id="1:36760" name="Component 2" x="0" y="15" width="403.5799865722656" height="16" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:36766" name="div.content-Gvxnai7n" x="-8" y="68" width="1323" height="504">
+                        <frame id="1:36767" name="div.grid-psYqC5VC" x="0" y="0" width="1331" height="504">
+                          <instance id="1:36768" name="Component 22" x="0" y="0" width="401" height="114" />
+                          <instance id="1:36788" name="Component 22" x="465" y="0" width="401" height="114" />
+                          <instance id="1:36824" name="Component 22" x="930" y="0" width="401" height="114" />
+                          <instance id="1:36844" name="Component 22" x="0" y="146" width="401" height="90" />
+                          <instance id="1:36864" name="Component 22" x="465" y="146" width="401" height="90" />
+                          <instance id="1:36917" name="Component 22" x="930" y="146" width="401" height="90" />
+                          <instance id="1:36946" name="Component 22" x="0" y="268" width="401" height="114" />
+                          <instance id="1:36966" name="Component 22" x="465" y="268" width="401" height="114" />
+                          <instance id="1:36986" name="Component 22" x="930" y="268" width="401" height="114" />
+                          <instance id="1:37015" name="Component 22" x="0" y="414" width="401" height="90" />
+                          <instance id="1:37035" name="Component 22" x="465" y="414" width="401" height="90" />
+                          <instance id="1:37064" name="Component 22" x="930" y="414" width="401" height="90" />
+                        </frame>
+                      </frame>
+                      <frame id="1:37116" name="div.footer-Gvxnai7n:margin" x="0" y="572" width="1315" height="48">
+                        <frame id="1:37117" name="div.footer-Gvxnai7n" x="0" y="24" width="1315" height="24">
+                          <frame id="1:37118" name="div" x="0" y="0" width="1315" height="24">
+                            <instance id="1:37119" name="Component 6" x="0" y="0" width="128.72999572753906" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1:37126" name="section.section-jIcZQl74" x="40" y="8290.1904296875" width="1315" height="1698.550048828125">
+              <frame id="1:37127" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="1698.550048828125">
+                <frame id="1:37128" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="68">
+                  <frame id="1:37129" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="44">
+                    <frame id="1:37130" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="44">
+                      <frame id="1:37131" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="459.80999755859375" height="44">
+                        <instance id="1:37132" name="Component 2" x="0" y="22" width="459.80999755859375" height="16" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:37138" name="div.content-Gvxnai7n" x="0" y="68" width="1315" height="1630.550048828125">
+                  <frame id="1:37139" name="div.widgets-jIcZQl74" x="0" y="0" width="1315" height="1630.550048828125">
+                    <frame id="1:37140" name="div" x="0" y="0" width="1315" height="480.54998779296875">
+                      <frame id="1:37141" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="480.54998779296875">
+                        <frame id="1:37142" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                          <frame id="1:37143" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                            <frame id="1:37144" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                              <frame id="1:37145" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="225.8000030517578" height="36">
+                                <instance id="1:37146" name="Component 2" x="0" y="15" width="225.8000030517578" height="16" />
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                        <frame id="1:37152" name="div.content-Gvxnai7n" x="-8" y="60" width="1323" height="420.54998779296875">
+                          <frame id="1:37153" name="div.container-VfuW0jXu" x="0" y="0" width="1323" height="420.54998779296875">
+                            <frame id="1:37154" name="div.items-VfuW0jXu" x="0" y="0" width="1331" height="420.54998779296875">
+                              <instance id="1:37155" name="Component 15" x="0" y="6" width="422.3299865722656" height="408.54998779296875" />
+                              <frame id="1:37222" name="article.card-exterior-GVAqO64h:margin" x="422.3299865722656" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37223" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:37273" name="article.card-exterior-GVAqO64h:margin" x="876.6599731445312" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37274" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:37329" name="article.card-exterior-GVAqO64h:margin" x="1330.97998046875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37330" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:37384" name="article.card-exterior-GVAqO64h:margin" x="1785.31005859375" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37385" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:37451" name="article.card-exterior-GVAqO64h:margin" x="2239.639892578125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37452" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:37506" name="article.card-exterior-GVAqO64h:margin" x="2693.969970703125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37507" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:37561" name="article.card-exterior-GVAqO64h:margin" x="3148.300048828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37562" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:37616" name="article.card-exterior-GVAqO64h:margin" x="3602.6298828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37617" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:37671" name="article.card-exterior-GVAqO64h:margin" x="4056.949951171875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37672" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:37726" name="a.card-exuF9vc4:margin" x="4511.27978515625" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:37727" name="Component 18" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                            </frame>
+                            <frame id="1:37736" name="div.rightScrollButton-VfuW0jXu" x="1291" y="109.23046875" width="48" height="48">
+                              <instance id="1:37737" name="Component 19" x="0" y="0" width="48" height="48" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:37741" name="div#quotes" x="0" y="560.5499877929688" width="1315" height="330">
+                      <frame id="1:37742" name="div.content-Gvxnai7n" x="0" y="0" width="1315" height="330">
+                        <frame id="1:37743" name="div.container-L_bmEBNr" x="0" y="0" width="1315" height="330">
+                          <frame id="1:37744" name="div.container-Gvxnai7n" x="0" y="0" width="625.5" height="330">
+                            <frame id="1:37745" name="div.header-Gvxnai7n:margin" x="0" y="0" width="625.5" height="60">
+                              <frame id="1:37746" name="div.header-Gvxnai7n" x="0" y="0" width="625.5" height="36">
+                                <frame id="1:37747" name="div.wrapper-BQZK4DnU" x="0" y="0" width="625.5" height="36">
+                                  <frame id="1:37748" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="263.45001220703125" height="36">
+                                    <instance id="1:37749" name="Component 2" x="0" y="15" width="263.45001220703125" height="16" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:37755" name="div.content-Gvxnai7n" x="0" y="60" width="625.5" height="222">
+                              <frame id="1:37756" name="div.container-aPcTuZxR" x="0" y="0" width="625.5" height="222">
+                                <rounded-rectangle id="1:37757" name="::before" x="0" y="-6" width="625.5" height="3" />
+                                <frame id="1:37758" name="div.container-lLGceaUg:margin" x="0" y="0" width="280.75" height="68">
+                                  <instance id="1:37759" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:37792" name="div.container-lLGceaUg:margin" x="344.75" y="0" width="280.75" height="68">
+                                  <instance id="1:37793" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:37826" name="div.container-lLGceaUg:margin" x="0" y="77" width="280.75" height="68">
+                                  <instance id="1:37827" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:37860" name="div.container-lLGceaUg:margin" x="344.75" y="77" width="280.75" height="68">
+                                  <instance id="1:37861" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:37896" name="div.container-lLGceaUg:margin" x="0" y="154" width="280.75" height="68">
+                                  <instance id="1:37897" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:37930" name="div.container-lLGceaUg:margin" x="344.75" y="154" width="280.75" height="68">
+                                  <instance id="1:37931" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:37966" name="div.footer-Gvxnai7n:margin" x="0" y="282" width="625.5" height="48">
+                              <frame id="1:37967" name="div.footer-Gvxnai7n" x="0" y="24" width="625.5" height="24">
+                                <frame id="1:37968" name="div" x="0" y="0" width="625.5" height="24">
+                                  <instance id="1:37969" name="Component 6" x="0" y="0" width="256.9200134277344" height="24" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:37976" name="div.container-Gvxnai7n" x="689.5" y="0" width="625.5" height="330">
+                            <frame id="1:37977" name="div.header-Gvxnai7n:margin" x="0" y="0" width="625.5" height="60">
+                              <frame id="1:37978" name="div.header-Gvxnai7n" x="0" y="0" width="625.5" height="36">
+                                <frame id="1:37979" name="div.wrapper-BQZK4DnU" x="0" y="0" width="625.5" height="36">
+                                  <frame id="1:37980" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="268.04998779296875" height="36">
+                                    <instance id="1:37981" name="Component 2" x="0" y="15" width="268.04998779296875" height="16" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:37987" name="div.content-Gvxnai7n" x="0" y="60" width="625.5" height="222">
+                              <frame id="1:37988" name="div.container-aPcTuZxR" x="0" y="0" width="625.5" height="222">
+                                <rounded-rectangle id="1:37989" name="::before" x="0" y="-6" width="625.5" height="3" />
+                                <frame id="1:37990" name="div.container-lLGceaUg:margin" x="0" y="0" width="280.75" height="68">
+                                  <instance id="1:37991" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:38024" name="div.container-lLGceaUg:margin" x="344.75" y="0" width="280.75" height="68">
+                                  <instance id="1:38025" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:38058" name="div.container-lLGceaUg:margin" x="0" y="77" width="280.75" height="68">
+                                  <instance id="1:38059" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:38093" name="div.container-lLGceaUg:margin" x="344.75" y="77" width="280.75" height="68">
+                                  <instance id="1:38094" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:38127" name="div.container-lLGceaUg:margin" x="0" y="154" width="280.75" height="68">
+                                  <instance id="1:38128" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                                <frame id="1:38162" name="div.container-lLGceaUg:margin" x="344.75" y="154" width="280.75" height="68">
+                                  <instance id="1:38163" name="Component 5" x="-12" y="0" width="304.75" height="68" />
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:38197" name="div.footer-Gvxnai7n:margin" x="0" y="282" width="625.5" height="48">
+                              <frame id="1:38198" name="div.footer-Gvxnai7n" x="0" y="24" width="625.5" height="24">
+                                <frame id="1:38199" name="div" x="0" y="0" width="625.5" height="24">
+                                  <instance id="1:38200" name="Component 6" x="0" y="0" width="259.54998779296875" height="24" />
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:38207" name="div.container-Gvxnai7n" x="0" y="970.5499877929688" width="1315" height="660">
+                      <frame id="1:38208" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                        <frame id="1:38209" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <frame id="1:38210" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                            <frame id="1:38211" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="304.30999755859375" height="36">
+                              <instance id="1:38212" name="Component 2" x="0" y="15" width="304.30999755859375" height="16" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:38218" name="div.content-Gvxnai7n" x="-8" y="60" width="1323" height="552">
+                        <frame id="1:38219" name="div.grid-psYqC5VC" x="0" y="0" width="1331" height="552">
+                          <instance id="1:38220" name="Component 22" x="0" y="0" width="401" height="114" />
+                          <instance id="1:38233" name="Component 22" x="465" y="0" width="401" height="114" />
+                          <instance id="1:38256" name="Component 22" x="930" y="0" width="401" height="114" />
+                          <instance id="1:38269" name="Component 22" x="0" y="146" width="401" height="114" />
+                          <instance id="1:38298" name="Component 22" x="465" y="146" width="401" height="114" />
+                          <instance id="1:38318" name="Component 22" x="930" y="146" width="401" height="114" />
+                          <instance id="1:38338" name="Component 22" x="0" y="292" width="401" height="114" />
+                          <instance id="1:38377" name="Component 22" x="465" y="292" width="401" height="114" />
+                          <instance id="1:38408" name="Component 22" x="930" y="292" width="401" height="114" />
+                          <instance id="1:38437" name="Component 22" x="0" y="438" width="401" height="114" />
+                          <instance id="1:38450" name="Component 22" x="465" y="438" width="401" height="114" />
+                          <instance id="1:38463" name="Component 22" x="930" y="438" width="401" height="114" />
+                        </frame>
+                      </frame>
+                      <frame id="1:38483" name="div.footer-Gvxnai7n:margin" x="0" y="612" width="1315" height="48">
+                        <frame id="1:38484" name="div.footer-Gvxnai7n" x="0" y="24" width="1315" height="24">
+                          <frame id="1:38485" name="div" x="0" y="0" width="1315" height="24">
+                            <instance id="1:38486" name="Component 6" x="0" y="0" width="128.72999572753906" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1:38493" name="section.section-jIcZQl74" x="40" y="10108.740234375" width="1315" height="1820.550048828125">
+              <frame id="1:38494" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="1820.550048828125">
+                <frame id="1:38495" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="68">
+                  <frame id="1:38496" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="44">
+                    <frame id="1:38497" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="44">
+                      <frame id="1:38498" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="271.29998779296875" height="44">
+                        <instance id="1:38499" name="Component 2" x="0" y="22" width="271.29998779296875" height="16" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:38505" name="div.content-Gvxnai7n" x="0" y="68" width="1315" height="1752.550048828125">
+                  <frame id="1:38506" name="div.widgets-jIcZQl74" x="0" y="0" width="1315" height="1752.550048828125">
+                    <frame id="1:38507" name="div" x="0" y="0" width="1315" height="480.54998779296875">
+                      <frame id="1:38508" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="480.54998779296875">
+                        <frame id="1:38509" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                          <frame id="1:38510" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                            <frame id="1:38511" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                              <frame id="1:38512" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="225.8000030517578" height="36">
+                                <instance id="1:38513" name="Component 2" x="0" y="15" width="225.8000030517578" height="16" />
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                        <frame id="1:38519" name="div.content-Gvxnai7n" x="-8" y="60" width="1323" height="420.54998779296875">
+                          <frame id="1:38520" name="div.container-VfuW0jXu" x="0" y="0" width="1323" height="420.54998779296875">
+                            <frame id="1:38521" name="div.items-VfuW0jXu" x="0" y="0" width="1331" height="420.54998779296875">
+                              <instance id="1:38522" name="Component 15" x="0" y="6" width="422.3299865722656" height="408.54998779296875" />
+                              <frame id="1:38588" name="article.card-exterior-GVAqO64h:margin" x="422.3299865722656" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:38589" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:38653" name="article.card-exterior-GVAqO64h:margin" x="876.6599731445312" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:38654" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:38721" name="article.card-exterior-GVAqO64h:margin" x="1330.97998046875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:38722" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:38786" name="article.card-exterior-GVAqO64h:margin" x="1785.31005859375" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:38787" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:38856" name="article.card-exterior-GVAqO64h:margin" x="2239.639892578125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:38857" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:38922" name="article.card-exterior-GVAqO64h:margin" x="2693.969970703125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:38923" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:38988" name="article.card-exterior-GVAqO64h:margin" x="3148.300048828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:38989" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:39052" name="article.card-exterior-GVAqO64h:margin" x="3602.6298828125" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:39053" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:39129" name="article.card-exterior-GVAqO64h:margin" x="4056.949951171875" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:39130" name="Component 15" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                              <frame id="1:39194" name="a.card-exuF9vc4:margin" x="4511.27978515625" y="6" width="454.3299865722656" height="408.54998779296875">
+                                <instance id="1:39195" name="Component 18" x="32" y="0" width="422.3299865722656" height="408.54998779296875" />
+                              </frame>
+                            </frame>
+                            <frame id="1:39204" name="div.rightScrollButton-VfuW0jXu" x="1291" y="109.23999786376953" width="48" height="48">
+                              <instance id="1:39205" name="Component 19" x="0" y="0" width="48" height="48" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:39209" name="div.container-Gvxnai7n" x="0" y="560.5499877929688" width="1315" height="500">
+                      <frame id="1:39210" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                        <frame id="1:39211" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <frame id="1:39212" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                            <frame id="1:39213" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="491.2699890136719" height="36">
+                              <instance id="1:39214" name="Component 2" x="0" y="15" width="491.2699890136719" height="16" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:39220" name="div.content-Gvxnai7n" x="0" y="60" width="1315" height="392">
+                        <frame id="1:39221" name="div.wrapper-DCoH6_Dy" x="0" y="0" width="1315" height="392">
+                          <frame id="1:39222" name="div.timeframes-DCoH6_Dy" x="0" y="344" width="1315" height="48">
+                            <frame id="1:39223" name="div.options-bCKe7n07" x="0" y="4" width="533.760009765625" height="40">
+                              <instance id="1:39224" name="Component 26" x="0" y="0" width="52" height="40" />
+                              <instance id="1:39228" name="Component 26" x="56" y="0" width="50.470001220703125" height="40" />
+                              <instance id="1:39232" name="Component 26" x="110.47000122070312" y="0" width="53.470001220703125" height="40" />
+                              <instance id="1:39236" name="Component 26" x="167.94000244140625" y="0" width="53.470001220703125" height="40" />
+                              <instance id="1:39240" name="Component 26" x="225.41000366210938" y="0" width="53.470001220703125" height="40" />
+                              <instance id="1:39244" name="Component 26" x="282.8800048828125" y="0" width="62.470001220703125" height="40" />
+                              <instance id="1:39248" name="Component 26" x="349.3500061035156" y="0" width="51.470001220703125" height="40" />
+                              <instance id="1:39252" name="Component 26" x="404.82000732421875" y="0" width="51.470001220703125" height="40" />
+                              <instance id="1:39256" name="Component 26" x="460.2900085449219" y="0" width="73.47000122070312" height="40" />
+                            </frame>
+                          </frame>
+                          <frame id="1:39260" name="div.container-DCoH6_Dy" x="0" y="0" width="1315" height="320">
+                            <frame id="1:39261" name="div.container-lLGceaUg:margin" x="0" y="0" width="1315" height="40">
+                              <instance id="1:39262" name="Component 27" x="-12" y="0" width="1339" height="40" />
+                            </frame>
+                            <frame id="1:39285" name="div.container-lLGceaUg:margin" x="0" y="40" width="1315" height="40">
+                              <instance id="1:39286" name="Component 27" x="-12" y="0" width="1339" height="40" />
+                            </frame>
+                            <frame id="1:39310" name="div.container-lLGceaUg:margin" x="0" y="80" width="1315" height="40">
+                              <instance id="1:39311" name="Component 27" x="-12" y="0" width="1339" height="40" />
+                            </frame>
+                            <frame id="1:39335" name="div.container-lLGceaUg:margin" x="0" y="120" width="1315" height="40">
+                              <instance id="1:39336" name="Component 27" x="-12" y="0" width="1339" height="40" />
+                            </frame>
+                            <frame id="1:39363" name="div.container-lLGceaUg:margin" x="0" y="160" width="1315" height="40">
+                              <instance id="1:39364" name="Component 27" x="-12" y="0" width="1339" height="40" />
+                            </frame>
+                            <frame id="1:39388" name="div.container-lLGceaUg:margin" x="0" y="200" width="1315" height="40">
+                              <instance id="1:39389" name="Component 27" x="-12" y="0" width="1339" height="40" />
+                            </frame>
+                            <frame id="1:39413" name="div.container-lLGceaUg:margin" x="0" y="240" width="1315" height="40">
+                              <instance id="1:39414" name="Component 27" x="-12" y="0" width="1339" height="40" />
+                            </frame>
+                            <frame id="1:39440" name="div.container-lLGceaUg:margin" x="0" y="280" width="1315" height="40">
+                              <instance id="1:39441" name="Component 27" x="-12" y="0" width="1339" height="40" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:39464" name="div.footer-Gvxnai7n:margin" x="0" y="452" width="1315" height="48">
+                        <frame id="1:39465" name="div.footer-Gvxnai7n" x="0" y="24" width="1315" height="24">
+                          <frame id="1:39466" name="div" x="0" y="0" width="1315" height="24">
+                            <instance id="1:39467" name="Component 6" x="0" y="0" width="155.25" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:39474" name="div.container-Gvxnai7n" x="0" y="1140.550048828125" width="1315" height="612">
+                      <frame id="1:39475" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                        <frame id="1:39476" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <frame id="1:39477" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                            <frame id="1:39478" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="297.54998779296875" height="36">
+                              <instance id="1:39479" name="Component 2" x="0" y="15" width="297.54998779296875" height="16" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:39485" name="div.content-Gvxnai7n" x="-8" y="60" width="1323" height="504">
+                        <frame id="1:39486" name="div.grid-psYqC5VC" x="0" y="0" width="1331" height="504">
+                          <instance id="1:39487" name="Component 22" x="0" y="0" width="401" height="90" />
+                          <instance id="1:39539" name="Component 22" x="465" y="0" width="401" height="90" />
+                          <instance id="1:39589" name="Component 22" x="930" y="0" width="401" height="90" />
+                          <instance id="1:39622" name="Component 22" x="0" y="122" width="401" height="114" />
+                          <instance id="1:39674" name="Component 22" x="465" y="122" width="401" height="114" />
+                          <instance id="1:39726" name="Component 22" x="930" y="122" width="401" height="114" />
+                          <instance id="1:39778" name="Component 22" x="0" y="268" width="401" height="90" />
+                          <instance id="1:39811" name="Component 22" x="465" y="268" width="401" height="90" />
+                          <instance id="1:39860" name="Component 22" x="930" y="268" width="401" height="90" />
+                          <instance id="1:39891" name="Component 22" x="0" y="390" width="401" height="114" />
+                          <instance id="1:39904" name="Component 22" x="465" y="390" width="401" height="114" />
+                          <instance id="1:39958" name="Component 22" x="930" y="390" width="401" height="114" />
+                        </frame>
+                      </frame>
+                      <frame id="1:40010" name="div.footer-Gvxnai7n:margin" x="0" y="564" width="1315" height="48">
+                        <frame id="1:40011" name="div.footer-Gvxnai7n" x="0" y="24" width="1315" height="24">
+                          <frame id="1:40012" name="div" x="0" y="0" width="1315" height="24">
+                            <instance id="1:40013" name="Component 6" x="0" y="0" width="128.72999572753906" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1:40020" name="section.section-jIcZQl74" x="40" y="12049.2900390625" width="1315" height="1155.18994140625">
+              <frame id="1:40021" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="1155.18994140625">
+                <frame id="1:40022" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="68">
+                  <frame id="1:40023" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="44">
+                    <frame id="1:40024" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="44">
+                      <frame id="1:40025" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="183.8300018310547" height="44">
+                        <instance id="1:40026" name="Component 2" x="0" y="22" width="183.8300018310547" height="16" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:40032" name="div.content-Gvxnai7n" x="0" y="68" width="1315" height="1087.18994140625">
+                  <frame id="1:40033" name="div.widgets-jIcZQl74" x="0" y="0" width="1315" height="1087.18994140625">
+                    <frame id="1:40034" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="757.1900024414062">
+                      <frame id="1:40036" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="60">
+                        <frame id="1:40037" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="36">
+                          <frame id="1:40038" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="36">
+                            <frame id="1:40039" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="391.79998779296875" height="36">
+                              <instance id="1:40040" name="Component 2" x="0" y="15" width="391.79998779296875" height="16" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:40046" name="div.content-Gvxnai7n" x="0" y="48" width="1315" height="673.1900024414062">
+                        <frame id="1:40047" name="div.container-xYQiJfBC" x="0" y="0" width="1315" height="673.18798828125">
+                          <frame id="1:40048" name="div.map-xYQiJfBC" x="57.5" y="0" width="1200" height="673.18798828125">
+                            <frame id="1:40050" name="div.container-PucT6CA9" x="0" y="0" width="1224" height="673.18798828125">
+                              <frame id="1:40051" name="div.mapContainer-PucT6CA9" x="12" y="12" width="1200" height="649.18798828125">
+                                <frame id="1:40052" name="div.mapWrapper-PucT6CA9" x="0" y="0" width="1200" height="599.18798828125">
+                                  <frame id="1:40053" name="span.map-PucT6CA9" x="0" y="0" width="1200" height="599.18798828125">
+                                    <instance id="1:40054" name="Component 1" x="0" y="0" width="1200" height="599.18798828125" />
+                                    <instance id="1:40260" name="Component 1" x="0" y="0" width="1200" height="599.18798828125" />
+                                  </frame>
+                                </frame>
+                                <frame id="1:40261" name="div.container-IyWyk2Ci:margin" x="0" y="599.18798828125" width="1200" height="50">
+                                  <frame id="1:40263" name="div.block-IyWyk2Ci" x="0" y="16" width="1200" height="34">
+                                    <instance id="1:40264" name="Component 1" x="300" y="0" width="600" height="34" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:40306" name="div.footer-Gvxnai7n:margin" x="0" y="709.1900024414062" width="1315" height="48">
+                        <frame id="1:40307" name="div.footer-Gvxnai7n" x="0" y="24" width="1315" height="24">
+                          <frame id="1:40308" name="div" x="0" y="0" width="1315" height="24">
+                            <instance id="1:40309" name="Component 6" x="0" y="0" width="244.05999755859375" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                    <frame id="1:40316" name="div.container-Gvxnai7n" x="0" y="837.1900024414062" width="1315" height="250">
+                      <frame id="1:40317" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="64">
+                        <frame id="1:40318" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="40">
+                          <frame id="1:40319" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="40">
+                            <frame id="1:40321" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="2" width="307.0799865722656" height="36">
+                              <instance id="1:40322" name="Component 2" x="0" y="15" width="307.0799865722656" height="16" />
+                            </frame>
+                            <instance id="1:40328" name="Component 16" x="1275" y="0" width="40" height="40" />
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:40334" name="div.content-Gvxnai7n" x="-24" y="40" width="1339" height="186">
+                        <frame id="1:40335" name="div.container-VfuW0jXu" x="0" y="0" width="1339" height="186">
+                          <frame id="1:40336" name="div.items-VfuW0jXu" x="0" y="0" width="1339" height="186">
+                            <instance id="1:40337" name="Component 28" x="24" y="24" width="304.75" height="138" />
+                            <frame id="1:40388" name="a.wrap-nj94V3ds:margin" x="328.75" y="24" width="336.75" height="138">
+                              <instance id="1:40389" name="Component 28" x="32" y="0" width="304.75" height="138" />
+                            </frame>
+                            <frame id="1:40440" name="a.wrap-nj94V3ds:margin" x="665.5" y="24" width="336.75" height="138">
+                              <instance id="1:40441" name="Component 28" x="32" y="0" width="304.75" height="138" />
+                            </frame>
+                            <frame id="1:40491" name="a.wrap-nj94V3ds:margin" x="1002.25" y="24" width="336.75" height="138">
+                              <instance id="1:40492" name="Component 28" x="32" y="0" width="304.75" height="138" />
+                            </frame>
+                            <frame id="1:40542" name="a.wrap-nj94V3ds:margin" x="1339" y="24" width="336.75" height="138">
+                              <instance id="1:40543" name="Component 28" x="32" y="0" width="304.75" height="138" />
+                            </frame>
+                            <frame id="1:40593" name="a.wrap-nj94V3ds:margin" x="1675.75" y="24" width="336.75" height="138">
+                              <instance id="1:40594" name="Component 28" x="32" y="0" width="304.75" height="138" />
+                            </frame>
+                            <frame id="1:40644" name="a.wrap-nj94V3ds:margin" x="2012.5" y="24" width="336.75" height="138">
+                              <instance id="1:40645" name="Component 28" x="32" y="0" width="304.75" height="138" />
+                            </frame>
+                            <frame id="1:40697" name="a.wrap-nj94V3ds:margin" x="2349.25" y="24" width="336.75" height="138">
+                              <instance id="1:40698" name="Component 28" x="32" y="0" width="304.75" height="138" />
+                            </frame>
+                            <frame id="1:40748" name="a.card-exuF9vc4:margin" x="2686" y="24" width="336.75" height="138">
+                              <instance id="1:40749" name="Component 18" x="32" y="0" width="304.75" height="138" />
+                            </frame>
+                          </frame>
+                          <frame id="1:40758" name="div.rightScrollButton-VfuW0jXu" x="1307" y="69" width="48" height="48">
+                            <instance id="1:40759" name="Component 19" x="0" y="0" width="48" height="48" />
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:40763" name="div.footer-Gvxnai7n:margin" x="0" y="202" width="1315" height="48">
+                        <frame id="1:40764" name="div.footer-Gvxnai7n" x="0" y="24" width="1315" height="24">
+                          <frame id="1:40765" name="div" x="0" y="0" width="1315" height="24">
+                            <instance id="1:40766" name="Component 6" x="0" y="0" width="275.1099853515625" height="24" />
+                          </frame>
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1:40773" name="section.section-jIcZQl74" x="40" y="13324.48046875" width="1315" height="328">
+              <frame id="1:40774" name="div.container-Gvxnai7n" x="0" y="0" width="1315" height="328">
+                <frame id="1:40775" name="div.header-Gvxnai7n:margin" x="0" y="0" width="1315" height="132">
+                  <frame id="1:40776" name="div.header-Gvxnai7n" x="0" y="0" width="1315" height="108">
+                    <frame id="1:40777" name="div.wrapper-BQZK4DnU" x="0" y="0" width="1315" height="44">
+                      <frame id="1:40778" name="span.titleAndHintWrapper-BQZK4DnU" x="0" y="0" width="313.70001220703125" height="44">
+                        <instance id="1:40779" name="Component 2" x="0" y="22" width="313.70001220703125" height="16" />
+                      </frame>
+                    </frame>
+                    <instance id="1:40785" name="Component 12" x="0" y="52" width="664" height="56" />
+                  </frame>
+                </frame>
+                <frame id="1:40787" name="div.content-Gvxnai7n" x="0" y="132" width="1315" height="196">
+                  <frame id="1:40788" name="div.widgets-jIcZQl74" x="0" y="0" width="1315" height="196">
+                    <frame id="1:40789" name="div.content-Gvxnai7n" x="0" y="0" width="1315" height="196">
+                      <frame id="1:40790" name="div.container-VfuW0jXu" x="0" y="0" width="1315" height="196">
+                        <frame id="1:40791" name="div.items-VfuW0jXu" x="0" y="0" width="1315" height="196">
+                          <frame id="1:40792" name="div.container-gFu2m6yn:margin" x="0" y="0" width="416.9800109863281" height="196">
+                            <instance id="1:40793" name="Component 30" x="0" y="8" width="416.9800109863281" height="188" />
+                          </frame>
+                          <frame id="1:40846" name="div.container-gFu2m6yn:margin" x="416.9800109863281" y="0" width="448.9800109863281" height="196">
+                            <instance id="1:40848" name="Component 30" x="32" y="8" width="416.9800109863281" height="188" />
+                          </frame>
+                          <frame id="1:40893" name="div.container-gFu2m6yn:margin" x="865.969970703125" y="0" width="448.9800109863281" height="196">
+                            <instance id="1:40894" name="Component 30" x="32" y="8" width="416.9800109863281" height="188" />
+                          </frame>
+                          <frame id="1:40943" name="div.container-gFu2m6yn:margin" x="1314.949951171875" y="0" width="448.9800109863281" height="196">
+                            <instance id="1:40944" name="Component 30" x="32" y="8" width="416.9800109863281" height="188" />
+                          </frame>
+                          <frame id="1:40987" name="div.container-gFu2m6yn:margin" x="1763.93994140625" y="0" width="448.9800109863281" height="196">
+                            <instance id="1:40988" name="Component 30" x="32" y="8" width="416.9800109863281" height="188" />
+                          </frame>
+                          <frame id="1:41037" name="a.card-exuF9vc4:margin" x="2212.919921875" y="0" width="448.9800109863281" height="196">
+                            <instance id="1:41038" name="Component 18" x="32" y="8" width="416.9800109863281" height="188" />
+                          </frame>
+                        </frame>
+                        <frame id="1:41047" name="div.rightScrollButton-VfuW0jXu" x="1283" y="74" width="48" height="48">
+                          <instance id="1:41048" name="Component 19" x="0" y="0" width="48" height="48" />
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="1:41052" name="div.container-eaDI_i8s" x="0" y="0" width="1395" height="13652.48046875">
+            <frame id="1:41058" name="div.container-sticky-eaDI_i8s" x="0" y="0" width="1395" height="52">
+              <frame id="1:41059" name="div.container-KzjYSOih" x="430.1000061035156" y="0" width="534.7999877929688" height="52">
+                <frame id="1:41063" name="div.wrap-KzjYSOih" x="1" y="-3" width="535" height="58">
+                  <frame id="1:41064" name="div.tabs-eaDI_i8s" x="7" y="11" width="521" height="36">
+                    <frame id="1:41065" name="div.scrollWrap-cDg9MxE_" x="0" y="0" width="521" height="36">
+                      <frame id="1:41066" name="div#sticky-navigation-tabs" x="4" y="4" width="513" height="28">
+                        <instance id="1:41067" name="Component 31" x="0" y="0" width="144" height="28" />
+                        <frame id="1:41070" name="a#header-crypto:margin" x="144" y="0" width="67" height="28">
+                          <instance id="1:41071" name="Component 31" x="4" y="0" width="63" height="28" />
+                        </frame>
+                        <frame id="1:41074" name="a#header-futures:margin" x="211" y="0" width="75" height="28">
+                          <instance id="1:41075" name="Component 31" x="4" y="0" width="71" height="28" />
+                        </frame>
+                        <frame id="1:41078" name="a#header-forex:margin" x="286" y="0" width="63" height="28">
+                          <instance id="1:41079" name="Component 31" x="4" y="0" width="59" height="28" />
+                        </frame>
+                        <frame id="1:41082" name="a#header-economy:margin" x="349" y="0" width="89" height="28">
+                          <instance id="1:41083" name="Component 31" x="4" y="0" width="85" height="28" />
+                        </frame>
+                        <frame id="1:41086" name="a#header-brokers:margin" x="438" y="0" width="75" height="28">
+                          <instance id="1:41087" name="Component 31" x="4" y="0" width="71" height="28" />
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <rounded-rectangle id="1:41090" name="::before" x="485.79998779296875" y="1" width="48" height="50" />
+                <rounded-rectangle id="1:41091" name="::after" x="49" y="51" width="48" height="50" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <frame id="1:41092" name="div.root-_gnlNXvh" x="0" y="13916.4697265625" width="1395" height="972.47998046875">
+        <frame id="1:41093" name="hr.separator-_gnlNXvh" x="0" y="0" width="1395" height="1" />
+        <frame id="1:41094" name="div.container-_gnlNXvh" x="0" y="1" width="1395" height="971.47998046875">
+          <frame id="1:41096" name="div.backgroundImage-_gnlNXvh" x="545" y="176.48046875" width="980" height="715" />
+          <frame id="1:41099" name="div.content-_gnlNXvh" x="40" y="0" width="1315" height="840">
+            <frame id="1:41100" name="div" x="0" y="48" width="310" height="792">
+              <frame id="1:41102" name="div.logoSocials-_gnlNXvh" x="0" y="0" width="226" height="152">
+                <frame id="1:41103" name="PÃ¡gina de inicio de TradingView" x="0" y="0" width="162" height="54">
+                  <frame id="1:41104" name="span.logo-_gnlNXvh:mask-group" x="0" y="0" width="162" height="54">
+                    <frame id="1:41105" name="span.logo-_gnlNXvh:mask" x="0" y="0" width="162" height="54">
+                      <instance id="1:41106" name="Component 1" x="0" y="0" width="162" height="54" />
+                    </frame>
+                    <rounded-rectangle id="1:41108" name="span.logo-_gnlNXvh" x="0" y="0" width="162" height="54" />
+                  </frame>
+                </frame>
+                <frame id="1:41110" name="div.socials-bGBbwUbv" x="0" y="76" width="226" height="76">
+                  <frame id="1:41111" name="TradingView en X:margin" x="0" y="0" width="28" height="28">
+                    <instance id="1:41112" name="Component 16" x="-6" y="-6" width="40" height="40" />
+                  </frame>
+                  <frame id="1:41118" name="TradingView en Facebook:margin" x="48" y="0" width="28" height="28">
+                    <instance id="1:41119" name="Component 16" x="-6" y="-6" width="40" height="40" />
+                  </frame>
+                  <frame id="1:41125" name="TradingView en YouTube:margin" x="96" y="0" width="28" height="28">
+                    <instance id="1:41126" name="Component 16" x="-6" y="-6" width="40" height="40" />
+                  </frame>
+                  <frame id="1:41132" name="TradingView en Instagram:margin" x="144" y="0" width="28" height="28">
+                    <instance id="1:41133" name="Component 16" x="-6" y="-6" width="40" height="40" />
+                  </frame>
+                  <frame id="1:41139" name="TradingView en LinkedIn:margin" x="192" y="0" width="28" height="28">
+                    <instance id="1:41140" name="Component 16" x="-6" y="-6" width="40" height="40" />
+                  </frame>
+                  <frame id="1:41146" name="TradingView en Telegram:margin" x="0" y="48" width="28" height="28">
+                    <instance id="1:41147" name="Component 16" x="-6" y="-6" width="40" height="40" />
+                  </frame>
+                  <frame id="1:41153" name="TradingView en TikTok:margin" x="48" y="48" width="28" height="28">
+                    <instance id="1:41154" name="Component 16" x="-6" y="-6" width="40" height="40" />
+                  </frame>
+                  <frame id="1:41160" name="TradingView en Reddit:margin" x="96" y="48" width="28" height="28">
+                    <instance id="1:41161" name="Component 16" x="-6" y="-6" width="40" height="40" />
+                  </frame>
+                </frame>
+              </frame>
+              <frame id="1:41167" name="div.copyrightContainer-_gnlNXvh" x="0" y="174" width="310" height="272">
+                <instance id="1:41168" name="Component 32" x="-12" y="0" width="135.63999938964844" height="40" />
+                <frame id="1:41181" name="p.copyright-_gnlNXvh" x="0" y="64" width="310" height="208">
+                  <frame id="1:41182" name="span" x="0" y="0" width="310" height="32">
+                    <text id="1:41183" name="Los datos de mercado seleccionados los proporciona" x="0" y="0" width="282.11639404296875" height="16" />
+                    <instance id="1:41184" name="Component 33" x="0" y="1" width="301.6099853515625" height="30" />
+                    <text id="1:41187" name="." x="71.97000122070312" y="16" width="5.145999908447266" height="16" />
+                  </frame>
+                  <instance id="1:41188" name="Component 12" x="0" y="44" width="310" height="32" />
+                  <instance id="1:41190" name="Component 12" x="0" y="88" width="310" height="48" />
+                  <frame id="1:41192" name="span" x="0" y="148" width="310" height="32">
+                    <text id="1:41193" name="Los documentos presentados ante la SEC y otros, los facilita" x="0" y="0" width="282" height="32" />
+                    <instance id="1:41194" name="Component 10" x="41.75" y="17" width="33.470001220703125" height="14" />
+                    <text id="1:41196" name="." x="75.22000122070312" y="16" width="5.145999908447266" height="16" />
+                  </frame>
+                  <instance id="1:41197" name="Component 12" x="0" y="192" width="310" height="16" />
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1:41199" name="div.footerLinks-hezxxKBJ" x="390" y="48" width="925" height="792">
+              <frame id="1:41201" name="div.footerLinksGroup-hezxxKBJ" x="0" y="0" width="141.6999969482422" height="792">
+                <frame id="1:41202" name="div.footerLinksColumn-hezxxKBJ" x="0" y="0" width="141.6999969482422" height="42">
+                  <frame id="1:41203" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="141.6999969482422" height="16">
+                    <text id="1:41204" name="MÃ¡s que un producto" x="0" y="0" width="141.6999969482422" height="16" />
+                  </frame>
+                  <frame id="1:41208" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="141.6999969482422" height="26">
+                    <instance id="1:41209" name="Component 10" x="-8" y="7" width="100.37999725341797" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1:41211" name="div.footerLinksColumn-hezxxKBJ" x="0" y="62" width="141.6999969482422" height="174">
+                  <frame id="1:41212" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="141.6999969482422" height="16">
+                    <text id="1:41213" name="Analizadores" x="0" y="0" width="141.6999969482422" height="16" />
+                  </frame>
+                  <frame id="1:41214" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="141.6999969482422" height="158">
+                    <frame id="1:41215" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="149.6999969482422" height="152">
+                      <frame id="1:41216" name="li" x="0" y="0" width="149.6999969482422" height="20">
+                        <instance id="1:41217" name="Component 10" x="0" y="0" width="70.58000183105469" height="20" />
+                      </frame>
+                      <frame id="1:41219" name="li" x="0" y="22" width="149.6999969482422" height="20">
+                        <instance id="1:41220" name="Component 10" x="0" y="0" width="38.97999954223633" height="20" />
+                      </frame>
+                      <frame id="1:41222" name="li" x="0" y="44" width="149.6999969482422" height="20">
+                        <instance id="1:41223" name="Component 10" x="0" y="0" width="52.27000045776367" height="20" />
+                      </frame>
+                      <frame id="1:41225" name="li" x="0" y="66" width="149.6999969482422" height="20">
+                        <instance id="1:41226" name="Component 10" x="0" y="0" width="109.91999816894531" height="20" />
+                      </frame>
+                      <frame id="1:41228" name="li" x="0" y="88" width="149.6999969482422" height="20">
+                        <instance id="1:41229" name="Component 10" x="0" y="0" width="77.13999938964844" height="20" />
+                      </frame>
+                      <frame id="1:41231" name="li" x="0" y="110" width="149.6999969482422" height="20">
+                        <instance id="1:41232" name="Component 10" x="0" y="0" width="77.36000061035156" height="20" />
+                      </frame>
+                      <frame id="1:41234" name="li" x="0" y="132" width="149.6999969482422" height="20">
+                        <instance id="1:41235" name="Component 10" x="0" y="0" width="42.439998626708984" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41237" name="div.footerLinksColumn-hezxxKBJ" x="0" y="256" width="141.6999969482422" height="86">
+                  <frame id="1:41238" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="141.6999969482422" height="16">
+                    <text id="1:41239" name="Mapas de calor" x="0" y="0" width="141.6999969482422" height="16" />
+                  </frame>
+                  <frame id="1:41240" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="141.6999969482422" height="70">
+                    <frame id="1:41241" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="149.6999969482422" height="64">
+                      <frame id="1:41242" name="li" x="0" y="0" width="149.6999969482422" height="20">
+                        <instance id="1:41243" name="Component 10" x="0" y="0" width="70.58000183105469" height="20" />
+                      </frame>
+                      <frame id="1:41245" name="li" x="0" y="22" width="149.6999969482422" height="20">
+                        <instance id="1:41246" name="Component 10" x="0" y="0" width="38.97999954223633" height="20" />
+                      </frame>
+                      <frame id="1:41248" name="li" x="0" y="44" width="149.6999969482422" height="20">
+                        <instance id="1:41249" name="Component 10" x="0" y="0" width="109.91999816894531" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41251" name="div.footerLinksColumn-hezxxKBJ" x="0" y="362" width="141.6999969482422" height="86">
+                  <frame id="1:41252" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="141.6999969482422" height="16">
+                    <text id="1:41253" name="Calendarios" x="0" y="0" width="141.6999969482422" height="16" />
+                  </frame>
+                  <frame id="1:41254" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="141.6999969482422" height="70">
+                    <frame id="1:41255" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="149.6999969482422" height="64">
+                      <frame id="1:41256" name="li" x="0" y="0" width="149.6999969482422" height="20">
+                        <instance id="1:41257" name="Component 10" x="0" y="0" width="83.16999816894531" height="20" />
+                      </frame>
+                      <frame id="1:41259" name="li" x="0" y="22" width="149.6999969482422" height="20">
+                        <instance id="1:41260" name="Component 10" x="0" y="0" width="80.12999725341797" height="20" />
+                      </frame>
+                      <frame id="1:41262" name="li" x="0" y="44" width="149.6999969482422" height="20">
+                        <instance id="1:41263" name="Component 10" x="0" y="0" width="83.5" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41265" name="div.footerLinksColumn-hezxxKBJ" x="0" y="468" width="141.6999969482422" height="130">
+                  <frame id="1:41266" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="141.6999969482422" height="16">
+                    <text id="1:41267" name="MÃ¡s productos" x="0" y="0" width="141.6999969482422" height="16" />
+                  </frame>
+                  <frame id="1:41268" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="141.6999969482422" height="114">
+                    <frame id="1:41269" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="149.6999969482422" height="108">
+                      <frame id="1:41270" name="li" x="0" y="0" width="149.6999969482422" height="20">
+                        <instance id="1:41271" name="Component 10" x="0" y="0" width="157.6999969482422" height="20" />
+                      </frame>
+                      <frame id="1:41273" name="li" x="0" y="22" width="149.6999969482422" height="20">
+                        <instance id="1:41274" name="Component 10" x="0" y="0" width="72.62999725341797" height="20" />
+                      </frame>
+                      <frame id="1:41276" name="li" x="0" y="44" width="149.6999969482422" height="20">
+                        <instance id="1:41277" name="Component 10" x="0" y="0" width="97.19999694824219" height="20" />
+                      </frame>
+                      <frame id="1:41279" name="li" x="0" y="66" width="149.6999969482422" height="20">
+                        <instance id="1:41280" name="Component 10" x="0" y="0" width="120.30000305175781" height="20" />
+                      </frame>
+                      <frame id="1:41282" name="li" x="0" y="88" width="149.6999969482422" height="20">
+                        <instance id="1:41283" name="Component 10" x="0" y="0" width="93.08000183105469" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41285" name="div.footerLinksColumn-hezxxKBJ" x="0" y="618" width="141.6999969482422" height="64">
+                  <frame id="1:41286" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="141.6999969482422" height="16">
+                    <text id="1:41287" name="Aplicaciones" x="0" y="0" width="141.6999969482422" height="16" />
+                  </frame>
+                  <frame id="1:41288" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="141.6999969482422" height="48">
+                    <frame id="1:41289" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="149.6999969482422" height="42">
+                      <frame id="1:41290" name="li" x="0" y="0" width="149.6999969482422" height="20">
+                        <instance id="1:41291" name="Component 10" x="0" y="0" width="48.439998626708984" height="20" />
+                      </frame>
+                      <frame id="1:41293" name="li" x="0" y="22" width="149.6999969482422" height="20">
+                        <instance id="1:41294" name="Component 10" x="0" y="0" width="65.83000183105469" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+              <frame id="1:41296" name="div.footerLinksGroup-hezxxKBJ" x="167.82667541503906" y="0" width="303.04998779296875" height="792">
+                <frame id="1:41297" name="div.footerLinksColumn-hezxxKBJ" x="0" y="0" width="303.04998779296875" height="108">
+                  <frame id="1:41298" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="303.04998779296875" height="16">
+                    <text id="1:41299" name="Herramientas y suscripciones" x="0" y="0" width="303.04998779296875" height="16" />
+                  </frame>
+                  <frame id="1:41300" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="303.04998779296875" height="92">
+                    <frame id="1:41301" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="311.04998779296875" height="86">
+                      <frame id="1:41302" name="li" x="0" y="0" width="311.04998779296875" height="20">
+                        <instance id="1:41303" name="Component 10" x="0" y="0" width="116.47000122070312" height="20" />
+                      </frame>
+                      <frame id="1:41305" name="li" x="0" y="22" width="311.04998779296875" height="20">
+                        <instance id="1:41306" name="Component 10" x="0" y="0" width="60.34000015258789" height="20" />
+                      </frame>
+                      <frame id="1:41308" name="li" x="0" y="44" width="311.04998779296875" height="20">
+                        <instance id="1:41309" name="Component 10" x="0" y="0" width="128.83999633789062" height="20" />
+                      </frame>
+                      <frame id="1:41311" name="li" x="0" y="66" width="311.04998779296875" height="20">
+                        <instance id="1:41312" name="Component 10" x="0" y="0" width="106.9800033569336" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41314" name="div.footerLinksColumn-hezxxKBJ" x="0" y="128" width="303.04998779296875" height="86">
+                  <frame id="1:41315" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="303.04998779296875" height="16">
+                    <text id="1:41316" name="Trading" x="0" y="0" width="303.04998779296875" height="16" />
+                  </frame>
+                  <frame id="1:41317" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="303.04998779296875" height="70">
+                    <frame id="1:41318" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="311.04998779296875" height="64">
+                      <frame id="1:41319" name="li" x="0" y="0" width="311.04998779296875" height="20">
+                        <instance id="1:41320" name="Component 10" x="0" y="0" width="71.44999694824219" height="20" />
+                      </frame>
+                      <frame id="1:41322" name="li" x="0" y="22" width="311.04998779296875" height="20">
+                        <instance id="1:41323" name="Component 10" x="0" y="0" width="134.52999877929688" height="20" />
+                      </frame>
+                      <frame id="1:41325" name="li" x="0" y="44" width="311.04998779296875" height="20">
+                        <instance id="1:41326" name="Component 10" x="0" y="0" width="167.97999572753906" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41328" name="div.footerLinksColumn-hezxxKBJ" x="0" y="234" width="303.04998779296875" height="86">
+                  <frame id="1:41329" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="303.04998779296875" height="16">
+                    <text id="1:41330" name="Ofertas especiales" x="0" y="0" width="303.04998779296875" height="16" />
+                  </frame>
+                  <frame id="1:41331" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="303.04998779296875" height="70">
+                    <frame id="1:41332" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="311.04998779296875" height="64">
+                      <frame id="1:41333" name="li" x="0" y="0" width="311.04998779296875" height="20">
+                        <instance id="1:41334" name="Component 10" x="0" y="0" width="134.94000244140625" height="20" />
+                      </frame>
+                      <frame id="1:41336" name="li" x="0" y="22" width="311.04998779296875" height="20">
+                        <instance id="1:41337" name="Component 10" x="0" y="0" width="102.27999877929688" height="20" />
+                      </frame>
+                      <frame id="1:41339" name="li" x="0" y="44" width="311.04998779296875" height="20">
+                        <instance id="1:41340" name="Component 10" x="0" y="0" width="211.63999938964844" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41342" name="div.footerLinksColumn-hezxxKBJ" x="0" y="340" width="303.04998779296875" height="130">
+                  <frame id="1:41343" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="303.04998779296875" height="16">
+                    <text id="1:41344" name="Acerca de la empresa" x="0" y="0" width="303.04998779296875" height="16" />
+                  </frame>
+                  <frame id="1:41345" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="303.04998779296875" height="114">
+                    <frame id="1:41346" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="311.04998779296875" height="108">
+                      <frame id="1:41347" name="li" x="0" y="0" width="311.04998779296875" height="20">
+                        <instance id="1:41348" name="Component 10" x="0" y="0" width="107.88999938964844" height="20" />
+                      </frame>
+                      <frame id="1:41350" name="li" x="0" y="22" width="311.04998779296875" height="20">
+                        <instance id="1:41351" name="Component 10" x="0" y="0" width="109.83999633789062" height="20" />
+                      </frame>
+                      <frame id="1:41353" name="li" x="0" y="44" width="311.04998779296875" height="20">
+                        <instance id="1:41354" name="Component 10" x="0" y="0" width="42.59000015258789" height="20" />
+                      </frame>
+                      <frame id="1:41356" name="li" x="0" y="66" width="311.04998779296875" height="20">
+                        <instance id="1:41357" name="Component 10" x="0" y="0" width="132.47000122070312" height="20" />
+                      </frame>
+                      <frame id="1:41359" name="li" x="0" y="88" width="311.04998779296875" height="20">
+                        <instance id="1:41360" name="Component 10" x="0" y="0" width="101.2699966430664" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41362" name="div.footerLinksColumn-hezxxKBJ" x="0" y="490" width="303.04998779296875" height="86">
+                  <frame id="1:41363" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="303.04998779296875" height="16">
+                    <text id="1:41364" name="Tienda" x="0" y="0" width="303.04998779296875" height="16" />
+                  </frame>
+                  <frame id="1:41365" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="303.04998779296875" height="70">
+                    <frame id="1:41366" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="311.04998779296875" height="64">
+                      <frame id="1:41367" name="li" x="0" y="0" width="311.04998779296875" height="20">
+                        <instance id="1:41368" name="Component 10" x="0" y="0" width="137.8300018310547" height="20" />
+                      </frame>
+                      <frame id="1:41370" name="li" x="0" y="22" width="311.04998779296875" height="20">
+                        <instance id="1:41371" name="Component 10" x="0" y="0" width="192.30999755859375" height="20" />
+                      </frame>
+                      <frame id="1:41373" name="li" x="0" y="44" width="311.04998779296875" height="20">
+                        <instance id="1:41374" name="Component 10" x="0" y="0" width="108.63999938964844" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41376" name="div.footerLinksColumn-hezxxKBJ" x="0" y="596" width="303.04998779296875" height="196">
+                  <frame id="1:41377" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="303.04998779296875" height="16">
+                    <text id="1:41378" name="PolÃ­ticas y seguridad" x="0" y="0" width="303.04998779296875" height="16" />
+                  </frame>
+                  <frame id="1:41379" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="303.04998779296875" height="180">
+                    <frame id="1:41380" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="311.04998779296875" height="174">
+                      <frame id="1:41381" name="li" x="0" y="0" width="311.04998779296875" height="20">
+                        <instance id="1:41382" name="Component 10" x="0" y="0" width="135.4199981689453" height="20" />
+                      </frame>
+                      <frame id="1:41384" name="li" x="0" y="22" width="311.04998779296875" height="20">
+                        <instance id="1:41385" name="Component 10" x="0" y="0" width="193.36000061035156" height="20" />
+                      </frame>
+                      <frame id="1:41387" name="li" x="0" y="44" width="311.04998779296875" height="20">
+                        <instance id="1:41388" name="Component 10" x="0" y="0" width="151.80999755859375" height="20" />
+                      </frame>
+                      <frame id="1:41390" name="li" x="0" y="66" width="311.04998779296875" height="20">
+                        <instance id="1:41391" name="Component 10" x="0" y="0" width="132.80999755859375" height="20" />
+                      </frame>
+                      <frame id="1:41393" name="li" x="0" y="88" width="311.04998779296875" height="20">
+                        <instance id="1:41394" name="Component 10" x="0" y="0" width="194.77999877929688" height="20" />
+                      </frame>
+                      <frame id="1:41396" name="li" x="0" y="110" width="311.04998779296875" height="20">
+                        <instance id="1:41397" name="Component 10" x="0" y="0" width="155.41000366210938" height="20" />
+                      </frame>
+                      <frame id="1:41399" name="li" x="0" y="132" width="311.04998779296875" height="20">
+                        <instance id="1:41400" name="Component 10" x="0" y="0" width="319.04998779296875" height="20" />
+                      </frame>
+                      <frame id="1:41402" name="li" x="0" y="154" width="311.04998779296875" height="20">
+                        <instance id="1:41403" name="Component 10" x="0" y="0" width="122.58999633789062" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+              <frame id="1:41405" name="div.footerLinksGroup-hezxxKBJ" x="497.00335693359375" y="0" width="169.08999633789062" height="792">
+                <frame id="1:41406" name="div.footerLinksColumn-hezxxKBJ" x="0" y="0" width="169.08999633789062" height="130">
+                  <frame id="1:41407" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="169.08999633789062" height="16">
+                    <text id="1:41408" name="Comunidad" x="0" y="0" width="169.08999633789062" height="16" />
+                  </frame>
+                  <frame id="1:41409" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="169.08999633789062" height="114">
+                    <frame id="1:41410" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="177.08999633789062" height="108">
+                      <frame id="1:41411" name="li" x="0" y="0" width="177.08999633789062" height="20">
+                        <instance id="1:41412" name="Component 10" x="0" y="0" width="78.83000183105469" height="20" />
+                      </frame>
+                      <frame id="1:41414" name="li" x="0" y="22" width="177.08999633789062" height="20">
+                        <instance id="1:41415" name="Component 10" x="0" y="0" width="106.47000122070312" height="20" />
+                      </frame>
+                      <frame id="1:41417" name="li" x="0" y="44" width="177.08999633789062" height="20">
+                        <instance id="1:41418" name="Component 10" x="0" y="0" width="165.97999572753906" height="20" />
+                      </frame>
+                      <frame id="1:41420" name="li" x="0" y="66" width="177.08999633789062" height="20">
+                        <instance id="1:41421" name="Component 10" x="0" y="0" width="117.69999694824219" height="20" />
+                      </frame>
+                      <frame id="1:41423" name="li" x="0" y="88" width="177.08999633789062" height="20">
+                        <instance id="1:41424" name="Component 10" x="0" y="0" width="95.7300033569336" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41426" name="div.footerLinksColumn-hezxxKBJ" x="0" y="150" width="169.08999633789062" height="86">
+                  <frame id="1:41427" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="169.08999633789062" height="16">
+                    <text id="1:41428" name="Ideas" x="0" y="0" width="169.08999633789062" height="16" />
+                  </frame>
+                  <frame id="1:41429" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="169.08999633789062" height="70">
+                    <frame id="1:41430" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="177.08999633789062" height="64">
+                      <frame id="1:41431" name="li" x="0" y="0" width="177.08999633789062" height="20">
+                        <instance id="1:41432" name="Component 10" x="0" y="0" width="61.86000061035156" height="20" />
+                      </frame>
+                      <frame id="1:41434" name="li" x="0" y="22" width="177.08999633789062" height="20">
+                        <instance id="1:41435" name="Component 10" x="0" y="0" width="81.37999725341797" height="20" />
+                      </frame>
+                      <frame id="1:41437" name="li" x="0" y="44" width="177.08999633789062" height="20">
+                        <instance id="1:41438" name="Component 10" x="0" y="0" width="185.08999633789062" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41440" name="div.footerLinksColumn-hezxxKBJ" x="0" y="256" width="169.08999633789062" height="108">
+                  <frame id="1:41441" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="169.08999633789062" height="16">
+                    <text id="1:41442" name="Pine Script" x="0" y="0" width="169.08999633789062" height="16" />
+                  </frame>
+                  <frame id="1:41443" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="169.08999633789062" height="92">
+                    <frame id="1:41444" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="177.08999633789062" height="86">
+                      <frame id="1:41445" name="li" x="0" y="0" width="177.08999633789062" height="20">
+                        <instance id="1:41446" name="Component 10" x="0" y="0" width="171.91000366210938" height="20" />
+                      </frame>
+                      <frame id="1:41448" name="li" x="0" y="22" width="177.08999633789062" height="20">
+                        <instance id="1:41449" name="Component 10" x="0" y="0" width="64.63999938964844" height="20" />
+                      </frame>
+                      <frame id="1:41451" name="li" x="0" y="44" width="177.08999633789062" height="20">
+                        <instance id="1:41452" name="Component 10" x="0" y="0" width="84.94000244140625" height="20" />
+                      </frame>
+                      <frame id="1:41454" name="li" x="0" y="66" width="177.08999633789062" height="20">
+                        <instance id="1:41455" name="Component 10" x="0" y="0" width="122" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+              <frame id="1:41457" name="div.footerLinksGroup-hezxxKBJ" x="692.2200317382812" y="0" width="192.77999877929688" height="792">
+                <frame id="1:41458" name="div.footerLinksColumn-hezxxKBJ" x="0" y="0" width="192.77999877929688" height="130">
+                  <frame id="1:41459" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="192.77999877929688" height="16">
+                    <text id="1:41460" name="Soluciones para empresas" x="0" y="0" width="192.77999877929688" height="16" />
+                  </frame>
+                  <frame id="1:41461" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="192.77999877929688" height="114">
+                    <frame id="1:41462" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="200.77000427246094" height="108">
+                      <frame id="1:41463" name="li" x="0" y="0" width="200.77000427246094" height="20">
+                        <instance id="1:41464" name="Component 10" x="0" y="0" width="65.41999816894531" height="20" />
+                      </frame>
+                      <frame id="1:41466" name="li" x="0" y="22" width="200.77000427246094" height="20">
+                        <instance id="1:41467" name="Component 10" x="0" y="0" width="157.47000122070312" height="20" />
+                      </frame>
+                      <frame id="1:41469" name="li" x="0" y="44" width="200.77000427246094" height="20">
+                        <instance id="1:41470" name="Component 10" x="0" y="0" width="142.72999572753906" height="20" />
+                      </frame>
+                      <frame id="1:41472" name="li" x="0" y="66" width="200.77000427246094" height="20">
+                        <instance id="1:41473" name="Component 10" x="0" y="0" width="135.97000122070312" height="20" />
+                      </frame>
+                      <frame id="1:41475" name="li" x="0" y="88" width="200.77000427246094" height="20">
+                        <instance id="1:41476" name="Component 10" x="0" y="0" width="154" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:41478" name="div.footerLinksColumn-hezxxKBJ" x="0" y="150" width="192.77999877929688" height="108">
+                  <frame id="1:41479" name="span.footerLinksColumnTitle-hezxxKBJ" x="0" y="0" width="192.77999877929688" height="16">
+                    <text id="1:41480" name="Oportunidades de crecimiento" x="0" y="0" width="192.77999877929688" height="16" />
+                  </frame>
+                  <frame id="1:41481" name="ul.footerLinksColumnList-hezxxKBJ:margin" x="0" y="16" width="192.77999877929688" height="92">
+                    <frame id="1:41482" name="ul.footerLinksColumnList-hezxxKBJ" x="-8" y="7" width="200.77000427246094" height="86">
+                      <frame id="1:41483" name="li" x="0" y="0" width="200.77000427246094" height="20">
+                        <instance id="1:41484" name="Component 10" x="0" y="0" width="81.2699966430664" height="20" />
+                      </frame>
+                      <frame id="1:41486" name="li" x="0" y="22" width="200.77000427246094" height="20">
+                        <instance id="1:41487" name="Component 10" x="0" y="0" width="157.0800018310547" height="20" />
+                      </frame>
+                      <frame id="1:41489" name="li" x="0" y="44" width="200.77000427246094" height="20">
+                        <instance id="1:41490" name="Component 10" x="0" y="0" width="136.05999755859375" height="20" />
+                      </frame>
+                      <frame id="1:41492" name="li" x="0" y="66" width="200.77000427246094" height="20">
+                        <instance id="1:41493" name="Component 10" x="0" y="0" width="161.97000122070312" height="20" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="1:41495" name="div.lookFirstContainer-_gnlNXvh" x="0" y="872" width="1395" height="99.4800033569336">
+            <frame id="1:41496" name="Look First" x="0" y="0" width="1395" height="99.4800033569336">
+              <instance id="1:41497" name="Component 1" x="1.68359375" y="0" width="1391.6328125" height="99.4800033569336" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <frame id="1:41502" name="div.tv-header" x="0" y="0" width="1395" height="64">
+        <frame id="1:41503" name="div.tv-header__inner" x="0" y="0" width="1395" height="64">
+          <frame id="1:41504" name="span.tv-header__logo" x="40" y="0" width="189" height="64">
+            <frame id="1:41505" name="PÃ¡gina de inicio de TradingView" x="0" y="18" width="189" height="28">
+              <instance id="1:41506" name="Component 38" x="0" y="-18" width="36" height="64" />
+              <frame id="1:41510" name="span.tv-header__logo-text:margin" x="36" y="-18" width="153" height="64">
+                <instance id="1:41511" name="Component 38" x="6" y="0" width="147" height="64" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="1:41515" name="div.tv-header__middle-wrapper" x="229" y="0" width="979.4000244140625" height="64">
+            <frame id="1:41516" name="div.tv-header__middle-content" x="31.77001953125" y="0" width="915.8599853515625" height="64">
+              <frame id="1:41517" name="div.tv-header__area:margin" x="119.84999084472656" y="12" width="208.16000366210938" height="40">
+                <frame id="1:41518" name="div.tv-header__area" x="0" y="0" width="200.16000366210938" height="40">
+                  <frame id="1:41519" name="div.tv-header-search-container" x="0" y="0" width="200.16000366210938" height="40">
+                    <instance id="1:41520" name="Component 34" x="0" y="0" width="200.16000366210938" height="40" />
+                  </frame>
+                </frame>
+              </frame>
+              <frame id="1:41528" name="ul.tv-header__main-menu" x="328.010009765625" y="0" width="468" height="64">
+                <frame id="1:41529" name="li.tv-header__main-menu-item" x="0" y="0" width="105" height="64">
+                  <instance id="1:41530" name="Component 35" x="0" y="12" width="105" height="40" />
+                </frame>
+                <frame id="1:41537" name="li.tv-header__main-menu-item" x="105" y="0" width="115" height="64">
+                  <instance id="1:41538" name="Component 35" x="0" y="12" width="115" height="40" />
+                </frame>
+                <frame id="1:41545" name="li.tv-header__main-menu-item" x="220" y="0" width="101" height="64">
+                  <instance id="1:41546" name="Component 35" x="0" y="12" width="101" height="40" />
+                </frame>
+                <frame id="1:41553" name="li.tv-header__main-menu-item" x="321" y="0" width="88" height="64">
+                  <instance id="1:41554" name="Component 35" x="0" y="12" width="88" height="40" />
+                </frame>
+                <frame id="1:41561" name="li.tv-header__main-menu-item" x="409" y="0" width="59" height="64">
+                  <instance id="1:41562" name="Component 35" x="0" y="12" width="59" height="40" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="1:41569" name="div.tv-header__area" x="1208.4000244140625" y="12" width="146.60000610351562" height="40">
+            <instance id="1:41570" name="Component 36" x="0" y="0" width="40" height="40" />
+            <frame id="1:41576" name="div.js-offer-button" x="40" y="0" width="106.5999984741211" height="40">
+              <instance id="1:41577" name="Component 37" x="12" y="0" width="94.5999984741211" height="40" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <frame id="1:41584" name="div.layout__area--right" x="1395" y="0" width="45" height="900">
+      <frame id="1:41585" name="div.widgetbar-wrap" x="0" y="0" width="45" height="900">
+        <frame id="1:41586" name="div.widgetbar-tabs" x="0" y="0" width="45" height="900">
+          <frame id="1:41587" name="div.wrap-Z4M3tWHb" x="0" y="0" width="45" height="900">
+            <frame id="1:41588" name="div.scrollWrap-Z4M3tWHb" x="0" y="0" width="145" height="900">
+              <frame id="1:41589" name="div.content-Z4M3tWHb" x="0" y="0" width="45" height="900">
+                <frame id="1:41590" name="div.toolbar-S4V6IoxY" x="0" y="0" width="45" height="900">
+                  <frame id="1:41591" name="div.separator-gZVyfVJP:margin" x="0" y="841" width="45" height="13">
+                    <rounded-rectangle id="1:41592" name="div.separator-gZVyfVJP" x="6" y="6" width="33" height="1" />
+                  </frame>
+                  <instance id="1:41593" name="Component 19" x="0.5" y="2" width="44" height="44" />
+                  <frame id="1:41598" name="Alertas:margin" x="0.5" y="46" width="44" height="46">
+                    <instance id="1:41599" name="Component 19" x="0" y="2" width="44" height="44" />
+                  </frame>
+                  <frame id="1:41604" name="Chats:margin" x="0.5" y="92" width="44" height="46">
+                    <instance id="1:41605" name="Component 19" x="0" y="2" width="44" height="44" />
+                  </frame>
+                  <instance id="1:41609" name="Component 19" x="0.5" y="613" width="44" height="44" />
+                  <frame id="1:41617" name="Calendarios:margin" x="0.5" y="657" width="44" height="46">
+                    <instance id="1:41618" name="Component 19" x="0" y="2" width="44" height="44" />
+                  </frame>
+                  <frame id="1:41622" name="Comunidad:margin" x="0.5" y="703" width="44" height="46">
+                    <instance id="1:41623" name="Component 19" x="0" y="2" width="44" height="44" />
+                  </frame>
+                  <frame id="1:41630" name="Notificaciones:margin" x="0.5" y="749" width="44" height="46">
+                    <instance id="1:41631" name="Component 19" x="0" y="2" width="44" height="44" />
+                  </frame>
+                  <frame id="1:41635" name="Productos:margin" x="0.5" y="795" width="44" height="46">
+                    <instance id="1:41636" name="Component 19" x="0" y="2" width="44" height="44" />
+                  </frame>
+                  <instance id="1:41640" name="Component 19" x="0.5" y="854" width="44" height="44" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="1:41644" name="div.widgetbar-pages" x="-1" y="0" width="1" height="900" />
+      </frame>
+    </frame>
+  </frame>
+</section>

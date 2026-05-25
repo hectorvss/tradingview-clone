@@ -1,0 +1,639 @@
+﻿<section id="1:3022" name="https://es.tradingview.com/chart/TnohNGGA/ - es_tradingview_com_chart_TnohNGGA_1440w_default.h2d - 24/05/2026, 12:25:07 CEST" x="-720" y="100" width="1640" height="1100">
+  <frame id="1:2211" name="1440w default" x="100" y="100" width="1440" height="900">
+    <frame id="1:2215" name="div.js-rootresizer__contents" x="0" y="0" width="1440" height="900">
+      <frame id="1:2216" name="div.panel-Iwy8U8Rs" x="0" y="0" width="1440" height="900">
+        <frame id="1:2217" name="div.topLeftButton-hCWTCWBf" x="0" y="0" width="52" height="38">
+          <frame id="1:2218" name="div.wrap-n5bmFxyX" x="0" y="0" width="52" height="38">
+            <instance id="1:2219" name="Component 2" x="0" y="0" width="52" height="38" />
+            <frame id="1:2224" name="span.menuNotifications-U2jIw4km" x="29.5" y="-0.5" width="23" height="20.5">
+              <text id="1:2227" name="11" x="6" y="2" width="11" height="16" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="1:2230" name="div.layout__area--top" x="52" y="0" width="1388" height="38">
+          <frame id="1:2231" name="div.toolbar-qqNP9X6e" x="0" y="0" width="1388" height="38">
+            <frame id="1:2232" name="div.overflowWrap-qqNP9X6e" x="0" y="0" width="1388" height="38">
+              <frame id="1:2233" name="div.inner-OhqNVIYA" x="0" y="0" width="1388" height="38">
+                <frame id="1:2234" name="div.wrap-wXGVFOC9" x="0" y="0" width="1227" height="38">
+                  <frame id="1:2235" name="div.scrollWrap-wXGVFOC9" x="0" y="0" width="1226.780029296875" height="138">
+                    <frame id="1:2236" name="div.content-OhqNVIYA" x="0" y="0" width="1226.780029296875" height="38">
+                      <frame id="1:2237" name="div.innerWrap-OhqNVIYA" x="0" y="0" width="1226.780029296875" height="38">
+                        <frame id="1:2238" name="div.group-MBOVGQRI" x="0" y="0" width="174" height="38">
+                          <frame id="1:2240" name="div.container-JQZ0HKD4:margin" x="0" y="5" width="136" height="28">
+                            <frame id="1:2241" name="div.container-JQZ0HKD4" x="4" y="0" width="128" height="28">
+                              <instance id="1:2242" name="Component 3" x="0" y="0" width="128" height="28" />
+                              <instance id="1:2246" name="Component 4" x="100" y="0" width="28" height="28" />
+                            </frame>
+                          </frame>
+                          <instance id="1:2253" name="Component 4" x="136" y="0" width="38" height="38" />
+                        </frame>
+                        <frame id="1:2258" name="div.separatorWrap-MBOVGQRI" x="174" y="0" width="9" height="38">
+                          <rounded-rectangle id="1:2259" name="div.separator-xVhBjD5m" x="4" y="8" width="1" height="22" />
+                        </frame>
+                        <frame id="1:2260" name="div.group-MBOVGQRI" x="183" y="0" width="37.40999984741211" height="38">
+                          <frame id="1:2261" name="div#header-toolbar-intervals" x="0" y="0" width="37.40999984741211" height="38">
+                            <instance id="1:2262" name="Component 6" x="0" y="0" width="37.40999984741211" height="38" />
+                          </frame>
+                        </frame>
+                        <frame id="1:2266" name="div.separatorWrap-MBOVGQRI" x="220.41000366210938" y="0" width="9" height="38">
+                          <rounded-rectangle id="1:2267" name="div.separator-xVhBjD5m" x="4" y="8" width="1" height="22" />
+                        </frame>
+                        <frame id="1:2268" name="div.group-MBOVGQRI" x="229.41000366210938" y="0" width="38" height="38">
+                          <frame id="1:2269" name="div#header-toolbar-chart-styles" x="0" y="0" width="38" height="38">
+                            <instance id="1:2270" name="Component 7" x="0" y="0" width="38" height="38" />
+                          </frame>
+                        </frame>
+                        <frame id="1:2278" name="div.separatorWrap-MBOVGQRI" x="267.4100036621094" y="0" width="9" height="38">
+                          <rounded-rectangle id="1:2279" name="div.separator-xVhBjD5m" x="4" y="8" width="1" height="22" />
+                        </frame>
+                        <frame id="1:2280" name="div.group-MBOVGQRI" x="276.4100036621094" y="0" width="181" height="38">
+                          <frame id="1:2281" name="div#header-toolbar-indicators" x="0" y="0" width="143" height="38">
+                            <instance id="1:2282" name="Component 8" x="0" y="0" width="119" height="38" />
+                            <instance id="1:2289" name="Component 9" x="119" y="0" width="24" height="38" />
+                          </frame>
+                          <frame id="1:2295" name="div#header-toolbar-study-templates" x="143" y="0" width="38" height="38">
+                            <instance id="1:2296" name="Component 7" x="0" y="0" width="38" height="38" />
+                          </frame>
+                        </frame>
+                        <frame id="1:2301" name="div.separatorWrap-MBOVGQRI" x="457.4100036621094" y="0" width="9" height="38">
+                          <rounded-rectangle id="1:2302" name="div.separator-xVhBjD5m" x="4" y="8" width="1" height="22" />
+                        </frame>
+                        <frame id="1:2303" name="div.group-MBOVGQRI" x="466.4100036621094" y="0" width="217.99000549316406" height="38">
+                          <instance id="1:2305" name="Component 8" x="0" y="0" width="86" height="38" />
+                          <instance id="1:2312" name="Component 8" x="85.98999786376953" y="0" width="132" height="38" />
+                        </frame>
+                        <frame id="1:2318" name="div.separatorWrap-MBOVGQRI" x="684.4000244140625" y="0" width="9" height="38">
+                          <rounded-rectangle id="1:2319" name="div.separator-xVhBjD5m" x="4" y="8" width="1" height="22" />
+                        </frame>
+                        <frame id="1:2320" name="div.group-MBOVGQRI" x="693.4000244140625" y="0" width="76" height="38">
+                          <frame id="1:2321" name="div#header-toolbar-undo-redo" x="0" y="0" width="76" height="38">
+                            <instance id="1:2322" name="Component 4" x="0" y="0" width="38" height="38" />
+                            <instance id="1:2326" name="Component 4" x="38" y="0" width="38" height="38" />
+                          </frame>
+                        </frame>
+                        <frame id="1:2330" name="div.fill-OhqNVIYA" x="769.4000244140625" y="0" width="152.39002990722656" height="38" />
+                        <frame id="1:2331" name="div.group-MBOVGQRI" x="921.7900390625" y="0" width="143.989990234375" height="38">
+                          <instance id="1:2332" name="Component 4" x="0" y="0" width="38" height="38" />
+                          <frame id="1:2336" name="div.wrap-n5bmFxyX" x="38" y="0" width="105.98999786376953" height="38">
+                            <frame id="1:2337" name="div.wrap-n5bmFxyX" x="0" y="0" width="105.98999786376953" height="38">
+                              <frame id="1:2338" name="Todos los cambios guardados" x="0" y="0" width="82" height="38">
+                                <frame id="1:2340" name="div.js-button-text" x="5" y="11" width="71" height="16">
+                                  <frame id="1:2341" name="div.textWrap-Uy_he976" x="0" y="0" width="71" height="16">
+                                    <frame id="1:2342" name="span.text-Uy_he976" x="0" y="0" width="71" height="16">
+                                      <text id="1:2343" name="Sin nombre" x="0" y="0" width="71" height="16" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                              <instance id="1:2344" name="Component 9" x="81.98999786376953" y="0" width="24" height="38" />
+                            </frame>
+                          </frame>
+                        </frame>
+                        <frame id="1:2350" name="div.separatorWrap-MBOVGQRI" x="1065.780029296875" y="0" width="9" height="38">
+                          <rounded-rectangle id="1:2351" name="div.separator-xVhBjD5m" x="4" y="8" width="1" height="22" />
+                        </frame>
+                        <frame id="1:2352" name="div.group-MBOVGQRI" x="1074.780029296875" y="0" width="152" height="38">
+                          <instance id="1:2353" name="Component 4" x="0" y="0" width="38" height="38" />
+                          <instance id="1:2358" name="Component 4" x="38" y="0" width="38" height="38" />
+                          <frame id="1:2363" name="div.group-MBOVGQRI" x="76" y="0" width="38" height="38">
+                            <instance id="1:2364" name="Component 4" x="0" y="0" width="38" height="38" />
+                          </frame>
+                          <instance id="1:2368" name="Component 7" x="114" y="0" width="38" height="38" />
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:2374" name="div#header-toolbar-trade-desktop" x="1227" y="0" width="76" height="38">
+                  <frame id="1:2375" name="div.wrapper-c7mhnUnO" x="4" y="5" width="68" height="28">
+                    <frame id="1:2376" name="div.pill-c7mhnUnO" x="0" y="0" width="68" height="28">
+                      <rounded-rectangle id="1:2377" name="::before" x="0" y="0" width="68" height="28" />
+                      <rounded-rectangle id="1:2378" name="::after" x="-4" y="-4" width="75.11000061035156" height="36" />
+                      <instance id="1:2379" name="Component 11" x="0" y="0" width="68" height="28" />
+                      <rounded-rectangle id="1:2387" name="div.blinkForeground-c7mhnUnO" x="-2" y="-2" width="71.11000061035156" height="32" />
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:2388" name="div#header-toolbar-publish-desktop" x="1303" y="0" width="85" height="38">
+                  <frame id="1:2389" name="Comparta su idea con la comunidad de trading" x="4" y="0" width="81" height="38">
+                    <frame id="1:2390" name="div.publish-chart-button" x="0" y="0" width="76" height="38">
+                      <frame id="1:2391" name="div.bg-O36zDbH4" x="0" y="5" width="76" height="28">
+                        <text id="1:2392" name="Publicar" x="12" y="5" width="52" height="18" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="1:2393" name="div.layout__area--left" x="0" y="42" width="52" height="858">
+          <frame id="1:2394" name="div#drawing-toolbar" x="0" y="0" width="52" height="858">
+            <frame id="1:2395" name="div.wrap-Z4M3tWHb" x="0" y="0" width="52" height="858">
+              <frame id="1:2396" name="div.scrollWrap-Z4M3tWHb" x="0" y="0" width="152" height="858">
+                <frame id="1:2397" name="div.content-Z4M3tWHb" x="0" y="0" width="52" height="858">
+                  <frame id="1:2398" name="div.inner-BfVZxb4b" x="0" y="0" width="52" height="858">
+                    <frame id="1:2399" name="div.group-BfVZxb4b" x="0" y="0" width="52" height="316">
+                      <frame id="1:2400" name="div.dropdown-pbhJWNrt" x="0" y="6" width="52" height="38">
+                        <instance id="1:2401" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                      <frame id="1:2414" name="div.dropdown-pbhJWNrt" x="0" y="44" width="52" height="38">
+                        <instance id="1:2415" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                      <frame id="1:2427" name="div.dropdown-pbhJWNrt" x="0" y="82" width="52" height="38">
+                        <instance id="1:2428" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                      <frame id="1:2443" name="div.dropdown-pbhJWNrt" x="0" y="120" width="52" height="38">
+                        <instance id="1:2444" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                      <frame id="1:2456" name="div.dropdown-pbhJWNrt" x="0" y="158" width="52" height="38">
+                        <instance id="1:2457" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                      <frame id="1:2467" name="div.dropdown-pbhJWNrt" x="0" y="196" width="52" height="38">
+                        <instance id="1:2468" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                      <frame id="1:2480" name="div.dropdown-pbhJWNrt" x="0" y="234" width="52" height="38">
+                        <instance id="1:2481" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                      <frame id="1:2491" name="div.dropdown-pbhJWNrt" x="0" y="272" width="52" height="38">
+                        <instance id="1:2492" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                    </frame>
+                    <frame id="1:2502" name="div.group-BfVZxb4b" x="0" y="316" width="52" height="89">
+                      <rounded-rectangle id="1:2503" name="::before" x="8" y="0" width="36" height="1" />
+                      <instance id="1:2504" name="Component 4" x="0" y="1" width="52" height="44" />
+                      <instance id="1:2508" name="Component 4" x="0" y="45" width="52" height="38" />
+                    </frame>
+                    <frame id="1:2515" name="div.group-BfVZxb4b" x="0" y="405" width="52" height="165">
+                      <rounded-rectangle id="1:2516" name="::before" x="8" y="0" width="36" height="1" />
+                      <frame id="1:2517" name="div.dropdown-pbhJWNrt" x="0" y="1" width="52" height="44">
+                        <instance id="1:2518" name="Component 12" x="0" y="6" width="52" height="38" />
+                      </frame>
+                      <instance id="1:2528" name="Component 4" x="0" y="45" width="52" height="38" />
+                      <instance id="1:2532" name="Component 4" x="0" y="83" width="52" height="38" />
+                      <frame id="1:2536" name="div.dropdown-pbhJWNrt" x="0" y="121" width="52" height="38">
+                        <instance id="1:2537" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                    </frame>
+                    <frame id="1:2547" name="div.group-BfVZxb4b" x="0" y="570" width="52" height="51">
+                      <rounded-rectangle id="1:2548" name="::before" x="8" y="0" width="36" height="1" />
+                      <frame id="1:2549" name="div.dropdown-pbhJWNrt" x="0" y="7" width="52" height="38">
+                        <instance id="1:2550" name="Component 12" x="0" y="0" width="52" height="38" />
+                      </frame>
+                    </frame>
+                    <frame id="1:2560" name="div.fill-BfVZxb4b:margin" x="0" y="621" width="52" height="211" />
+                    <rounded-rectangle id="1:2562" name="div.group-BfVZxb4b" x="0" y="832" width="52" height="26" />
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="1:2563" name="div.layout__area--center" x="56" y="42" width="1335" height="858">
+          <frame id="1:2564" name="div.chart-container" x="0" y="0" width="1335" height="819">
+            <frame id="1:2565" name="div.chart-container-border" x="0" y="0" width="1335" height="819">
+              <frame id="1:2566" name="GrÃ¡fico #1" x="0" y="0" width="1335" height="819">
+                <frame id="1:2567" name="div" x="0" y="0" width="1335" height="791">
+                  <frame id="1:2568" name="div.chart-gui-wrapper" x="0" y="0" width="1281" height="791">
+                    <frame id="1:2571" name="image" x="0" y="0" width="1281" height="791" />
+                    <frame id="1:2572" name="div.legend-l31H9iuA" x="4" y="4" width="1269" height="165">
+                      <frame id="1:2573" name="div.legendMainSourceWrapper-l31H9iuA" x="0" y="0" width="1269" height="66">
+                        <frame id="1:2574" name="div.withCustomTextColor-l31H9iuA" x="0" y="0" width="1269" height="24">
+                          <frame id="1:2575" name="div.noWrapWrapper-l31H9iuA" x="0" y="0" width="315.04998779296875" height="24">
+                            <frame id="1:2577" name="div.titlesWrapper-l31H9iuA" x="0" y="0" width="269" height="24">
+                              <frame id="1:2583" name="div.titleWrapper-l31H9iuA" x="2" y="2" width="162" height="20">
+                                <frame id="1:2585" name="div.logoWrapper-l31H9iuA" x="3" y="1" width="18" height="18">
+                                  <frame id="1:2586" name="span.logo-m0C6Ivpo" x="0" y="0" width="18" height="18">
+                                    <frame id="1:2587" name="nvidia.svg" x="0" y="0" width="18" height="18">
+                                      <instance id="1:2588" name="Component 1" x="0" y="0" width="18" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2591" name="span.logo-m0C6Ivpo" x="0" y="0" width="18" height="18">
+                                    <text id="1:2592" name="N" x="5" y="1" width="8" height="16" />
+                                  </frame>
+                                </frame>
+                                <frame id="1:2594" name="Cambiar sÃ­mbolo" x="25" y="0.5" width="137" height="19">
+                                  <text id="1:2595" name="NVIDIA Corporation" x="0" y="0" width="137" height="19" />
+                                </frame>
+                              </frame>
+                              <frame id="1:2599" name="div.titleWrapper-l31H9iuA" x="164" y="2" width="31" height="20">
+                                <frame id="1:2600" name="span.__h2d-remove-before" x="0" y="1" width="12" height="20">
+                                  <text id="1:2601" name="Â·" x="3" y="0" width="6" height="19" />
+                                </frame>
+                                <frame id="1:2602" name="Cambiar intervalo" x="12" y="0.5" width="19" height="19">
+                                  <text id="1:2603" name="1D" x="0" y="0" width="19" height="19" />
+                                </frame>
+                              </frame>
+                              <frame id="1:2604" name="div.titleWrapper-l31H9iuA" x="195" y="2" width="70" height="20">
+                                <frame id="1:2606" name="span.__h2d-remove-before" x="0" y="1" width="12" height="20">
+                                  <text id="1:2607" name="Â·" x="3" y="0" width="6" height="19" />
+                                </frame>
+                                <frame id="1:2608" name="div.title-l31H9iuA" x="12" y="0.5" width="58" height="19">
+                                  <text id="1:2609" name="NASDAQ" x="0" y="0" width="58" height="19" />
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:2610" name="div.statusesWrapper-l31H9iuA" x="267.04998779296875" y="0" width="48" height="24">
+                              <frame id="1:2611" name="div.statusesWrap-Lgtz1OtS" x="4" y="0" width="40" height="24">
+                                <instance id="1:2612" name="Component 13" x="0" y="3" width="40" height="18" />
+                              </frame>
+                            </frame>
+                            <frame id="1:2621" name="div.buttonsWrapper-l31H9iuA" x="267.04998779296875" y="0" width="57" height="24">
+                              <frame id="1:2622" name="div.buttons-l31H9iuA" x="0" y="0" width="57" height="24">
+                                <frame id="1:2623" name="Marcar sÃ­mbolo:align-stretch" x="0" y="0" width="28" height="24">
+                                  <frame id="1:2624" name="Marcar sÃ­mbolo" x="0" y="0" width="28" height="24">
+                                    <frame id="1:2625" name="div.buttonIcon-l31H9iuA" x="0" y="6" width="28" height="12">
+                                      <instance id="1:2626" name="Component 14" x="0" y="0" width="28" height="12" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                                <frame id="1:2629" name="MÃ¡s:margin:align-stretch" x="28" y="0" width="29" height="24">
+                                  <frame id="1:2630" name="MÃ¡s:margin" x="0" y="0" width="29" height="24">
+                                    <frame id="1:2631" name="MÃ¡s" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2632" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:2635" name="div.valuesWrapper-l31H9iuA:align-stretch" x="315.04998779296875" y="0" width="312.9800109863281" height="24">
+                            <frame id="1:2636" name="div.valuesWrapper-l31H9iuA" x="0" y="0" width="312.9800109863281" height="24">
+                              <frame id="1:2637" name="div.valuesAdditionalWrapper-l31H9iuA" x="0" y="4" width="312.9800109863281" height="16">
+                                <frame id="1:2638" name="div.valueItem-l31H9iuA" x="4" y="0" width="54.9900016784668" height="16">
+                                  <frame id="1:2639" name="div.valueTitle-l31H9iuA" x="0" y="0.5" width="10" height="15">
+                                    <text id="1:2640" name="O" x="0" y="0" width="9" height="15" />
+                                  </frame>
+                                  <frame id="1:2643" name="div.valueValue-l31H9iuA" x="9.989999771118164" y="0.5" width="39" height="15">
+                                    <text id="1:2644" name="220,90" x="0" y="0" width="39" height="15" />
+                                  </frame>
+                                </frame>
+                                <frame id="1:2645" name="div.valueItem-l31H9iuA" x="58.9900016784668" y="0" width="54.9900016784668" height="16">
+                                  <frame id="1:2646" name="div.valueTitle-l31H9iuA" x="0" y="0.5" width="10" height="15">
+                                    <text id="1:2647" name="H" x="0" y="0" width="9" height="15" />
+                                  </frame>
+                                  <frame id="1:2648" name="div.valueValue-l31H9iuA" x="9.989999771118164" y="0.5" width="39" height="15">
+                                    <text id="1:2649" name="221,01" x="0" y="0" width="39" height="15" />
+                                  </frame>
+                                </frame>
+                                <frame id="1:2650" name="div.valueItem-l31H9iuA" x="113.9800033569336" y="0" width="53" height="16">
+                                  <frame id="1:2652" name="div.valueTitle-l31H9iuA" x="0" y="0.5" width="8" height="15">
+                                    <text id="1:2653" name="L" x="0" y="0" width="7" height="15" />
+                                  </frame>
+                                  <frame id="1:2654" name="div.valueValue-l31H9iuA" x="8" y="0.5" width="39" height="15">
+                                    <text id="1:2655" name="214,80" x="0" y="0" width="39" height="15" />
+                                  </frame>
+                                </frame>
+                                <frame id="1:2656" name="div.valueItem-l31H9iuA" x="166.98001098632812" y="0" width="54" height="16">
+                                  <frame id="1:2657" name="div.valueTitle-l31H9iuA" x="0" y="0.5" width="9" height="15">
+                                    <text id="1:2658" name="C" x="0" y="0" width="8" height="15" />
+                                  </frame>
+                                  <frame id="1:2659" name="div.valueValue-l31H9iuA" x="9" y="0.5" width="39" height="15">
+                                    <text id="1:2660" name="215,33" x="0" y="0" width="39" height="15" />
+                                  </frame>
+                                </frame>
+                                <frame id="1:2661" name="div.valueItem-l31H9iuA" x="220.98001098632812" y="0" width="92" height="16">
+                                  <frame id="1:2662" name="div.valueValue-l31H9iuA" x="0" y="0.5" width="86" height="15">
+                                    <text id="1:2663" name="âˆ’4,18 (âˆ’1,90%)" x="0" y="0" width="86" height="15" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                        <frame id="1:2664" name="div.container-SXMXfs_Z" x="0" y="24" width="181" height="42">
+                          <frame id="1:2665" name="div.buttonsWrapper-SXMXfs_Z" x="0" y="0" width="181" height="42">
+                            <frame id="1:2666" name="div.sellBuyButtonsContainer-SXMXfs_Z" x="5" y="4" width="171" height="34">
+                              <instance id="1:2668" name="Component 15" x="0" y="0" width="63" height="34" />
+                              <frame id="1:2674" name="div.spreadQtyWrapper-SXMXfs_Z" x="71" y="12" width="20" height="10">
+                                <frame id="1:2676" name="div.apply-common-tooltip" x="0" y="0" width="20" height="10">
+                                  <text id="1:2677" name="0,00" x="0" y="0" width="20" height="10" />
+                                </frame>
+                              </frame>
+                              <instance id="1:2679" name="Component 15" x="99" y="0" width="72" height="34" />
+                            </frame>
+                          </frame>
+                        </frame>
+                      </frame>
+                      <frame id="1:2685" name="div.sourcesWrapper-l31H9iuA" x="0" y="66" width="1269" height="99">
+                        <frame id="1:2686" name="div.sources-l31H9iuA" x="0" y="0" width="1269" height="72">
+                          <frame id="1:2687" name="div.withCustomTextColor-l31H9iuA" x="0" y="0" width="1269" height="24">
+                            <frame id="1:2688" name="div.noWrapWrapper-l31H9iuA" x="0" y="0" width="157.9199981689453" height="24">
+                              <frame id="1:2689" name="div.titlesWrapper-l31H9iuA" x="0" y="0" width="134" height="24">
+                                <frame id="1:2690" name="div.titleWrapper-l31H9iuA" x="2" y="2" width="27" height="20">
+                                  <frame id="1:2691" name="div.title-l31H9iuA" x="3" y="2.5" width="24" height="15">
+                                    <text id="1:2692" name="EMA" x="0" y="0" width="24" height="15" />
+                                  </frame>
+                                </frame>
+                                <frame id="1:2693" name="div.titlesGroupWrapper-l31H9iuA" x="29" y="2" width="101" height="20">
+                                  <frame id="1:2694" name="div.titleWrapper-l31H9iuA" x="0" y="0" width="17" height="20">
+                                    <frame id="1:2695" name="div.title-l31H9iuA" x="3" y="2.5" width="14" height="15">
+                                      <text id="1:2696" name="22" x="0" y="0" width="14" height="15" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2697" name="div.titleWrapper-l31H9iuA" x="21" y="0" width="30" height="20">
+                                    <frame id="1:2698" name="div.title-l31H9iuA" x="0" y="2.5" width="30" height="15">
+                                      <text id="1:2699" name="close" x="0" y="0" width="30" height="15" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2700" name="div.titleWrapper-l31H9iuA" x="55" y="0" width="7" height="20">
+                                    <frame id="1:2701" name="div.title-l31H9iuA" x="0" y="2.5" width="7" height="15">
+                                      <text id="1:2702" name="0" x="0" y="0" width="7" height="15" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2703" name="div.titleWrapper-l31H9iuA" x="66" y="0" width="24" height="20">
+                                    <frame id="1:2704" name="div.title-l31H9iuA" x="0" y="2.5" width="24" height="15">
+                                      <text id="1:2705" name="SMA" x="0" y="0" width="24" height="15" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2706" name="div.titleWrapper-l31H9iuA" x="94" y="0" width="7" height="20">
+                                    <frame id="1:2707" name="div.title-l31H9iuA" x="0" y="2.5" width="7" height="15">
+                                      <text id="1:2708" name="5" x="0" y="0" width="7" height="15" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                              <frame id="1:2709" name="div.statusesWrapper-l31H9iuA" x="131.9199981689453" y="0" width="26" height="24">
+                                <frame id="1:2710" name="div.statusesWrap-Lgtz1OtS" x="4" y="0" width="18" height="24">
+                                  <instance id="1:2711" name="Component 13" x="0" y="3" width="18" height="18" />
+                                </frame>
+                              </frame>
+                              <frame id="1:2716" name="div.buttonsWrapper-l31H9iuA" x="131.9199981689453" y="0" width="141" height="24">
+                                <frame id="1:2717" name="div.buttons-l31H9iuA" x="0" y="0" width="141" height="24">
+                                  <frame id="1:2718" name="Ocultar:align-stretch" x="0" y="0" width="28" height="24">
+                                    <frame id="1:2719" name="Ocultar" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2720" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2733" name="Opciones de configuraciÃ³n:align-stretch" x="28" y="0" width="28" height="24">
+                                    <frame id="1:2734" name="Opciones de configuraciÃ³n" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2735" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2738" name="div.button-l31H9iuA:align-stretch" x="56" y="0" width="28" height="24">
+                                    <frame id="1:2739" name="div.button-l31H9iuA" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2740" name="Component 14" x="0" y="0" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2743" name="Eliminar:align-stretch" x="84" y="0" width="28" height="24">
+                                    <frame id="1:2744" name="Eliminar" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2745" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2748" name="MÃ¡s:margin:align-stretch" x="112" y="0" width="29" height="24">
+                                    <frame id="1:2749" name="MÃ¡s:margin" x="0" y="0" width="29" height="24">
+                                      <frame id="1:2750" name="MÃ¡s" x="0" y="0" width="28" height="24">
+                                        <instance id="1:2751" name="Component 14" x="0" y="3" width="28" height="18" />
+                                      </frame>
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:2754" name="div.valuesWrapper-l31H9iuA:align-stretch" x="157.9199981689453" y="0" width="49" height="24">
+                              <frame id="1:2755" name="div.valuesWrapper-l31H9iuA" x="0" y="0" width="49" height="24">
+                                <frame id="1:2756" name="div.valuesAdditionalWrapper-l31H9iuA" x="0" y="4" width="49" height="16">
+                                  <frame id="1:2757" name="div.valueItem-l31H9iuA" x="4" y="0" width="45" height="16">
+                                    <frame id="1:2758" name="div.valueValue-l31H9iuA" x="0" y="0.5" width="39" height="15">
+                                      <text id="1:2759" name="213,61" x="0" y="0" width="39" height="15" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:2762" name="div.withCustomTextColor-l31H9iuA" x="0" y="24" width="1269" height="24">
+                            <frame id="1:2763" name="div.noWrapWrapper-l31H9iuA" x="0" y="0" width="157.77999877929688" height="24">
+                              <frame id="1:2764" name="div.titlesWrapper-l31H9iuA" x="0" y="0" width="134" height="24">
+                                <frame id="1:2765" name="div.titleWrapper-l31H9iuA" x="2" y="2" width="20" height="20">
+                                  <frame id="1:2766" name="div.title-l31H9iuA" x="3" y="2.5" width="17" height="15">
+                                    <text id="1:2767" name="MA" x="0" y="0" width="17" height="15" />
+                                  </frame>
+                                </frame>
+                                <frame id="1:2768" name="div.titlesGroupWrapper-l31H9iuA" x="22" y="2" width="108" height="20">
+                                  <frame id="1:2769" name="div.titleWrapper-l31H9iuA" x="0" y="0" width="24" height="20">
+                                    <frame id="1:2770" name="div.title-l31H9iuA" x="3" y="2.5" width="21" height="15">
+                                      <text id="1:2771" name="200" x="0" y="0" width="21" height="15" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2772" name="div.titleWrapper-l31H9iuA" x="28" y="0" width="30" height="20">
+                                    <frame id="1:2773" name="div.title-l31H9iuA" x="0" y="2.5" width="30" height="15">
+                                      <text id="1:2774" name="close" x="0" y="0" width="30" height="15" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2775" name="div.titleWrapper-l31H9iuA" x="62" y="0" width="7" height="20">
+                                    <frame id="1:2776" name="div.title-l31H9iuA" x="0" y="2.5" width="7" height="15">
+                                      <text id="1:2777" name="0" x="0" y="0" width="7" height="15" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2778" name="div.titleWrapper-l31H9iuA" x="73" y="0" width="24" height="20">
+                                    <frame id="1:2779" name="div.title-l31H9iuA" x="0" y="2.5" width="24" height="15">
+                                      <text id="1:2780" name="SMA" x="0" y="0" width="24" height="15" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2781" name="div.titleWrapper-l31H9iuA" x="101" y="0" width="7" height="20">
+                                    <frame id="1:2782" name="div.title-l31H9iuA" x="0" y="2.5" width="7" height="15">
+                                      <text id="1:2783" name="5" x="0" y="0" width="7" height="15" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                              <frame id="1:2784" name="div.statusesWrapper-l31H9iuA" x="131.77999877929688" y="0" width="26" height="24">
+                                <frame id="1:2785" name="div.statusesWrap-Lgtz1OtS" x="4" y="0" width="18" height="24">
+                                  <instance id="1:2786" name="Component 13" x="0" y="3" width="18" height="18" />
+                                </frame>
+                              </frame>
+                              <frame id="1:2791" name="div.buttonsWrapper-l31H9iuA" x="131.77999877929688" y="0" width="141" height="24">
+                                <frame id="1:2792" name="div.buttons-l31H9iuA" x="0" y="0" width="141" height="24">
+                                  <frame id="1:2793" name="Ocultar:align-stretch" x="0" y="0" width="28" height="24">
+                                    <frame id="1:2794" name="Ocultar" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2795" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2808" name="Opciones de configuraciÃ³n:align-stretch" x="28" y="0" width="28" height="24">
+                                    <frame id="1:2809" name="Opciones de configuraciÃ³n" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2810" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2813" name="div.button-l31H9iuA:align-stretch" x="56" y="0" width="28" height="24">
+                                    <frame id="1:2814" name="div.button-l31H9iuA" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2815" name="Component 14" x="0" y="0" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2818" name="Eliminar:align-stretch" x="84" y="0" width="28" height="24">
+                                    <frame id="1:2819" name="Eliminar" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2820" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2823" name="MÃ¡s:margin:align-stretch" x="112" y="0" width="29" height="24">
+                                    <frame id="1:2824" name="MÃ¡s:margin" x="0" y="0" width="29" height="24">
+                                      <frame id="1:2825" name="MÃ¡s" x="0" y="0" width="28" height="24">
+                                        <instance id="1:2826" name="Component 14" x="0" y="3" width="28" height="18" />
+                                      </frame>
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:2829" name="div.valuesWrapper-l31H9iuA:align-stretch" x="157.77999877929688" y="0" width="49" height="24">
+                              <frame id="1:2830" name="div.valuesWrapper-l31H9iuA" x="0" y="0" width="49" height="24">
+                                <frame id="1:2831" name="div.valuesAdditionalWrapper-l31H9iuA" x="0" y="4" width="49" height="16">
+                                  <frame id="1:2832" name="div.valueItem-l31H9iuA" x="4" y="0" width="45" height="16">
+                                    <frame id="1:2833" name="div.valueValue-l31H9iuA" x="0" y="0.5" width="39" height="15">
+                                      <text id="1:2834" name="187,03" x="0" y="0" width="39" height="15" />
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                          <frame id="1:2837" name="div.withCustomTextColor-l31H9iuA" x="0" y="48" width="1269" height="24">
+                            <frame id="1:2838" name="div.noWrapWrapper-l31H9iuA" x="0" y="0" width="145" height="24">
+                              <frame id="1:2839" name="div.titlesWrapper-l31H9iuA" x="0" y="0" width="32" height="24">
+                                <frame id="1:2840" name="div.title-l31H9iuA" x="5" y="4.5" width="23" height="15">
+                                  <text id="1:2841" name="Vol." x="0" y="0" width="23" height="15" />
+                                </frame>
+                              </frame>
+                              <frame id="1:2842" name="div.buttonsWrapper-l31H9iuA" x="32" y="0" width="113" height="24">
+                                <frame id="1:2843" name="div.buttons-l31H9iuA" x="0" y="0" width="113" height="24">
+                                  <frame id="1:2844" name="Ocultar:align-stretch" x="0" y="0" width="28" height="24">
+                                    <frame id="1:2845" name="Ocultar" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2846" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2859" name="Opciones de configuraciÃ³n:align-stretch" x="28" y="0" width="28" height="24">
+                                    <frame id="1:2860" name="Opciones de configuraciÃ³n" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2861" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2864" name="Eliminar:align-stretch" x="56" y="0" width="28" height="24">
+                                    <frame id="1:2865" name="Eliminar" x="0" y="0" width="28" height="24">
+                                      <instance id="1:2866" name="Component 14" x="0" y="3" width="28" height="18" />
+                                    </frame>
+                                  </frame>
+                                  <frame id="1:2869" name="MÃ¡s:margin:align-stretch" x="84" y="0" width="29" height="24">
+                                    <frame id="1:2870" name="MÃ¡s:margin" x="0" y="0" width="29" height="24">
+                                      <frame id="1:2871" name="MÃ¡s" x="0" y="0" width="28" height="24">
+                                        <instance id="1:2872" name="Component 14" x="0" y="3" width="28" height="18" />
+                                      </frame>
+                                    </frame>
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                            <frame id="1:2875" name="div.valuesWrapper-l31H9iuA" x="31.389999389648438" y="0" width="61" height="24">
+                              <frame id="1:2876" name="div.valuesAdditionalWrapper-l31H9iuA" x="0" y="4" width="61" height="16">
+                                <frame id="1:2877" name="div.valueItem-l31H9iuA" x="4" y="0" width="57" height="16">
+                                  <frame id="1:2878" name="div.valueValue-l31H9iuA" x="0" y="0.5" width="51" height="15">
+                                    <text id="1:2879" name="169,28â€¯M" x="0" y="0" width="51" height="15" />
+                                  </frame>
+                                </frame>
+                              </frame>
+                            </frame>
+                          </frame>
+                        </frame>
+                        <frame id="1:2882" name="div.togglerWrapper-l31H9iuA" x="0" y="72" width="47" height="27">
+                          <instance id="1:2883" name="Component 16" x="5" y="3" width="29" height="21" />
+                        </frame>
+                      </frame>
+                    </frame>
+                  </frame>
+                  <frame id="1:2887" name="div.price-axis" x="1281" y="0" width="54" height="791">
+                    <frame id="1:2889" name="image" x="0" y="0" width="54" height="791" />
+                    <frame id="1:2890" name="div.price-axis-currency-label-wrapper-y5H41VPj" x="0" y="0" width="54" height="34">
+                      <frame id="1:2891" name="div.price-axis-currency-label-y5H41VPj" x="4" y="4" width="46" height="26">
+                        <instance id="1:2892" name="Component 17" x="1" y="1" width="44" height="24" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+                <frame id="1:2898" name="div" x="0" y="791" width="1335" height="28">
+                  <frame id="1:2899" name="div.chart-markup-table" x="0" y="0" width="1281" height="28">
+                    <frame id="1:2900" name="div" x="0" y="0" width="1281" height="28">
+                      <frame id="1:2901" name="image" x="0" y="0" width="1281" height="28" />
+                    </frame>
+                  </frame>
+                  <frame id="1:2902" name="image" x="1281" y="0" width="54" height="28" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="1:2903" name="div.chart-toolbar" x="0" y="819" width="1335" height="39">
+            <frame id="1:2904" name="div.toolbar-BXXUwft2" x="0" y="1" width="1335" height="38">
+              <frame id="1:2905" name="div.dateRangeExpanded-BXXUwft2" x="0" y="0" width="341" height="38">
+                <frame id="1:2906" name="div.wrap-k2h4OAz8:margin" x="0" y="0" width="294" height="38">
+                  <frame id="1:2907" name="div.wrap-k2h4OAz8" x="8" y="0" width="286" height="38">
+                    <instance id="1:2908" name="Component 18" x="0" y="0" width="28" height="38" />
+                    <instance id="1:2911" name="Component 18" x="28" y="0" width="28" height="38" />
+                    <instance id="1:2914" name="Component 18" x="56" y="0" width="30" height="38" />
+                    <instance id="1:2917" name="Component 18" x="86" y="0" width="30" height="38" />
+                    <instance id="1:2920" name="Component 18" x="116" y="0" width="30" height="38" />
+                    <instance id="1:2923" name="Component 18" x="146" y="0" width="37" height="38" />
+                    <instance id="1:2926" name="Component 18" x="183" y="0" width="28" height="38" />
+                    <instance id="1:2929" name="Component 18" x="211" y="0" width="28" height="38" />
+                    <instance id="1:2932" name="Component 18" x="239" y="0" width="47" height="38" />
+                  </frame>
+                </frame>
+                <frame id="1:2935" name="span.separator-yDfG9Ccu:margin" x="294" y="0" width="9" height="38">
+                  <rounded-rectangle id="1:2936" name="span.separator-yDfG9Ccu" x="4" y="8" width="1" height="22" />
+                </frame>
+                <instance id="1:2937" name="Component 4" x="303" y="0" width="38" height="38" />
+              </frame>
+              <frame id="1:2941" name="div.seriesControlWrapper-BXXUwft2" x="1175.6600341796875" y="0" width="160" height="38">
+                <instance id="1:2942" name="Component 18" x="0" y="0" width="111" height="38" />
+                <frame id="1:2945" name="div.inline-BXXUwft2" x="111" y="0" width="9" height="38">
+                  <rounded-rectangle id="1:2946" name="span.separator-yDfG9Ccu" x="4" y="8" width="1" height="22" />
+                </frame>
+                <instance id="1:2947" name="Component 18" x="120" y="0" width="36" height="38" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="1:2950" name="div.widgetbar-wrap" x="1395" y="42" width="45" height="858">
+          <frame id="1:2951" name="div.widgetbar-tabs" x="0" y="0" width="45" height="858">
+            <frame id="1:2952" name="div.wrap-Z4M3tWHb" x="0" y="0" width="45" height="858">
+              <frame id="1:2953" name="div.scrollWrap-Z4M3tWHb" x="0" y="0" width="145" height="858">
+                <frame id="1:2954" name="div.content-Z4M3tWHb" x="0" y="0" width="45" height="858">
+                  <frame id="1:2955" name="div.toolbar-S4V6IoxY" x="0" y="0" width="45" height="858">
+                    <frame id="1:2956" name="div.separator-gZVyfVJP:margin" x="0" y="799" width="45" height="13">
+                      <rounded-rectangle id="1:2957" name="div.separator-gZVyfVJP" x="6" y="6" width="33" height="1" />
+                    </frame>
+                    <instance id="1:2958" name="Component 4" x="0.5" y="2" width="44" height="44" />
+                    <frame id="1:2963" name="Alertas:margin" x="0.5" y="46" width="44" height="46">
+                      <instance id="1:2964" name="Component 4" x="0" y="2" width="44" height="44" />
+                    </frame>
+                    <frame id="1:2969" name="Ãrbol de objetos y ventana de datos:margin" x="0.5" y="92" width="44" height="46">
+                      <instance id="1:2970" name="Component 4" x="0" y="2" width="44" height="44" />
+                    </frame>
+                    <frame id="1:2974" name="Chats:margin" x="0.5" y="138" width="44" height="46">
+                      <instance id="1:2975" name="Component 4" x="0" y="2" width="44" height="44" />
+                    </frame>
+                    <instance id="1:2979" name="Component 4" x="0.5" y="529" width="44" height="44" />
+                    <frame id="1:2987" name="div.wrapper-W9c7qTYj" x="0.5" y="573" width="44" height="44">
+                      <instance id="1:2988" name="Component 4" x="0" y="0" width="44" height="44" />
+                    </frame>
+                    <instance id="1:2993" name="Component 4" x="0.5" y="617" width="44" height="44" />
+                    <frame id="1:2997" name="Comunidad:margin" x="0.5" y="661" width="44" height="46">
+                      <instance id="1:2998" name="Component 4" x="0" y="2" width="44" height="44" />
+                    </frame>
+                    <frame id="1:3005" name="Notificaciones:margin" x="0.5" y="707" width="44" height="46">
+                      <instance id="1:3006" name="Component 4" x="0" y="2" width="44" height="44" />
+                    </frame>
+                    <frame id="1:3010" name="Productos:margin" x="0.5" y="753" width="44" height="46">
+                      <instance id="1:3011" name="Component 4" x="0" y="2" width="44" height="44" />
+                    </frame>
+                    <instance id="1:3015" name="Component 4" x="0.5" y="812" width="44" height="44" />
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="1:3019" name="div.widgetbar-pages" x="-1" y="0" width="1" height="858" />
+        </frame>
+      </frame>
+    </frame>
+    <frame id="1:3020" name="div#common-tooltip-wrapper" x="0" y="900" width="169.52000427246094" height="24">
+      <frame id="1:3021" name="div.common-tooltip__ear-holder-EJBD96zX" x="0" y="0" width="169.52000427246094" height="24" />
+    </frame>
+  </frame>
+</section>
