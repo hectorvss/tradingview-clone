@@ -2189,3 +2189,38 @@ input[type="datetime-local"].al-m-hidden-input {
   min-width: 56px; text-align: right;
   white-space: nowrap;
 }
+
+/* ---- Drawings: Trendlines ---- */
+.nvda-chart.drawing-mode,
+.nvda-chart.drawing-mode * {
+  cursor: crosshair !important;
+}
+#drawOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.trendline-handle {
+  position: absolute;
+  width: 10px; height: 10px;
+  background: #2962ff;
+  border: 2px solid #ffffff;
+  border-radius: 2px;
+  pointer-events: auto;
+  cursor: move;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
+}
+.trendline-context-menu {
+  position: absolute; z-index: 100;
+  background: #1c1c1c; border: 1px solid #2e2e2e;
+  border-radius: 4px; padding: 4px 0;
+  min-width: 140px; font-size: 13px; color: #dbdbdb;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+.trendline-context-menu div {
+  padding: 6px 12px; cursor: pointer;
+}
+.trendline-context-menu div:hover { background: #2962ff; color: #fff; }

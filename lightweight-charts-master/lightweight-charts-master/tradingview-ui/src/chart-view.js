@@ -4218,6 +4218,384 @@ function startClock() {
 let _clockId = null;
 
 /* =========================================================================
+   DRAWINGS — Trendlines (lightweight-charts LineSeries-based)
+   =========================================================================
+   state.drawings: [{ id, type:'trendline', p1:{time,price}, p2:{time,price}, color }]
+   _ctx.drawings:  [{ id, def, series, endpointSeries, visible }]
+   ========================================================================= */
+function _genId() {
+  return 'd_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function _trendSeriesOpts(color, selected, dashed) {
+  return {
+    color,
+    lineWidth: 2,
+    lineStyle: dashed ? LineStyle.Dashed : LineStyle.Solid,
+    priceLineVisible: false,
+    lastValueVisible: false,
+    crosshairMarkerVisible: false,
+    pointMarkersVisible: false,
+    autoscaleInfoProvider: () => null,
+  };
+}
+
+function _candleRangeContains(time) {
+  if (!_ctx || !_ctx.candles || !_ctx.candles.length) return false;
+  const t0 = _ctx.candles[0].time;
+  const tN = _ctx.candles[_ctx.candles.length - 1].time;
+  return time >= t0 && time <= tN;
+}
+
+function _findNearestCandleTime(time) {
+  if (!_ctx || !_ctx.candles || !_ctx.candles.length) return time;
+  const candles = _ctx.candles;
+  // binary search
+  let lo = 0, hi = candles.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (candles[mid].time < time) lo = mid + 1; else hi = mid;
+  }
+  const a = candles[Math.max(0, lo - 1)].time;
+  const b = candles[lo].time;
+  return Math.abs(a - time) < Math.abs(b - time) ? a : b;
+}
+
+function _renderTrendlineSeries(d) {
+  // Sort the two endpoints by time (LWC requires ascending time)
+  let p1 = d.def.p1, p2 = d.def.p2;
+  if (p1.time > p2.time) { const t = p1; p1 = p2; p2 = t; }
+  d.series.applyOptions(_trendSeriesOpts(d.def.color || '#2962ff', d.selected, false));
+  d.series.setData([
+    { time: p1.time, value: p1.price },
+    { time: p2.time, value: p2.price },
+  ]);
+}
+
+function _createDrawingFromDef(def) {
+  const series = _chart.addSeries(LineSeries, _trendSeriesOpts(def.color || '#2962ff', false, false));
+  const rec = { id: def.id, def, series, selected: false, visible: true };
+  _renderTrendlineSeries(rec);
+  _ctx.drawings.push(rec);
+  return rec;
+}
+
+function _removeDrawingRecord(rec) {
+  try { _chart.removeSeries(rec.series); } catch {}
+  _ctx.drawings = _ctx.drawings.filter(d => d.id !== rec.id);
+}
+
+function _drawingCoords(rec) {
+  // Returns {x1,y1,x2,y2} or null if any endpoint can't be projected
+  const ts = _chart.timeScale();
+  const x1 = ts.timeToCoordinate(rec.def.p1.time);
+  const x2 = ts.timeToCoordinate(rec.def.p2.time);
+  const y1 = _ctx.series.priceToCoordinate(rec.def.p1.price);
+  const y2 = _ctx.series.priceToCoordinate(rec.def.p2.price);
+  if (x1 == null || x2 == null || y1 == null || y2 == null) return null;
+  return { x1, y1, x2, y2 };
+}
+
+function _distPointToSegment(px, py, x1, y1, x2, y2) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len2 = dx * dx + dy * dy;
+  if (len2 === 0) return Math.hypot(px - x1, py - y1);
+  let t = ((px - x1) * dx + (py - y1) * dy) / len2;
+  t = Math.max(0, Math.min(1, t));
+  const cx = x1 + t * dx, cy = y1 + t * dy;
+  return Math.hypot(px - cx, py - cy);
+}
+
+function _ensureHandleOverlay(container) {
+  let ov = document.getElementById('drawOverlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'drawOverlay';
+    ov.style.position = 'absolute';
+    ov.style.inset = '0';
+    ov.style.pointerEvents = 'none';
+    container.appendChild(ov);
+  }
+  return ov;
+}
+
+function _renderHandles(container) {
+  const ov = _ensureHandleOverlay(container);
+  ov.innerHTML = '';
+  for (const rec of _ctx.drawings) {
+    if (!rec.selected) continue;
+    const c = _drawingCoords(rec);
+    if (!c) continue;
+    for (const [which, x, y] of [['p1', c.x1, c.y1], ['p2', c.x2, c.y2]]) {
+      const h = document.createElement('div');
+      h.className = 'trendline-handle';
+      h.style.left = x + 'px';
+      h.style.top = y + 'px';
+      h.dataset.drawingId = rec.id;
+      h.dataset.endpoint = which;
+      ov.appendChild(h);
+    }
+  }
+}
+
+function selectDrawing(id) {
+  if (!_ctx) return;
+  _ctx.selectedDrawingId = id;
+  for (const d of _ctx.drawings) {
+    const sel = d.id === id;
+    if (d.selected !== sel) {
+      d.selected = sel;
+      d.series.applyOptions({ lineWidth: sel ? 3 : 2 });
+    }
+  }
+  _renderHandles(_ctx.container);
+}
+
+function deleteDrawing(id) {
+  if (!_ctx) return;
+  const rec = _ctx.drawings.find(d => d.id === id);
+  if (rec) _removeDrawingRecord(rec);
+  state.drawings = state.drawings.filter(d => d.id !== id);
+  saveDrawings();
+  if (_ctx.selectedDrawingId === id) _ctx.selectedDrawingId = null;
+  _renderHandles(_ctx.container);
+  const tcm = document.getElementById('trendCtxMenu');
+  if (tcm) tcm.style.display = 'none';
+}
+
+function activateTrendlineMode() {
+  if (!_ctx || !_chart) return;
+  if (_ctx.drawingMode) return;
+  _ctx.drawingMode = 'trendline';
+  _ctx.drawingFirstPoint = null;
+  _ctx.container.classList.add('drawing-mode');
+  // Activate the trend tool button visually
+  const btn = document.querySelector('.lb-btn[data-tool="trend"]');
+  if (btn) btn.classList.add('lb-active');
+  selectDrawing(null);
+}
+
+function cancelTrendlineMode() {
+  if (!_ctx) return;
+  _ctx.drawingMode = null;
+  _ctx.drawingFirstPoint = null;
+  _ctx.container.classList.remove('drawing-mode');
+  // Remove preview series if any
+  if (_ctx.previewSeries) {
+    try { _chart.removeSeries(_ctx.previewSeries); } catch {}
+    _ctx.previewSeries = null;
+  }
+}
+
+function _finishTrendline(p1, p2) {
+  const def = {
+    id: _genId(),
+    type: 'trendline',
+    p1: { time: p1.time, price: p1.price },
+    p2: { time: p2.time, price: p2.price },
+    color: '#2962ff',
+  };
+  state.drawings.push(def);
+  saveDrawings();
+  _createDrawingFromDef(def);
+  cancelTrendlineMode();
+}
+
+function _showTrendCtxMenu(container, clientX, clientY, drawingId) {
+  let m = document.getElementById('trendCtxMenu');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'trendCtxMenu';
+    m.className = 'trendline-context-menu';
+    container.appendChild(m);
+  }
+  m.innerHTML = `<div data-act="delete">Eliminar línea</div>`;
+  const r = container.getBoundingClientRect();
+  m.style.left = (clientX - r.left) + 'px';
+  m.style.top = (clientY - r.top) + 'px';
+  m.style.display = 'block';
+  m.onclick = (ev) => {
+    const act = ev.target.dataset?.act;
+    m.style.display = 'none';
+    if (act === 'delete') deleteDrawing(drawingId);
+  };
+}
+
+function initDrawings(container) {
+  // Initialize drawings array on context
+  _ctx.drawings = [];
+  _ctx.drawingMode = null;
+  _ctx.drawingFirstPoint = null;
+  _ctx.previewSeries = null;
+  _ctx.selectedDrawingId = null;
+
+  // Restore persisted drawings whose time range is valid
+  for (const def of state.drawings) {
+    if (def.type !== 'trendline') continue;
+    if (!_candleRangeContains(def.p1.time) || !_candleRangeContains(def.p2.time)) continue;
+    try { _createDrawingFromDef(def); } catch (e) { console.warn('[drawings] restore failed', e); }
+  }
+
+  // Click handler on chart container (capture phase, before LWC processes pan)
+  // We use mousedown so we can also handle drag-start on handles.
+  const overlay = _ensureHandleOverlay(container);
+
+  // Drag handle logic
+  let dragging = null; // {recId, endpoint}
+  overlay.addEventListener('mousedown', (ev) => {
+    const h = ev.target.closest('.trendline-handle');
+    if (!h) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    dragging = { recId: h.dataset.drawingId, endpoint: h.dataset.endpoint };
+  });
+
+  window.addEventListener('mousemove', (ev) => {
+    if (!dragging || !_ctx) return;
+    const rec = _ctx.drawings.find(d => d.id === dragging.recId);
+    if (!rec) return;
+    const r = container.getBoundingClientRect();
+    const x = ev.clientX - r.left;
+    const y = ev.clientY - r.top;
+    const ts = _chart.timeScale();
+    let time = ts.coordinateToTime(x);
+    if (time == null) return;
+    // Snap to nearest candle
+    time = _findNearestCandleTime(time);
+    const price = _ctx.series.coordinateToPrice(y);
+    if (price == null) return;
+    rec.def[dragging.endpoint] = { time, price };
+    _renderTrendlineSeries(rec);
+    _renderHandles(container);
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (dragging) {
+      // Persist updated def
+      const rec = _ctx.drawings.find(d => d.id === dragging.recId);
+      if (rec) {
+        const sd = state.drawings.find(d => d.id === rec.id);
+        if (sd) { sd.p1 = rec.def.p1; sd.p2 = rec.def.p2; saveDrawings(); }
+      }
+      dragging = null;
+    }
+  });
+
+  // Click on chart: drawing-mode anchor OR selection hit-test
+  container.addEventListener('click', (ev) => {
+    if (!_ctx) return;
+    // Ignore clicks on UI overlays / handles
+    if (ev.target.closest('.trendline-handle, .trendline-context-menu, .legend, .replay-panel, .ctx-menu, .modal, .sym-pop, .trade-pop, .pane-resize')) return;
+    const r = container.getBoundingClientRect();
+    const x = ev.clientX - r.left;
+    const y = ev.clientY - r.top;
+    const ts = _chart.timeScale();
+    let time = ts.coordinateToTime(x);
+    const price = _ctx.series.coordinateToPrice(y);
+    if (_ctx.drawingMode === 'trendline') {
+      if (time == null || price == null) return;
+      time = _findNearestCandleTime(time);
+      const point = { time, price };
+      if (!_ctx.drawingFirstPoint) {
+        _ctx.drawingFirstPoint = point;
+        // Create preview series
+        _ctx.previewSeries = _chart.addSeries(LineSeries, _trendSeriesOpts('#2962ff', false, true));
+        _ctx.previewSeries.setData([{ time, value: price }]);
+      } else {
+        const p1 = _ctx.drawingFirstPoint;
+        // Remove preview before adding committed series
+        if (_ctx.previewSeries) {
+          try { _chart.removeSeries(_ctx.previewSeries); } catch {}
+          _ctx.previewSeries = null;
+        }
+        _finishTrendline(p1, point);
+      }
+      return;
+    }
+    // Selection hit-test
+    let hit = null;
+    let hitDist = 6;
+    for (const rec of _ctx.drawings) {
+      const c = _drawingCoords(rec);
+      if (!c) continue;
+      const d = _distPointToSegment(x, y, c.x1, c.y1, c.x2, c.y2);
+      if (d < hitDist) { hitDist = d; hit = rec; }
+    }
+    if (hit) {
+      selectDrawing(hit.id);
+    } else if (_ctx.selectedDrawingId) {
+      selectDrawing(null);
+    }
+  }, true);
+
+  // Right-click on a trendline → context menu
+  container.addEventListener('contextmenu', (ev) => {
+    if (!_ctx || !_ctx.drawings.length) return;
+    const r = container.getBoundingClientRect();
+    const x = ev.clientX - r.left;
+    const y = ev.clientY - r.top;
+    let hit = null;
+    let hitDist = 6;
+    for (const rec of _ctx.drawings) {
+      const c = _drawingCoords(rec);
+      if (!c) continue;
+      const d = _distPointToSegment(x, y, c.x1, c.y1, c.x2, c.y2);
+      if (d < hitDist) { hitDist = d; hit = rec; }
+    }
+    if (hit) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      selectDrawing(hit.id);
+      // hide the standard chart ctx menu if it appeared
+      const stdCtx = document.getElementById('ctxMenu');
+      if (stdCtx) stdCtx.style.display = 'none';
+      _showTrendCtxMenu(container, ev.clientX, ev.clientY, hit.id);
+    }
+  }, true);
+
+  // Hide ctx-menu on outside click
+  window.addEventListener('mousedown', (ev) => {
+    const m = document.getElementById('trendCtxMenu');
+    if (m && m.style.display === 'block' && !ev.target.closest('#trendCtxMenu')) {
+      m.style.display = 'none';
+    }
+  });
+
+  // Live preview during trendline drawing + handle reposition on zoom/pan
+  _chart.subscribeCrosshairMove((p) => {
+    if (_ctx && _ctx.drawingMode === 'trendline' && _ctx.drawingFirstPoint && p && p.point && _ctx.previewSeries) {
+      const ts = _chart.timeScale();
+      let t = ts.coordinateToTime(p.point.x);
+      const pr = _ctx.series.coordinateToPrice(p.point.y);
+      if (t == null || pr == null) return;
+      t = _findNearestCandleTime(t);
+      const p1 = _ctx.drawingFirstPoint;
+      let a = p1, b = { time: t, price: pr };
+      if (a.time === b.time) {
+        // identical x — render single point only to avoid LWC error
+        _ctx.previewSeries.setData([{ time: a.time, value: a.price }]);
+      } else {
+        if (a.time > b.time) { const tmp = a; a = b; b = tmp; }
+        _ctx.previewSeries.setData([
+          { time: a.time, value: a.price },
+          { time: b.time, value: b.price },
+        ]);
+      }
+    }
+  });
+
+  // Reposition handles on zoom/pan
+  _chart.timeScale().subscribeVisibleTimeRangeChange(() => {
+    if (_ctx) _renderHandles(_ctx.container);
+  });
+  _chart.timeScale().subscribeVisibleLogicalRangeChange(() => {
+    if (_ctx) _renderHandles(_ctx.container);
+  });
+
+  _renderHandles(container);
+}
+
+/* =========================================================================
    ENTRY
    ========================================================================= */
 export function renderChartView(container) {
