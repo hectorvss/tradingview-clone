@@ -857,7 +857,85 @@ function makeMiniCandles(container, data, up) {
 
 /* ────────────────────── MAIN EXPORT ────────────────────── */
 
+// New modular section imports (Batch 1/2/3)
+import * as Header      from './sections/header.js';
+import * as StickyBar   from './sections/sticky-bar.js';
+import * as Footer      from './sections/footer.js';
+import * as RightSide   from './sections/right-sidebar.js';
+import * as Sec1        from './sections/section-1.js';
+import * as Sec2        from './sections/section-2.js';
+import * as Sec3        from './sections/section-3.js';
+import * as Sec4        from './sections/section-4.js';
+import * as Sec5        from './sections/section-5.js';
+import * as Sec6        from './sections/section-6.js';
+import * as Sec7        from './sections/section-7.js';
+import * as LookFirst   from './sections/look-first.js';
+
+let _activeMounts = [];
+
 export function renderMarketOverview(container, onChartNav) {
+  // Tear down any prior mounts
+  try { _activeMounts.forEach(m => m && typeof m.destroy === 'function' && m.destroy()); } catch {}
+  _activeMounts = [];
+
+  const goSymbol = (ticker) => {
+    if (typeof onChartNav === 'function') onChartNav(ticker || 'NVDA');
+    else window.location.hash = '#/chart/' + (ticker || 'NVDA');
+  };
+  const ctx = { onSelectSymbol: goSymbol, onTicker: goSymbol, onOpenBroker: (n) => console.log('open broker', n) };
+
+  container.innerHTML = `
+<div class="mo-page" id="mo-page">
+  <div id="mo-mount-header"></div>
+  <div class="mo-body">
+    <main class="mo-main">
+      <div id="mo-mount-sec1"></div>
+      <div id="mo-mount-sec2"></div>
+      <div id="mo-mount-sec3"></div>
+      <div id="mo-mount-sec4"></div>
+      <div id="mo-mount-lookfirst"></div>
+      <div id="mo-mount-sec5"></div>
+      <div id="mo-mount-sec6"></div>
+      <div id="mo-mount-sec7"></div>
+      <div id="mo-mount-footer"></div>
+    </main>
+    <div id="mo-mount-rightside"></div>
+  </div>
+  <div id="mo-mount-sticky"></div>
+</div>`;
+
+  const mount = (mod, id, label) => {
+    try {
+      const el = container.querySelector('#' + id);
+      if (!el || !mod || typeof mod.render !== 'function') return;
+      const handle = mod.render(el, ctx);
+      if (handle && typeof handle.destroy === 'function') _activeMounts.push(handle);
+    } catch (e) {
+      console.error('[market-overview] mount failed:', label, e);
+    }
+  };
+
+  mount(Header,    'mo-mount-header',    'header');
+  mount(Sec1,      'mo-mount-sec1',      'section-1');
+  mount(Sec2,      'mo-mount-sec2',      'section-2');
+  mount(Sec3,      'mo-mount-sec3',      'section-3');
+  mount(Sec4,      'mo-mount-sec4',      'section-4');
+  mount(LookFirst, 'mo-mount-lookfirst', 'look-first');
+  mount(Sec5,      'mo-mount-sec5',      'section-5');
+  mount(Sec6,      'mo-mount-sec6',      'section-6');
+  mount(Sec7,      'mo-mount-sec7',      'section-7');
+  mount(Footer,    'mo-mount-footer',    'footer');
+  mount(RightSide, 'mo-mount-rightside', 'right-sidebar');
+  mount(StickyBar, 'mo-mount-sticky',    'sticky-bar');
+
+  // Global delegated nav (covers any [data-ticker] that bypassed module wiring)
+  container.addEventListener('click', (ev) => {
+    const t = ev.target.closest('[data-ticker]');
+    if (t) goSymbol(t.dataset.ticker || 'NVDA');
+  });
+  return;
+
+  /* === legacy inline render kept below for fallback only — unreachable === */
   container.innerHTML = `
 <div class="mo-page" id="mo-page">
   ${buildHeader()}

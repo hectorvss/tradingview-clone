@@ -22,7 +22,22 @@ const PRICE_SCALE_MODE_LABELS = [
   ['percent', 'Porcentaje'],
   ['indexed', 'Indexada a 100'],
 ];
-import { generateNVDAData, computeEMA, computeSMA, loadCandles, getSymbolProfile, TF_SECONDS } from './data.js';
+import { generateNVDAData, computeEMA, computeSMA, loadCandles, getSymbolProfile, TF_SECONDS, openLiveStream, toBinanceSymbol } from './data.js';
+import { createVolumeProfile } from './volume-profile.js';
+import { createMultiChartLayout } from './multi-chart.js';
+import { createLiveFeed } from './live-feed.js';
+import { renderMonthlyReturnsHeatmap, renderGridHeatmap, computeMonthlyReturns, computeCorrelationMatrix } from './heatmap.js';
+import { wireExtras } from './extras-integration.js';
+import { createNativeTrendLine, createNativeRectangle } from './plugins/native-drawing-tools.js';
+import { openSymbolInfoModal } from './symbol-info-modal.js';
+import { createAlertManager } from './alert-manager.js';
+import { createNewsIdeasPane } from './news-ideas-pane.js';
+import { createDrawingTemplateManager } from './drawing-templates.js';
+import { createSymbolCompareModal } from './multi-tf-compare.js';
+import { createObjectTree, createDataWindow } from './object-tree-data-window.js';
+import { createTradingPanel, createDOMPanel, createTimeSalesPanel } from './trading-panel.js';
+import { createStrategyTesterPanel } from './strategy-tester-ui.js';
+import { createWatchlistManager, createLayoutManager } from './watchlist-layouts-manager.js';
 import {
   SMA, EMA, WMA, RSI, MACD, BB, Stochastic, ATR, ADX, VWAP,
   Momentum, OBV, CCI, WilliamsR, Ichimoku,
@@ -33,6 +48,10 @@ import {
   VolumeOscillator,
   INDICATOR_CATALOG, INDICATOR_PALETTE,
 } from './indicators.js';
+import {
+  FairValueGap, OrderBlocks, BreakOfStructure, ChangeOfCharacter,
+  LiquiditySweeps, VolumeDelta, AnchoredVolumeProfile,
+} from './indicators-smc.js';
 import { createDrawingManager } from './drawing-tools.js';
 import { backtest, PRESET_STRATEGIES } from './backtester.js';
 
@@ -369,6 +388,7 @@ const LEFT_TOOL_MENUS = {
         { id: 'ch-eraser', label: 'Borrador',      svg: CH_GLYPHS.eraser },
       ]},
       { isToggle: true, id: 'ch-longpress-hint', label: 'Sugerencia sobre valores al pulsar de forma prolongada' },
+      { isToggle: true, id: 'ch-ohlc-tooltip', label: 'Mostrar OHLC al pasar el cursor', defaultOn: true },
     ]
   },
   // 5th icon: Predicción y proyección
@@ -591,6 +611,7 @@ function buildTopBar() {
         <div class="tb-symbol" id="symbolPill" title="Cambiar símbolo">
           <span class="tb-symbol-chev">▾</span>
           <span class="tb-symbol-text">NVDA</span>
+          <button class="tb-symbol-info" id="symbolInfoBtn" title="Información del símbolo" style="background:none;border:none;color:#787b86;cursor:pointer;padding:0 4px;font-size:11px">ⓘ</button>
           <button class="tb-symbol-add" id="symbolAddBtn" title="Añadir símbolo de comparación">
             <div>${img(TOP.add, 18, 18)}</div>
           </button>
@@ -1244,16 +1265,10 @@ function mountChart(container, candles) {
     catch { if (typeof series.setMarkers === 'function') series.setMarkers(markers); }
   }
 
-  // Last close price line — use the most recent real candle
+  // (Removed manual "last close" priceLine — lightweight-charts already draws the
+  // live last-value line automatically via series default `priceLineVisible: true`.
+  // Keeping a manual one created a second frozen line on top of it.)
   const last = realCandles[realCandles.length - 1];
-  series.createPriceLine({
-    price: last.close,
-    color: last.close >= last.open ? '#089981' : '#f23645',
-    lineWidth: 1,
-    lineStyle: LineStyle.Dashed,
-    axisLabelVisible: true,
-    title: state.symbol,
-  });
 
   // Volume color logic (red label if last bar down)
   const volNameEl = document.getElementById('volName');
@@ -1287,6 +1302,12 @@ function mountChart(container, candles) {
     alertLines: [],   // [{id, priceLine, ...}]
     nextPaneIndex: 1,
   };
+
+  // Wire all extras (tooltips, shading, plugins, alt chart types, advanced drawings, SMC, screenshot, infinite-scroll, watermark)
+  try {
+    _ctx.extras = wireExtras(chart, series, container, _ctx);
+    _restoreExtrasToggles();
+  } catch (e) { console.warn('[extras] wire failed', e); }
 
   // Apply persisted chart settings (Settings modal)
   try { applySettings(loadSettings(), /*persist*/ false); } catch {}
@@ -1366,6 +1387,9 @@ function mountChart(container, candles) {
       crossTip.style.display = 'none';
       return;
     }
+    // Respect user toggle (default ON)
+    const ohlcEnabled = _getToolToggleWithDefault('ch-ohlc-tooltip', true);
+    if (!ohlcEnabled) { crossTip.style.display = 'none'; return; }
     const d = p.seriesData.get(series);
     if (d) {
       updateLegend(d);
@@ -1490,6 +1514,28 @@ function mountChart(container, candles) {
     console.warn('[chart-view] createDrawingManager failed:', e);
     _dm = null;
   }
+
+  // Create SVG overlay used by advanced drawings (position-range, pitchfork-gann, elliott-text)
+  try {
+    let svg = container.querySelector('.drawing-overlay-svg');
+    if (!svg) {
+      svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'drawing-overlay-svg');
+      svg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;overflow:visible';
+      container.appendChild(svg);
+    }
+    if (_ctx) _ctx.svgOverlay = svg;
+  } catch (e) { console.warn('[chart-view] svg overlay failed', e); }
+
+  // Initialize native trend-line + rectangle drawing tools (lightweight-charts primitives)
+  try {
+    if (_ctx) {
+      _ctx.nativeTrend = createNativeTrendLine(chart, series, container, { color: '#2962FF', lineWidth: 2, showLabels: true });
+      _ctx.nativeRect  = createNativeRectangle(chart, series, container, { color: '#2962FF', fillColor: 'rgba(41,98,255,0.18)', lineWidth: 1 });
+      try { _ctx.nativeTrend.loadFromStorage(); } catch {}
+      try { _ctx.nativeRect.loadFromStorage(); } catch {}
+    }
+  } catch (e) { console.warn('[native drawings]', e); }
 }
 
 /* ---------- Tier-1 API additions ---------- */
@@ -1690,6 +1736,241 @@ function togglePane(paneIdx) {
   } catch {}
 }
 
+// ============================================================
+// TIER 3 wiring — Live stream, Volume Profile, Heatmap, Layout, Sim feed
+// ============================================================
+let _liveHandle = null;
+let _simHandle = null;
+let _vpHandle = null;
+let _hmModal = null;
+let _layoutModal = null;
+let _multiHandle = null;
+
+function _setBtnActive(id, on) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.background = on ? '#2962ff' : '#1e222d';
+  el.style.borderColor = on ? '#2962ff' : '#2a2e39';
+  el.style.color = on ? '#fff' : '#b2b5be';
+}
+
+let _liveTickCount = 0;
+let _liveTickTimer = null;
+let _liveLastPrice = null;
+
+function toggleLiveStream() {
+  if (_liveHandle) {
+    try { _liveHandle.close(); } catch {}
+    _liveHandle = null;
+    _setBtnActive('liveToggleBtn', false);
+    const dot = document.getElementById('liveDot'); if (dot) { dot.style.background = '#787b86'; dot.style.boxShadow=''; dot.style.animation=''; }
+    if (_liveTickTimer) { clearInterval(_liveTickTimer); _liveTickTimer = null; }
+    const label = document.getElementById('liveLabel'); if (label) label.textContent = 'LIVE';
+    return;
+  }
+  if (!_ctx || !_ctx.series) return;
+  const symbol = state.symbol || 'NVDA';
+  const tf = state.tf || '1D';
+  _liveTickCount = 0;
+  let _firstTick = true;
+  let _lastFlashColor = null;
+  const handle = openLiveStream(symbol, tf, (bar) => {
+    try {
+      _ctx.series.update({ time: bar.time, open: bar.open, high: bar.high, low: bar.low, close: bar.close });
+      if (_ctx.vol && bar.volume != null) {
+        _ctx.vol.update({ time: bar.time, value: bar.volume, color: bar.close >= bar.open ? '#08998166' : '#f2364566' });
+      }
+      setPills(bar.close);
+      // Price-flash effect on the OHLC header (TradingView-style)
+      try {
+        if (_liveLastPrice != null) {
+          const dir = bar.close > _liveLastPrice ? 'up' : bar.close < _liveLastPrice ? 'dn' : null;
+          if (dir) flashPrice(dir);
+        }
+      } catch {}
+      _liveTickCount++;
+      _liveLastPrice = bar.close;
+      // Auto-scroll to real-time on first tick so user sees the live candle
+      if (_firstTick) {
+        try { _ctx.chart.timeScale().scrollToRealTime(); } catch {}
+        _firstTick = false;
+      }
+    } catch {}
+  }, { mode: 'trade' });
+  _liveHandle = handle;
+  _setBtnActive('liveToggleBtn', true);
+  const dot = document.getElementById('liveDot');
+  if (dot) {
+    dot.style.background = '#089981';
+    dot.style.boxShadow = '0 0 8px #089981';
+    dot.style.animation = 'liveDotPulse 1s ease-in-out infinite';
+    // inject keyframes once
+    if (!document.getElementById('liveDotKf')) {
+      const st = document.createElement('style');
+      st.id = 'liveDotKf';
+      st.textContent = '@keyframes liveDotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.85)}}';
+      document.head.appendChild(st);
+    }
+  }
+  // Tick-rate counter every second
+  _liveTickTimer = setInterval(() => {
+    const label = document.getElementById('liveLabel');
+    if (!label) return;
+    const provider = handle.provider || '';
+    const tag = provider.includes('binance-trade') ? 'WS·TRADE'
+              : provider.includes('binance-kline') ? 'WS·KLINE'
+              : provider.includes('coinbase')      ? 'COINBASE'
+              : 'POLL';
+    label.textContent = `LIVE · ${tag} · ${_liveTickCount}/s`;
+    _liveTickCount = 0;
+  }, 1000);
+}
+
+function toggleVolumeProfile() {
+  if (_vpHandle) {
+    try { _vpHandle.destroy && _vpHandle.destroy(); } catch {}
+    _vpHandle = null;
+    _setBtnActive('volProfileBtn', false);
+    return;
+  }
+  if (!_ctx || !_ctx.chart || !_ctx.series) return;
+  try {
+    _vpHandle = createVolumeProfile(_ctx.chart, _ctx.series, _ctx.container, {
+      candles: _ctx.candles, bins: 60, opacity: 0.55,
+    });
+    _setBtnActive('volProfileBtn', true);
+  } catch (e) { console.error('[vp]', e); }
+}
+
+function toggleSimFeed() {
+  if (_simHandle) {
+    try { _simHandle.stop && _simHandle.stop(); } catch {}
+    try { _simHandle.close && _simHandle.close(); } catch {}
+    _simHandle = null;
+    _setBtnActive('simFeedBtn', false);
+    return;
+  }
+  if (!_ctx) return;
+  try {
+    _simHandle = createLiveFeed({
+      series: _ctx.series, volumeSeries: _ctx.vol,
+      timeframe: state.tf || '1D',
+      lastCandle: _ctx.lastCandle,
+      onTick: (p) => setPills(p),
+    });
+    if (_simHandle && _simHandle.start) _simHandle.start();
+    _setBtnActive('simFeedBtn', true);
+  } catch (e) { console.error('[sim]', e); }
+}
+
+function openHeatmapModal() {
+  if (_hmModal) { _hmModal.remove(); _hmModal = null; _setBtnActive('heatmapBtn', false); return; }
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center';
+  overlay.innerHTML = `
+    <div style="background:#131722;border:1px solid #2a2e39;border-radius:10px;padding:18px;max-width:1100px;width:92%;max-height:88vh;overflow:auto;color:#d1d4dc">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0;font-size:14px">Heatmap — Rentabilidad mensual & Correlación</h3>
+        <button id="hmClose" style="background:#1e222d;color:#fff;border:1px solid #2a2e39;border-radius:4px;padding:4px 10px;cursor:pointer">✕</button>
+      </div>
+      <div style="margin-bottom:18px">
+        <div style="font-size:11px;color:#787b86;margin-bottom:6px;text-transform:uppercase">Rentabilidad mensual (${state.symbol||'NVDA'})</div>
+        <div id="hmMonthly"></div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#787b86;margin-bottom:6px;text-transform:uppercase">Correlación con índices (sintética)</div>
+        <div id="hmCorr"></div>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  _hmModal = overlay;
+  _setBtnActive('heatmapBtn', true);
+  overlay.querySelector('#hmClose').addEventListener('click', openHeatmapModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) openHeatmapModal(); });
+
+  try {
+    const monthly = computeMonthlyReturns(_ctx.candles || []);
+    renderMonthlyReturnsHeatmap(overlay.querySelector('#hmMonthly'), { data: monthly });
+  } catch (e) { overlay.querySelector('#hmMonthly').textContent = 'Sin datos suficientes.'; }
+
+  // Synthetic correlation matrix from candles + variants
+  try {
+    const c = _ctx.candles || [];
+    const variants = [
+      { name: state.symbol||'NVDA', candles: c },
+      { name: 'IBEX 35', candles: c.map(x => ({...x, close: x.close*0.98 + Math.sin(x.time/86400)*2})) },
+      { name: 'S&P 500', candles: c.map(x => ({...x, close: x.close*1.01 + Math.cos(x.time/86400)*1.5})) },
+      { name: 'NASDAQ', candles: c.map(x => ({...x, close: x.close*1.02 + Math.sin(x.time/172800)*3})) },
+      { name: 'DAX',    candles: c.map(x => ({...x, close: x.close*0.99 + Math.cos(x.time/172800)*2})) },
+      { name: 'BTC',    candles: c.map((x,i) => ({...x, close: x.close + Math.sin(i/12)*8})) },
+    ];
+    const m = computeCorrelationMatrix(variants);
+    renderGridHeatmap(overlay.querySelector('#hmCorr'), {
+      matrix: m.matrix, rowLabels: m.labels, colLabels: m.labels,
+      format: 'corr', scheme: 'red-white-green', min: -1, max: 1,
+    });
+  } catch (e) { console.warn('[hm corr]', e); }
+}
+
+function openLayoutModal() {
+  if (_layoutModal) { _layoutModal.remove(); _layoutModal = null; _setBtnActive('layoutBtn', false); return; }
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center';
+  overlay.innerHTML = `
+    <div style="background:#131722;border:1px solid #2a2e39;border-radius:10px;padding:18px;max-width:1300px;width:96%;height:86vh;display:flex;flex-direction:column;color:#d1d4dc">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="display:flex;gap:6px;align-items:center">
+          <h3 style="margin:0;font-size:13px">Multi-chart</h3>
+          <button data-layout="1x2" style="margin-left:14px;background:#1e222d;color:#b2b5be;border:1px solid #2a2e39;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:11px">1×2</button>
+          <button data-layout="2x1" style="background:#1e222d;color:#b2b5be;border:1px solid #2a2e39;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:11px">2×1</button>
+          <button data-layout="2x2" style="background:#2962ff;color:#fff;border:1px solid #2962ff;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:11px">2×2</button>
+          <button data-layout="3x1" style="background:#1e222d;color:#b2b5be;border:1px solid #2a2e39;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:11px">3×1</button>
+        </div>
+        <button id="layClose" style="background:#1e222d;color:#fff;border:1px solid #2a2e39;border-radius:4px;padding:4px 10px;cursor:pointer">✕</button>
+      </div>
+      <div id="layMount" style="flex:1;min-height:0"></div>
+    </div>`;
+  document.body.appendChild(overlay);
+  _layoutModal = overlay;
+  _setBtnActive('layoutBtn', true);
+  const close = () => openLayoutModal();
+  overlay.querySelector('#layClose').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+  const renderLayout = (rows, cols, symbols) => {
+    try { if (_multiHandle && _multiHandle.destroy) _multiHandle.destroy(); } catch {}
+    const mount = overlay.querySelector('#layMount');
+    mount.innerHTML = '';
+    const charts = symbols.map((sym, i) => ({
+      symbol: sym, timeframe: state.tf || '1D', candles: _ctx.candles || [],
+    }));
+    try {
+      _multiHandle = createMultiChartLayout(mount, { rows, cols, charts, syncCrosshair: true });
+    } catch (e) {
+      console.error('[layout]', e);
+      mount.textContent = 'Error montando layout: ' + e.message;
+    }
+  };
+
+  const symbolsPool = [state.symbol||'NVDA', 'AAPL', 'MSFT', 'TSLA', 'BTCUSDT', 'ETHUSDT'];
+  renderLayout(2, 2, symbolsPool.slice(0, 4));
+
+  overlay.querySelectorAll('[data-layout]').forEach(b => b.addEventListener('click', () => {
+    const [r, c] = b.dataset.layout.split('x').map(Number);
+    overlay.querySelectorAll('[data-layout]').forEach(x => { x.style.background = '#1e222d'; x.style.borderColor='#2a2e39'; x.style.color='#b2b5be'; });
+    b.style.background = '#2962ff'; b.style.borderColor = '#2962ff'; b.style.color = '#fff';
+    renderLayout(r, c, symbolsPool.slice(0, r*c));
+  }));
+}
+
+function wireTier3Toolbar() {
+  document.getElementById('liveToggleBtn')?.addEventListener('click', toggleLiveStream);
+  document.getElementById('volProfileBtn')?.addEventListener('click', toggleVolumeProfile);
+  document.getElementById('simFeedBtn')?.addEventListener('click', toggleSimFeed);
+  document.getElementById('heatmapBtn')?.addEventListener('click', openHeatmapModal);
+  document.getElementById('layoutBtn')?.addEventListener('click', openLayoutModal);
+}
+
 // Expose a few helpers for testing / console use
 try {
   if (typeof window !== 'undefined') {
@@ -1699,6 +1980,17 @@ try {
       togglePane,
       getChart: () => _chart,
       getCtx:   () => _ctx,
+      toggleLive: toggleLiveStream,
+      toggleVolumeProfile,
+      toggleSimFeed,
+      openHeatmap: openHeatmapModal,
+      openLayout: openLayoutModal,
+      // Extras façade (tooltips, shading, alt chart types, advanced drawings, SMC, screenshot, etc.)
+      get extras() { return _ctx && _ctx.extras; },
+      // Convenience shortcuts
+      screenshot: (opts) => _ctx && _ctx.extras && _ctx.extras.takeScreenshot(opts),
+      setChartType: (type, opts) => _ctx && _ctx.extras && _ctx.extras.setChartType(type, _ctx.candles, opts),
+      smc: () => _ctx && _ctx.extras && _ctx.extras.smc,
     };
   }
 } catch {}
@@ -2052,7 +2344,7 @@ function openToolMenu(toolId, anchorEl) {
     // Section-level toggle row (no items, just a single switch + label)
     if (section.isToggle) {
       if (si > 0) html += `<div class="tm-divider"></div>`;
-      const on = !!_getToolToggle(section.id);
+      const on = _getToolToggleWithDefault(section.id, !!section.defaultOn);
       html += `<div class="tm-item tm-toggle-row" data-tool-item="${section.id}" data-toggle="1">
         <span class="tm-label">${section.label}</span>
         <span class="tm-toggle${on ? ' on' : ''}" data-toggle-for="${section.id}"></span>
@@ -2100,7 +2392,9 @@ function openToolMenu(toolId, anchorEl) {
     el.addEventListener('click', (ev) => {
       const id = el.dataset.toolItem;
       if (el.dataset.toggle === '1') {
-        const cur = !!_getToolToggle(id);
+        // Find section to know its default
+        const sec = (LEFT_TOOL_MENUS[toolId]?.sections || []).find(s => s.isToggle && s.id === id);
+        const cur = _getToolToggleWithDefault(id, !!(sec && sec.defaultOn));
         _setToolToggle(id, !cur);
         const tog = el.querySelector('.tm-toggle');
         if (tog) tog.classList.toggle('on', !cur);
@@ -2115,7 +2409,12 @@ function openToolMenu(toolId, anchorEl) {
       }
       if (id === 'trend-line') {
         closeToolMenu();
-        activateTrendlineMode();
+        // Prefer the native lightweight-charts primitive trend line (imported from plugin examples).
+        if (_ctx && _ctx.nativeTrend) {
+          try { _ctx.nativeTrend.activate(); } catch (e) { console.warn('[trend-line] native failed, falling back', e); activateTrendlineMode(); }
+        } else {
+          activateTrendlineMode();
+        }
         ev.stopPropagation();
         return;
       }
@@ -2132,9 +2431,80 @@ function openToolMenu(toolId, anchorEl) {
         ev.stopPropagation();
         return;
       }
-      if (_dm && id === 'rect') {
+      if (id === 'rect') {
         closeToolMenu();
-        _dm.activate('rect');
+        // Prefer native lightweight-charts primitive rectangle.
+        if (_ctx && _ctx.nativeRect) {
+          try { _ctx.nativeRect.activate(); } catch (e) { console.warn('[rect] native failed, falling back', e); if (_dm) _dm.activate('rect'); }
+        } else if (_dm) { _dm.activate('rect'); }
+        ev.stopPropagation();
+        return;
+      }
+      // === New advanced drawings (position-range, pitchfork-gann, elliott-text) ===
+      const ADV_MAP = {
+        // Position / range tools (5th icon "predict")
+        'long-pos':   { reg: 'position',  key: 'long' },
+        'short-pos':  { reg: 'position',  key: 'short' },
+        'range-p':    { reg: 'position',  key: 'priceRange' },
+        'range-d':    { reg: 'position',  key: 'dateRange' },
+        'range-pd':   { reg: 'position',  key: 'priceRange' }, // fallback
+        // Pitchfork variants (2nd icon "trend" → Tridentes)
+        'pitch':      { reg: 'pitchfork', key: 'andrews_pitchfork', variant: 'standard' },
+        'schiff':     { reg: 'pitchfork', key: 'andrews_pitchfork', variant: 'schiff' },
+        'schiff-mod': { reg: 'pitchfork', key: 'andrews_pitchfork', variant: 'modified-schiff' },
+        // Gann (3rd icon "fib" → Gann section)
+        'gann-grid':  { reg: 'pitchfork', key: 'gann_box' },
+        'gann-sq-fix':{ reg: 'pitchfork', key: 'gann_square', variant: 'sq144' },
+        'gann-sq':    { reg: 'pitchfork', key: 'gann_square' },
+        'gann-fan':   { reg: 'pitchfork', key: 'gann_fan' },
+        // Elliott (4th icon "patterns" → Ondas de Elliott)
+        'ell-imp':    { reg: 'elliott',   key: 'elliott_impulse' },
+        'ell-corr':   { reg: 'elliott',   key: 'elliott_correction' },
+        // Text (6th icon "text")
+        'text':       { reg: 'elliott',   key: 'text' },
+        'note':       { reg: 'elliott',   key: 'callout' },
+        'price-note': { reg: 'elliott',   key: 'callout' },
+        'comment':    { reg: 'elliott',   key: 'callout' },
+        // Icons (7th icon "icons" → Pinceles + Flechas)
+        'pencil':     { reg: 'elliott',   key: 'polyline' },
+        'highliter':  { reg: 'elliott',   key: 'polyline' },
+        'arrow':      { reg: 'elliott',   key: 'arrow' },
+        'arrow-mark': { reg: 'elliott',   key: 'arrow' },
+        'polyline':   { reg: 'elliott',   key: 'polyline' },
+      };
+      if (ADV_MAP[id] && _ctx && _ctx.extras && _ctx.svgOverlay) {
+        const m = ADV_MAP[id];
+        closeToolMenu();
+        try {
+          const reg = _ctx.extras.drawings.registries[m.reg];
+          let tool = null;
+          const opts = m.variant ? { variant: m.variant } : undefined;
+          if (m.reg === 'position') {
+            const entry = reg && reg[m.key];
+            const factory = entry && entry.factory;
+            if (factory) tool = factory(_ctx.svgOverlay, _chart, _ctx.series, opts);
+          } else if (m.reg === 'pitchfork') {
+            // PITCHFORK_GANN_TOOLS has a create(id, svg, chart, series, opts) method
+            if (typeof reg.create === 'function') {
+              tool = reg.create(m.key, _ctx.svgOverlay, _chart, _ctx.series, opts);
+            }
+          } else if (m.reg === 'elliott') {
+            const entry = reg && reg[m.key];
+            const factory = entry && entry.create;
+            if (factory) tool = factory(_ctx.svgOverlay, _chart, _ctx.series);
+          }
+          if (!tool) {
+            console.warn('[adv-draw] factory not found for', m);
+            return;
+          }
+          if (typeof tool.startDraw === 'function') tool.startDraw();
+          else if (typeof tool.activate === 'function') tool.activate();
+          else if (typeof tool.beginCreate === 'function') tool.beginCreate();
+          // Track for cleanup
+          _ctx._advDrawings = _ctx._advDrawings || [];
+          _ctx._advDrawings.push(tool);
+          console.log('[adv-draw] activated', id, '→', m);
+        } catch (e) { console.error('[adv-draw]', id, e); }
         ev.stopPropagation();
         return;
       }
@@ -2966,6 +3336,9 @@ function applyIndicator(entry, persist = true) {
     s.setData(data);
     seriesList.push(s);
     valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id && entry.id.startsWith('smc-')) {
+    // SMC indicators — overlay via createPriceLine/markers (no pane series, mostly visual)
+    try { _renderSmcIndicator(entry, candles, paneIndex, seriesList, valueByTime, lineOpts); } catch (e) { console.error('[smc]', e); }
   }
 
   const record = {
@@ -2989,6 +3362,127 @@ function applyIndicator(entry, persist = true) {
     lsSet(LS.indicators, state.indicators);
   }
   refreshLegendIndicators();
+}
+
+/**
+ * Render an SMC indicator. Uses price lines on the main candle series for
+ * zones (FVG/OB), markers for events (BOS/CHoCH/Sweeps), a histogram pane
+ * for VolumeDelta, and price lines for AVP POC/VAH/VAL.
+ *
+ * Mutates `seriesList` (so removeIndicatorByUid can clean up), and pushes any
+ * price-line handles into `seriesList[0]._smcPriceLines` for later removal.
+ */
+function _renderSmcIndicator(entry, candles, paneIndex, seriesList, valueByTime, lineOpts) {
+  if (!_ctx || !candles || !candles.length) return;
+  const mainSeries = _ctx.series;
+  const priceLineHandles = [];
+  const addPL = (opts) => {
+    try {
+      const pl = mainSeries.createPriceLine(opts);
+      priceLineHandles.push(pl);
+    } catch {}
+  };
+
+  if (entry.id === 'smc-fvg') {
+    const minSize = entry.params?.minSize ?? 0.001;
+    const gaps = FairValueGap(candles, { minSize });
+    for (const g of gaps) {
+      const color = g.type === 'bullish' ? '#089981' : '#f23645';
+      const style = g.filled ? LineStyle.Dotted : LineStyle.Dashed;
+      addPL({ price: g.top,    color, lineStyle: style, lineWidth: 1, axisLabelVisible: false, title: 'FVG' });
+      addPL({ price: g.bottom, color, lineStyle: style, lineWidth: 1, axisLabelVisible: false, title: '' });
+    }
+    valueByTime.primary = new Map();
+  } else if (entry.id === 'smc-ob') {
+    const lookback = entry.params?.lookback ?? 5;
+    const minMove  = entry.params?.minMove  ?? 0.02;
+    const obs = OrderBlocks(candles, { lookback, minMove });
+    const markers = [];
+    for (const ob of obs) {
+      const color = ob.type === 'bullish' ? '#089981' : '#f23645';
+      addPL({ price: ob.top,    color, lineStyle: LineStyle.Solid,  lineWidth: 1, axisLabelVisible: false, title: 'OB' });
+      addPL({ price: ob.bottom, color, lineStyle: LineStyle.Dashed, lineWidth: 1, axisLabelVisible: false, title: '' });
+      markers.push({
+        time: ob.time,
+        position: ob.type === 'bullish' ? 'belowBar' : 'aboveBar',
+        color, shape: ob.type === 'bullish' ? 'arrowUp' : 'arrowDown',
+        text: 'OB',
+      });
+    }
+    markers.sort((a, b) => a.time - b.time);
+    try { createSeriesMarkers(mainSeries, markers); } catch {}
+    valueByTime.primary = new Map();
+  } else if (entry.id === 'smc-bos') {
+    const lookback = entry.params?.lookback ?? 20;
+    const events = BreakOfStructure(candles, { lookback });
+    const markers = events.map(e => ({
+      time: e.time,
+      position: e.type === 'bos-up' ? 'belowBar' : 'aboveBar',
+      color: e.type === 'bos-up' ? '#089981' : '#f23645',
+      shape: e.type === 'bos-up' ? 'arrowUp' : 'arrowDown',
+      text: 'BOS',
+    })).sort((a, b) => a.time - b.time);
+    try { createSeriesMarkers(mainSeries, markers); } catch {}
+    valueByTime.primary = new Map();
+  } else if (entry.id === 'smc-choch') {
+    const lookback = entry.params?.lookback ?? 20;
+    const events = ChangeOfCharacter(candles, { lookback });
+    const markers = events.map(e => ({
+      time: e.time,
+      position: e.type === 'choch-up' ? 'belowBar' : 'aboveBar',
+      color: e.type === 'choch-up' ? '#26c6da' : '#ec407a',
+      shape: e.type === 'choch-up' ? 'arrowUp' : 'arrowDown',
+      text: 'CHoCH',
+    })).sort((a, b) => a.time - b.time);
+    try { createSeriesMarkers(mainSeries, markers); } catch {}
+    valueByTime.primary = new Map();
+  } else if (entry.id === 'smc-sweeps') {
+    const tolerance = entry.params?.tolerance ?? 0.0005;
+    const events = LiquiditySweeps(candles, { tolerance });
+    const markers = events.map(e => ({
+      time: e.time,
+      position: e.direction === 'up' ? 'aboveBar' : 'belowBar',
+      color: e.direction === 'up' ? '#f23645' : '#089981',
+      shape: e.direction === 'up' ? 'arrowDown' : 'arrowUp',
+      text: 'Sweep',
+    })).sort((a, b) => a.time - b.time);
+    try { createSeriesMarkers(mainSeries, markers); } catch {}
+    valueByTime.primary = new Map();
+  } else if (entry.id === 'smc-voldelta') {
+    const data = VolumeDelta(candles);
+    const histData = data.map(d => ({
+      time: d.time, value: d.delta,
+      color: d.delta >= 0 ? '#089981aa' : '#f23645aa',
+    }));
+    const sh = _chart.addSeries(HistogramSeries, {
+      priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
+      priceLineVisible: false, lastValueVisible: false,
+    }, paneIndex);
+    sh.setData(histData);
+    seriesList.push(sh);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.delta]));
+    valueByTime.cumulative = new Map(data.map(d => [d.time, d.cumulative]));
+  } else if (entry.id === 'smc-avp') {
+    const bins = entry.params?.bins ?? 60;
+    const anchorTime = entry.params?.anchorTime ?? candles[0].time;
+    const { poc, vah, val } = AnchoredVolumeProfile(candles, anchorTime, { bins });
+    if (poc != null) addPL({ price: poc, color: '#f7a600', lineStyle: LineStyle.Solid,  lineWidth: 2, axisLabelVisible: true, title: 'POC' });
+    if (vah != null) addPL({ price: vah, color: '#f7a600', lineStyle: LineStyle.Dashed, lineWidth: 1, axisLabelVisible: true, title: 'VAH' });
+    if (val != null) addPL({ price: val, color: '#f7a600', lineStyle: LineStyle.Dashed, lineWidth: 1, axisLabelVisible: true, title: 'VAL' });
+    console.log('[smc-avp]', { poc, vah, val });
+    valueByTime.primary = new Map();
+  }
+
+  // Attach price-line handles to a sentinel object so cleanup can remove them.
+  if (priceLineHandles.length) {
+    const sentinel = {
+      _smcPriceLines: priceLineHandles,
+      _smcMainSeries: mainSeries,
+    };
+    // Provide a no-op so chart.removeSeries(sentinel) is safe.
+    Object.defineProperty(sentinel, '__isSmcSentinel', { value: true });
+    seriesList.push(sentinel);
+  }
 }
 
 function removeIndicatorByUid(uid) {
@@ -3178,11 +3672,31 @@ function checkAlerts(price) {
 async function reloadChart() {
   const container = document.getElementById('nvda-chart');
   if (!container) return;
+  // Stop any existing live stream before reloading
+  if (_liveHandle) { try { _liveHandle.close(); } catch {} _liveHandle = null; }
+  if (_liveTickTimer) { clearInterval(_liveTickTimer); _liveTickTimer = null; }
   const { candles, source } = await loadCandles(state.symbol, state.tf, 500);
   state.source = source;
   mountChart(container, candles);
   updateLegendHeader();
   persist();
+  // Auto-activate LIVE for crypto symbols (Binance WS sub-second)
+  if (toBinanceSymbol(state.symbol)) {
+    setTimeout(() => { try { toggleLiveStream(); } catch {} }, 250);
+  }
+}
+
+// TradingView-style price flash: highlight OHLC header in green/red briefly on tick
+function flashPrice(direction) {
+  const els = document.querySelectorAll('.legend-ohlc, .ohlc-value, #symbolPill, .tb-symbol-text');
+  const color = direction === 'up' ? '#089981' : '#f23645';
+  els.forEach(el => {
+    if (!el) return;
+    el.style.transition = 'color 80ms ease-out';
+    el.style.color = color;
+    clearTimeout(el._flashT);
+    el._flashT = setTimeout(() => { el.style.color = ''; }, 220);
+  });
 }
 
 function updateLegendHeader() {
@@ -3210,9 +3724,76 @@ async function changeTimeframe(tf) {
   state.tf = tf;
   await reloadChart();
 }
+// Custom-series types from lightweight-charts plugin examples (rendered as separate ICustomSeriesPaneView).
+const CUSTOM_SERIES_TYPES = new Set([
+  'rounded-candles', 'pretty-histogram', 'hlc-area', 'lollipop', 'box-whisker', 'dual-histogram',
+]);
+
 async function changeChartType(ct) {
   state.chartType = ct;
+  // If it's an alternative (transformed) type, reload base candles then apply transform
+  const altKey = ALT_CHART_TYPE_MAP && ALT_CHART_TYPE_MAP[ct];
+  if (altKey) {
+    const prev = state.chartType;
+    state.chartType = 'candles';
+    await reloadChart();
+    state.chartType = prev;
+    try {
+      if (_ctx && _ctx.extras) _ctx.extras.setChartType(altKey, _ctx.candles);
+      _showToast?.(`Gráfico: ${ct}`);
+    } catch (e) { console.error('[chart-type]', e); }
+    return;
+  }
+  // If it's a custom-series type, mount base then add custom series with adapted data
+  if (CUSTOM_SERIES_TYPES.has(ct)) {
+    const prev = state.chartType;
+    state.chartType = 'candles';
+    await reloadChart();
+    state.chartType = prev;
+    try {
+      const ex = _ctx && _ctx.extras;
+      if (!ex) return;
+      // Hide the base candle series so only the custom one shows
+      try { _ctx.series.applyOptions({ visible: false }); } catch {}
+      try { _ctx.vol?.applyOptions({ visible: false }); } catch {}
+      const data = _adaptDataForCustomSeries(ct, _ctx.candles);
+      const cs = ex.addCustomSeries(ct, {});
+      if (cs && data) {
+        try { cs.setData(data); } catch (e) { console.warn('[custom-series setData]', e); }
+        _ctx._customSeries = cs;
+      }
+      _showToast?.(`Gráfico: ${ct}`);
+    } catch (e) { console.error('[custom-chart-type]', e); }
+    return;
+  }
   await reloadChart();
+}
+
+function _adaptDataForCustomSeries(type, candles) {
+  if (!candles || !candles.length) return [];
+  switch (type) {
+    case 'rounded-candles':
+      return candles.map(c => ({ time: c.time, open: c.open, high: c.high, low: c.low, close: c.close }));
+    case 'pretty-histogram':
+    case 'lollipop':
+    case 'dual-histogram':
+      return candles.map((c, i, arr) => ({ time: c.time, value: i > 0 ? c.close - arr[i-1].close : 0 }));
+    case 'hlc-area':
+      return candles.map(c => ({ time: c.time, high: c.high, low: c.low, close: c.close }));
+    case 'box-whisker': {
+      // Synthetic: rolling 20-bar percentiles (placeholder visualization)
+      const out = [];
+      for (let i = 19; i < candles.length; i++) {
+        const w = candles.slice(i - 19, i + 1).map(x => x.close).sort((a,b) => a - b);
+        out.push({
+          time: candles[i].time,
+          low: w[0], q1: w[5], median: w[10], q3: w[15], high: w[19],
+        });
+      }
+      return out;
+    }
+    default: return [];
+  }
 }
 
 /* =========================================================================
@@ -3224,13 +3805,31 @@ const TOOL_TOGGLE_LS = 'tv.toolToggles';
 function _getToolToggle(id) {
   try { return (JSON.parse(localStorage.getItem(TOOL_TOGGLE_LS) || '{}'))[id]; } catch { return false; }
 }
+function _getToolToggleWithDefault(id, def) {
+  try {
+    const o = JSON.parse(localStorage.getItem(TOOL_TOGGLE_LS) || '{}');
+    return id in o ? !!o[id] : def;
+  } catch { return def; }
+}
 function _setToolToggle(id, val) {
   try {
     const o = JSON.parse(localStorage.getItem(TOOL_TOGGLE_LS) || '{}');
     o[id] = val;
     localStorage.setItem(TOOL_TOGGLE_LS, JSON.stringify(o));
   } catch {}
+  // Wire to UI side-effects
+  try {
+    if (id === 'ch-ohlc-tooltip') {
+      // Hide immediately if just turned off
+      if (!val) {
+        const t = document.getElementById('crossTip');
+        if (t) t.style.display = 'none';
+      }
+    }
+  } catch (e) { console.warn('[toggle wire]', e); }
 }
+
+function _restoreExtrasToggles() { /* no-op now — toggles are read live */ }
 
 const MAGNET_LS = 'tv.magnetMode';
 function _getMagnetMode() { try { return localStorage.getItem(MAGNET_LS) || 'weak'; } catch { return 'weak'; } }
@@ -3305,12 +3904,35 @@ const CHART_TYPE_GROUPS = [
     { id: 'tpo',          label: 'Oportunidad de precios en el tiempo',      icon: CTG.tpo, stub: true },
     { id: 'vps',          label: 'Perfil de volumen de sesión',              icon: CTG.vps, stub: true },
   ],
-  // Group 6
+  // Group 6 — alternative chart types (live, transformed via extras-integration)
   [
     { id: 'heikin',       label: 'Heikin Ashi',                              icon: CTG.heikin },
-    { id: 'renko',        label: 'Renko',                                    icon: CTG.renko, stub: true },
+    { id: 'renko',        label: 'Renko',                                    icon: CTG.renko },
+    { id: 'line-break',   label: 'Line Break (3)',                           icon: CTG.lineStep || CTG.line },
+    { id: 'range-bars',   label: 'Range bars',                               icon: CTG.bar },
+    { id: 'pf',           label: 'Point & Figure',                           icon: CTG.columns },
+    { id: 'kagi',         label: 'Kagi',                                     icon: CTG.line },
+  ],
+  // Group 7 — custom series (native ICustomSeriesPaneView plugins from lightweight-charts)
+  [
+    { id: 'rounded-candles', label: 'Velas redondeadas',                     icon: CTG.candle },
+    { id: 'pretty-histogram',label: 'Histograma con gradiente',              icon: CTG.columns },
+    { id: 'hlc-area',        label: 'Área HLC (Yahoo style)',                icon: CTG.areaHLC || CTG.area },
+    { id: 'lollipop',        label: 'Lollipop',                              icon: CTG.line },
+    { id: 'box-whisker',     label: 'Box-Whisker (estadístico)',             icon: CTG.bar },
+    { id: 'dual-histogram',  label: 'Histograma bipolar (+/-)',              icon: CTG.columns },
   ],
 ];
+
+// Maps chart-type id from the menu to the transformer key in extras-integration.
+const ALT_CHART_TYPE_MAP = {
+  'heikin':     'heikin-ashi',
+  'renko':      'renko',
+  'line-break': 'line-break',
+  'range-bars': 'range',
+  'pf':         'pf',
+  'kagi':       'kagi',
+};
 
 function _showToast(msg) {
   let t = document.getElementById('tvToast');
@@ -4788,6 +5410,9 @@ function wireTopbar() {
     tradePop.style.display = 'block';
   });
 
+  // === TIER 3 TOOLBAR WIRING (Live, VolProfile, Heatmap, Layout, SimFeed) ===
+  try { wireTier3Toolbar(); } catch (e) { console.warn('[tier3] wire failed', e); }
+
   // Symbol search popup
   const symPop = document.getElementById('symPop');
   const symInput = document.getElementById('symInput');
@@ -4914,14 +5539,22 @@ function wireTopbar() {
   const rbBtns = document.querySelectorAll('.rb-icon');
   rbBtns.forEach((btn, idx) => {
     btn.addEventListener('click', () => {
-      if (idx === 0) { openWatchPanel(); return; }
-      if (idx === 1) {
-        openAlertModal();
-        return;
-      }
+      if (idx === 0) { openWatchPanel(); return; }            // Watchlist (compat)
+      if (idx === 1) { openAlertManagerPanel(); return; }     // Alertas
+      if (idx === 2) { openObjectTreePanel(); return; }       // Árbol de objetos y ventana de datos
+      if (idx === 3) { openTradingPanelSidebar(); return; }   // Chats → reusar como trading panel
+      if (idx === 4) { openCalendarSidePanel(); return; }     // Calendario económico
+      if (idx === 5) { openNewsIdeasPanel('news'); return; }  // Calendario noticias
+      if (idx === 6) { openNewsIdeasPanel('ideas'); return; } // Ideas publicadas
       // Stub: open a generic side panel
       openStubPanel(RIGHT_ICONS[idx]?.title || 'Panel');
     });
+  });
+
+  // Symbol info button (ⓘ inside the symbol pill)
+  document.getElementById('symbolInfoBtn')?.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    try { openSymbolInfoModal(state.symbol); } catch (e) { console.error('[symbol-info]', e); }
   });
 
   // Keyboard shortcuts
@@ -4980,6 +5613,121 @@ function wireTopbar() {
       ev.preventDefault();
       deleteDrawing(_ctx.selectedDrawingId);
     }
+  });
+}
+
+function _openSidePanel(id, title, mountFn) {
+  let p = document.getElementById(id);
+  const center = document.getElementById('center');
+  if (!p) {
+    p = document.createElement('div');
+    p.id = id;
+    p.className = 'side-panel';
+    p.style.cssText = 'position:absolute;top:0;right:46px;width:380px;height:100%;background:#131722;border-left:1px solid #2a2e39;display:flex;flex-direction:column;z-index:30';
+    p.innerHTML = `
+      <div class="sp-head" style="padding:10px 14px;border-bottom:1px solid #2a2e39;display:flex;justify-content:space-between;align-items:center">
+        <span class="sp-title" style="font-size:13px;font-weight:600;color:#d1d4dc">${title}</span>
+        <button class="sp-x" style="background:none;border:none;color:#787b86;font-size:18px;cursor:pointer">✕</button>
+      </div>
+      <div class="sp-body" id="${id}-body" style="flex:1;overflow:auto;padding:0"></div>`;
+    center.appendChild(p);
+    p.querySelector('.sp-x').addEventListener('click', () => { p.style.display = 'none'; });
+    try { mountFn(p.querySelector('.sp-body')); } catch (e) { console.error('[side-panel mount]', e); }
+  }
+  p.style.display = 'flex';
+}
+
+function openAlertManagerPanel() {
+  _openSidePanel('alertMgrPanel', 'Gestor de alertas', (mount) => {
+    const mgr = createAlertManager(mount, {});
+    mgr.render();
+  });
+}
+
+function openObjectTreePanel() {
+  _openSidePanel('objectTreePanel', 'Árbol de objetos · Ventana de datos', (mount) => {
+    mount.style.padding = '0';
+    mount.innerHTML = `
+      <div id="ot-mount" style="border-bottom:1px solid #2a2e39"></div>
+      <div id="dw-mount"></div>`;
+    const tree = createObjectTree(mount.querySelector('#ot-mount'), {
+      onToggleVisibility: (id, vis) => console.log('visibility', id, vis),
+      onDelete: (id) => deleteDrawing?.(id),
+      panes: [0, 1, 2],
+    });
+    // Compose items list from current chart state
+    const items = [];
+    if (_ctx) {
+      for (const ind of (_ctx.indicators || [])) {
+        items.push({ id: ind.uid, type: 'indicator', name: ind.label || ind.id, visible: ind.visible !== false, paneIndex: ind.paneIndex });
+      }
+      for (const dr of (_ctx.drawings || [])) {
+        items.push({ id: dr.id, type: 'drawing', name: dr.kind || 'drawing', visible: true });
+      }
+      for (const cmp of (_ctx.compares || [])) {
+        items.push({ id: cmp.uid, type: 'compare', name: cmp.symbol, visible: cmp.visible !== false });
+      }
+      for (const al of (state.alerts || [])) {
+        items.push({ id: al.id, type: 'alert', name: `${al.condition} ${al.value}`, visible: true });
+      }
+    }
+    tree.render(items);
+    const dw = createDataWindow(mount.querySelector('#dw-mount'), {});
+    dw.render();
+    // Push live values on crosshair move
+    try {
+      _chart.subscribeCrosshairMove((p) => {
+        if (!p || !p.time) return;
+        const d = p.seriesData.get(_ctx.series);
+        if (!d) return;
+        const ohlc = { time: p.time, open: d.open, high: d.high, low: d.low, close: d.close, volume: _ctx.volByTime.get(d.time) };
+        const indVals = [];
+        for (const ind of (_ctx.indicators || [])) {
+          const s = ind.seriesList?.[0];
+          if (!s) continue;
+          const sd = p.seriesData.get(s);
+          const v = sd?.value ?? sd?.close;
+          if (v != null) indVals.push({ id: ind.uid, name: ind.label || ind.id, color: ind.color, value: v });
+        }
+        dw.updateValues({ ohlc, indicators: indVals });
+      });
+    } catch {}
+  });
+}
+
+function openTradingPanelSidebar() {
+  _openSidePanel('tradingSidebar', 'Trading · DOM · Tape', (mount) => {
+    mount.style.padding = '0';
+    mount.innerHTML = `
+      <div id="tp-mount" style="border-bottom:1px solid #2a2e39;padding:8px"></div>
+      <div id="dom-mount" style="border-bottom:1px solid #2a2e39;height:280px;overflow:hidden"></div>
+      <div id="ts-mount" style="height:240px;overflow:hidden"></div>`;
+    const symbol = state.symbol || 'NVDA';
+    const price = _ctx?.lastCandle?.close || 100;
+    const tp = createTradingPanel(mount.querySelector('#tp-mount'), { symbol, price, equity: 100000, onOrder: (o) => console.log('order', o) });
+    const dom = createDOMPanel(mount.querySelector('#dom-mount'), { symbol, price, onPriceClick: (p) => tp.setLimitPrice?.(p) });
+    const ts = createTimeSalesPanel(mount.querySelector('#ts-mount'), { symbol, price });
+    tp.render(); dom.render(); ts.render();
+  });
+}
+
+function openCalendarSidePanel() {
+  _openSidePanel('calendarSidebar', 'Calendario económico', (mount) => {
+    const w = createEconomicCalendar(mount, { eventCount: 40 });
+    w.render();
+  });
+}
+
+function openNewsIdeasPanel(defaultTab = 'news') {
+  const id = 'newsIdeasPanel';
+  const existing = document.getElementById(id);
+  if (existing) { existing.style.display = 'flex'; return; }
+  _openSidePanel(id, defaultTab === 'ideas' ? 'Ideas' : 'Noticias', (mount) => {
+    const pane = createNewsIdeasPane(mount, {
+      defaultTab,
+      onSelectSymbol: (sym) => { window.location.hash = '#/chart/' + sym; },
+    });
+    pane.render();
   });
 }
 

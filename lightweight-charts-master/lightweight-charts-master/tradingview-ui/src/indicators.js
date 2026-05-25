@@ -909,6 +909,14 @@ export const INDICATOR_CATALOG = [
   { id: 'cmo',     name: 'Oscilador de Momento de Chande', category: 'Oscilador',         pane: 'new',  defaults: { period: 14 } },
   { id: 'roc',     name: 'Tasa de Cambio (ROC)',           category: 'Momentum',          pane: 'new',  defaults: { period: 12 } },
   { id: 'volosc',  name: 'Oscilador de Volumen',           category: 'Volumen',           pane: 'new',  defaults: { fast: 5, slow: 10 } },
+  // ---- Smart Money Concepts (SMC) ----
+  { id: 'smc-fvg',      name: 'Fair Value Gap',           category: 'SMC', pane: 'main', defaults: { minSize: 0.001 } },
+  { id: 'smc-ob',       name: 'Order Blocks',             category: 'SMC', pane: 'main', defaults: { lookback: 5, minMove: 0.02 } },
+  { id: 'smc-bos',      name: 'Break of Structure',       category: 'SMC', pane: 'main', defaults: { lookback: 20 } },
+  { id: 'smc-choch',    name: 'Change of Character',      category: 'SMC', pane: 'main', defaults: { lookback: 20 } },
+  { id: 'smc-sweeps',   name: 'Liquidity Sweeps',         category: 'SMC', pane: 'main', defaults: { tolerance: 0.0005 } },
+  { id: 'smc-voldelta', name: 'Volume Delta',             category: 'SMC', pane: 'new',  defaults: {} },
+  { id: 'smc-avp',      name: 'Anchored Volume Profile',  category: 'SMC', pane: 'main', defaults: { bins: 60 } },
 ];
 
 export const INDICATOR_PALETTE = [

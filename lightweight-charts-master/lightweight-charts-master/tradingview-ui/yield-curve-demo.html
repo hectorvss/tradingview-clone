@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Yield Curve + Price-Axis Demo</title>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			background: #0d1117;
+			color: #c9d1d9;
+			font-family: Inter, system-ui, -apple-system, sans-serif;
+			min-height: 100vh;
+		}
+		header {
+			padding: 18px 24px;
+			border-bottom: 1px solid rgba(255,255,255,0.06);
+		}
+		header h1 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+		header p  { margin: 0; font-size: 13px; color: #8b949e; }
+		.grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 24px;
+			padding: 24px;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		@media (min-width: 900px) {
+			.grid { grid-template-columns: 1fr 1fr; }
+		}
+		.card {
+			background: #161b22;
+			border: 1px solid rgba(255,255,255,0.06);
+			border-radius: 8px;
+			overflow: hidden;
+		}
+		.card h2 {
+			margin: 0;
+			padding: 12px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			border-bottom: 1px solid rgba(255,255,255,0.06);
+		}
+		.card .meta {
+			padding: 6px 16px 10px;
+			font-size: 12px;
+			color: #8b949e;
+		}
+		.chart-host {
+			width: 100%;
+			height: 380px;
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<h1>Yield Curve & Price-Axis Demo</h1>
+		<p>Two specialized lightweight-charts modes wrapped by <code>src/plugins/yield-curve-chart.js</code>.</p>
+	</header>
+
+	<div class="grid">
+		<div class="card">
+			<h2>US Treasury Yield Curve (sample)</h2>
+			<div class="meta">X = months to maturity &nbsp;&middot;&nbsp; Y = yield %</div>
+			<div id="yield-curve" class="chart-host"></div>
+		</div>
+
+		<div class="card">
+			<h2>Option Open Interest by Strike (sample)</h2>
+			<div class="meta">X = strike price (HorzScaleBehaviorPrice) &nbsp;&middot;&nbsp; Y = open interest</div>
+			<div id="price-axis" class="chart-host"></div>
+		</div>
+	</div>
+
+	<script type="module">
+		import {
+			createYieldCurve,
+			setYieldCurveData,
+			createPriceAxisChart,
+			setPriceAxisData,
+		} from '/src/plugins/yield-curve-chart.js';
+
+		// --- Yield curve ---------------------------------------------------
+		// Approximate US Treasury curve. time = months to maturity.
+		//   1M, 3M, 6M, 1Y, 2Y, 3Y, 5Y, 7Y, 10Y, 20Y, 30Y
+		const treasury = [
+			{ time: 1,   value: 5.32 },
+			{ time: 3,   value: 5.28 },
+			{ time: 6,   value: 5.10 },
+			{ time: 12,  value: 4.78 },
+			{ time: 24,  value: 4.42 },
+			{ time: 36,  value: 4.21 },
+			{ time: 60,  value: 4.08 },
+			{ time: 84,  value: 4.12 },
+			{ time: 120, value: 4.22 },
+			{ time: 240, value: 4.55 },
+			{ time: 360, value: 4.48 },
+		];
+
+		const yc = createYieldCurve(document.getElementById('yield-curve'), {
+			area: true,
+			smooth: true,
+			lineColor: '#4f8bff',
+			baselineColor: 'rgba(79,139,255,0.40)',
+			bottomColor: 'rgba(79,139,255,0.02)',
+		});
+		setYieldCurveData(yc, treasury);
+
+		// --- Price-axis chart (option open interest by strike) -------------
+		// Synthetic OI distribution centered around 450 with a fatter call side.
+		const oi = [];
+		for (let strike = 380; strike <= 520; strike += 5) {
+			const distance = strike - 450;
+			const base = Math.exp(-(distance * distance) / (2 * 18 * 18)) * 12000;
+			// Add a secondary bump near 470 (popular call strike).
+			const bump = Math.exp(-((strike - 470) * (strike - 470)) / (2 * 8 * 8)) * 4500;
+			oi.push({ time: strike, value: Math.round(base + bump) });
+		}
+
+		const pa = createPriceAxisChart(document.getElementById('price-axis'), {
+			area: true,
+			lineColor: '#ffb547',
+			topColor: 'rgba(255,181,71,0.40)',
+			bottomColor: 'rgba(255,181,71,0.02)',
+			priceMinMove: 1,
+		});
+		setPriceAxisData(pa, oi);
+
+		// Handle window resize defensively (autoSize covers most cases).
+		window.addEventListener('resize', () => {
+			yc.chart.timeScale().fitContent();
+			pa.chart.timeScale().fitContent();
+		});
+	</script>
+</body>
+</html>

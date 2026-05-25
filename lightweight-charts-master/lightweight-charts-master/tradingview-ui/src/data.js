@@ -291,6 +291,13 @@ function cacheGet(key) {
     if (!raw) return null;
     const { ts, data } = JSON.parse(raw);
     if (Date.now() - ts > CACHE_TTL_MS) return null;
+    // Invalidate stale cross-source cache: if symbol is now a Binance pair but cache is from
+    // a non-binance source, drop it so loadCandles can fetch fresh aligned data.
+    const sym = key.split('_')[0];
+    if (toBinanceSymbol(sym) && data && data.source !== 'binance') {
+      try { localStorage.removeItem('tv.data.' + key); } catch {}
+      return null;
+    }
     return data;
   } catch { return null; }
 }
@@ -339,14 +346,51 @@ export async function fetchYahoo(symbol, tf = '1D') {
 }
 
 /**
- * Public loader: try Yahoo, fall back to mock, with cache.
- * Returns { candles, source: 'yahoo' | 'mock' }.
+ * Fetch historical klines from Binance REST. Aligns perfectly with Binance WS streams.
+ */
+export async function fetchBinanceKlines(symbol, tf = '1m', limit = 500) {
+  const sym = toBinanceSymbol(symbol);
+  const tfb = TF_TO_BINANCE[tf] || '1m';
+  if (!sym) throw new Error('not a binance symbol');
+  const url = `https://api.binance.com/api/v3/klines?symbol=${sym}&interval=${tfb}&limit=${limit}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Binance HTTP ' + res.status);
+  const arr = await res.json();
+  return arr.map(k => ({
+    time:   Math.floor(k[0] / 1000),
+    open:   +k[1],
+    high:   +k[2],
+    low:    +k[3],
+    close:  +k[4],
+    volume: +k[5],
+  }));
+}
+
+/**
+ * Public loader: routes to the best free real-time source.
+ *  - crypto pair → Binance REST (aligns with Binance WS)
+ *  - other        → Yahoo Finance, fallback mock
+ * Returns { candles, source: 'binance' | 'yahoo' | 'mock' }.
  */
 export async function loadCandles(symbol, tf = '1D', bars = 500) {
   const key = `${symbol}_${tf}`;
   const cached = cacheGet(key);
   if (cached) return { candles: cached.candles, source: cached.source };
 
+  // CRYPTO route — Binance REST
+  if (toBinanceSymbol(symbol)) {
+    try {
+      const candles = await fetchBinanceKlines(symbol, tf, Math.min(bars, 1000));
+      if (candles && candles.length > 10) {
+        cacheSet(key, { candles, source: 'binance' });
+        return { candles, source: 'binance' };
+      }
+    } catch (e) {
+      console.warn('[data] Binance REST failed, falling back to Yahoo:', e.message);
+    }
+  }
+
+  // STOCK / FX / FUT route — Yahoo
   try {
     const candles = await fetchYahoo(symbol, tf);
     if (candles && candles.length > 10) {
@@ -361,6 +405,251 @@ export async function loadCandles(symbol, tf = '1D', bars = 500) {
     cacheSet(key, { candles, source: 'mock' });
     return { candles, source: 'mock' };
   }
+}
+
+/* =========================================================================
+   LIVE STREAMING — Yahoo polling + Binance WebSocket
+   ========================================================================= */
+
+const TF_TO_BINANCE = {
+  '1m':'1m','5m':'5m','15m':'15m','30m':'30m','1h':'1h','4h':'4h','1D':'1d','1S':'1w','1M':'1M'
+};
+const TF_TO_MS = {
+  '1m':60e3,'5m':300e3,'15m':900e3,'30m':1.8e6,'1h':3.6e6,'4h':14.4e6,'1D':86.4e6,'1S':604.8e6,'1M':2.628e9
+};
+
+/**
+ * Detect if symbol is a crypto pair routable through Binance WS.
+ * Accepts e.g. BTCUSDT, ETHUSDT, BINANCE:BTCUSDT, BTC-USD, BTCUSD, BTC/USD.
+ * Pairs ending in plain USD are remapped to USDT (Binance's most liquid quote).
+ */
+const KNOWN_CRYPTO_BASES = new Set([
+  'BTC','ETH','SOL','ADA','XRP','BNB','DOGE','AVAX','DOT','MATIC','LINK','LTC',
+  'BCH','ATOM','UNI','XLM','NEAR','ETC','APT','ARB','OP','SUI','INJ','ICP',
+  'FIL','TRX','SHIB','PEPE','HBAR','RNDR','RENDER','FET','GRT','AAVE','MKR',
+  'TAO','TON','WIF','BONK','FLOKI','JUP','PYTH','TIA','SEI','ORDI','WLD',
+]);
+
+export function toBinanceSymbol(symbol) {
+  if (!symbol) return null;
+  let s = String(symbol).toUpperCase();
+  if (s.includes(':')) s = s.split(':').pop();
+  s = s.replace(/[-\/]/g, '');
+  // Bare base symbol — assume USDT (check FIRST to avoid e.g. "BTC" matching BTC$ regex)
+  if (KNOWN_CRYPTO_BASES.has(s)) return s + 'USDT';
+  // Plain USD → remap to USDT (Binance does not list <X>USD spot, only USDT)
+  if (s.endsWith('USD')) {
+    const base = s.slice(0, -3);
+    if (KNOWN_CRYPTO_BASES.has(base)) return base + 'USDT';
+  }
+  // Already in correct Binance format (with explicit quote)
+  const m = s.match(/^([A-Z0-9]{2,10})(USDT|USDC|BUSD|FDUSD|BTC|ETH|BNB|EUR|TRY)$/);
+  if (m && KNOWN_CRYPTO_BASES.has(m[1])) return s;
+  return null;
+}
+
+/**
+ * Open a Binance WS RAW TRADE stream — ticks por cada operación ejecutada.
+ * Mucho más fluido (>10 ticks/s en BTC) que el kline stream.
+ * Agrega los trades en la vela actual del timeframe `tf` y emite onTick().
+ *
+ * onTick({ time, open, high, low, close, volume, isFinal:false, tickPrice })
+ */
+export function openBinanceTradeStream(symbol, tf, onTick) {
+  const sym = toBinanceSymbol(symbol);
+  if (!sym) return { close() {} };
+  const tfMs = TF_TO_MS[tf] || 60e3;
+  const url = `wss://stream.binance.com:9443/ws/${sym.toLowerCase()}@trade`;
+  let ws, closed = false, retry = 0, timer = null;
+  let bar = null; // { time, open, high, low, close, volume }
+
+  const bucketStart = (tsMs) => Math.floor(tsMs / tfMs) * (tfMs / 1000);
+
+  const connect = () => {
+    if (closed) return;
+    try { ws = new WebSocket(url); } catch (e) { return; }
+    ws.onmessage = (ev) => {
+      try {
+        const m = JSON.parse(ev.data);
+        // m.p price, m.q qty, m.T trade time ms
+        const px = +m.p, qty = +m.q, tsMs = +m.T;
+        if (!isFinite(px)) return;
+        const bucket = bucketStart(tsMs);
+        if (!bar || bar.time !== bucket) {
+          // close previous bar (final)
+          if (bar) {
+            try { onTick({ ...bar, isFinal: true }); } catch {}
+          }
+          bar = { time: bucket, open: px, high: px, low: px, close: px, volume: qty };
+        } else {
+          bar.high = Math.max(bar.high, px);
+          bar.low  = Math.min(bar.low, px);
+          bar.close = px;
+          bar.volume += qty;
+        }
+        onTick({ ...bar, isFinal: false, tickPrice: px });
+      } catch {}
+    };
+    ws.onerror = () => { try { ws.close(); } catch {} };
+    ws.onclose = () => {
+      if (closed) return;
+      retry = Math.min(retry + 1, 6);
+      timer = setTimeout(connect, 1000 * Math.pow(2, retry));
+    };
+  };
+  connect();
+  return {
+    close() {
+      closed = true;
+      if (timer) clearTimeout(timer);
+      try { ws && ws.close(); } catch {}
+    }
+  };
+}
+
+/**
+ * Open a Binance WS kline stream. Returns { close() }.
+ * onTick({ time, open, high, low, close, volume, isFinal })
+ */
+export function openBinanceStream(symbol, tf, onTick) {
+  const sym = toBinanceSymbol(symbol);
+  const tfb = TF_TO_BINANCE[tf] || '1m';
+  if (!sym) return { close() {} };
+  const url = `wss://stream.binance.com:9443/ws/${sym.toLowerCase()}@kline_${tfb}`;
+  let ws, closed = false, retry = 0, timer = null;
+  const connect = () => {
+    if (closed) return;
+    try { ws = new WebSocket(url); } catch (e) { console.warn('[binance ws] err', e); return; }
+    ws.onmessage = (ev) => {
+      try {
+        const m = JSON.parse(ev.data);
+        const k = m.k;
+        if (!k) return;
+        onTick({
+          time: Math.floor(k.t / 1000),
+          open: +k.o, high: +k.h, low: +k.l, close: +k.c,
+          volume: +k.v, isFinal: !!k.x,
+        });
+      } catch {}
+    };
+    ws.onerror = () => { try { ws.close(); } catch {} };
+    ws.onclose = () => {
+      if (closed) return;
+      retry = Math.min(retry + 1, 6);
+      timer = setTimeout(connect, 1000 * Math.pow(2, retry));
+    };
+  };
+  connect();
+  return {
+    close() {
+      closed = true;
+      if (timer) clearTimeout(timer);
+      try { ws && ws.close(); } catch {}
+    }
+  };
+}
+
+/**
+ * Poll Yahoo for the latest bar(s) of (symbol, tf). Calls onTick with last bar.
+ * Returns { close() }. Cadence chosen by timeframe: 5s (1m), 10s (5m+), 30s (intraday), 60s (daily+).
+ */
+export function startYahooPolling(symbol, tf, onTick, opts = {}) {
+  const cad = opts.cadenceMs || (
+    tf === '1m' ? 5000 :
+    (tf === '5m' || tf === '15m') ? 10000 :
+    (tf === '30m' || tf === '1h') ? 30000 : 60000
+  );
+  let closed = false;
+  let lastTime = null;
+  const tick = async () => {
+    if (closed) return;
+    try {
+      const bars = await fetchYahoo(symbol, tf);
+      if (bars && bars.length) {
+        const last = bars[bars.length - 1];
+        // Emit last bar (update or new)
+        onTick({ ...last, isFinal: lastTime != null && last.time > lastTime });
+        lastTime = last.time;
+      }
+    } catch (e) { /* swallow */ }
+    if (!closed) setTimeout(tick, cad);
+  };
+  setTimeout(tick, cad);
+  return { close() { closed = true; } };
+}
+
+/**
+ * Open a Coinbase WS trade stream — alternative free crypto feed.
+ * Coinbase Advanced Trade uses different symbol format (BTC-USD, ETH-USD).
+ */
+export function openCoinbaseTradeStream(symbol, tf, onTick) {
+  // Convert e.g. BTCUSDT -> BTC-USD
+  let s = String(symbol || '').toUpperCase().replace(':', '-');
+  if (s.endsWith('USDT')) s = s.slice(0, -4) + '-USD';
+  if (s.endsWith('USD') && !s.includes('-')) s = s.slice(0, -3) + '-USD';
+  const tfMs = TF_TO_MS[tf] || 60e3;
+  const bucketStart = (tsMs) => Math.floor(tsMs / tfMs) * (tfMs / 1000);
+  let ws, closed = false, bar = null, retry = 0, timer = null;
+  const connect = () => {
+    if (closed) return;
+    try { ws = new WebSocket('wss://ws-feed.exchange.coinbase.com'); } catch { return; }
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ type: 'subscribe', product_ids: [s], channels: ['matches'] }));
+    };
+    ws.onmessage = (ev) => {
+      try {
+        const m = JSON.parse(ev.data);
+        if (m.type !== 'match' && m.type !== 'last_match') return;
+        const px = +m.price, qty = +m.size, tsMs = new Date(m.time).getTime();
+        const bucket = bucketStart(tsMs);
+        if (!bar || bar.time !== bucket) {
+          if (bar) onTick({ ...bar, isFinal: true });
+          bar = { time: bucket, open: px, high: px, low: px, close: px, volume: qty };
+        } else {
+          bar.high = Math.max(bar.high, px); bar.low = Math.min(bar.low, px);
+          bar.close = px; bar.volume += qty;
+        }
+        onTick({ ...bar, isFinal: false, tickPrice: px });
+      } catch {}
+    };
+    ws.onerror = () => { try { ws.close(); } catch {} };
+    ws.onclose = () => {
+      if (closed) return;
+      retry = Math.min(retry + 1, 6);
+      timer = setTimeout(connect, 1000 * Math.pow(2, retry));
+    };
+  };
+  connect();
+  return { close() { closed = true; if (timer) clearTimeout(timer); try { ws && ws.close(); } catch {} } };
+}
+
+/**
+ * Unified live stream — picks the best free feed available.
+ *  - crypto symbol → Binance @trade WebSocket (sub-second, real ticks)
+ *  - everything else → Yahoo polling
+ *
+ * Options:
+ *   mode: 'trade' (default, sub-second) | 'kline' (1s aggregate) | 'auto'
+ *   provider: 'binance' (default) | 'coinbase'
+ *   pollMs: override Yahoo polling cadence (default adaptive 5–60s)
+ */
+export function openLiveStream(symbol, tf, onTick, opts = {}) {
+  const mode = opts.mode || 'trade';
+  const provider = opts.provider || 'binance';
+  if (toBinanceSymbol(symbol)) {
+    if (provider === 'coinbase') {
+      const h = openCoinbaseTradeStream(symbol, tf, onTick);
+      return { close: h.close, provider: 'coinbase-trade-ws' };
+    }
+    if (mode === 'kline') {
+      const h = openBinanceStream(symbol, tf, onTick);
+      return { close: h.close, provider: 'binance-kline-ws' };
+    }
+    const h = openBinanceTradeStream(symbol, tf, onTick);
+    return { close: h.close, provider: 'binance-trade-ws' };
+  }
+  const h = startYahooPolling(symbol, tf, onTick, { cadenceMs: opts.pollMs });
+  return { close: h.close, provider: 'yahoo-poll' };
 }
 
 // Bar chart data (e.g. Spain 10Y monthly bars)
