@@ -10,13 +10,34 @@ import {
   LineStyle,
   LineType,
   createSeriesMarkers,
+  createTextWatermark,
 } from 'lightweight-charts';
+
+// PriceScaleMode is an enum object in v5: 0=Normal 1=Log 2=Percentage 3=IndexedTo100.
+// Use raw numbers for compatibility across builds.
+const PRICE_SCALE_MODE = { normal: 0, log: 1, percent: 2, indexed: 3 };
+const PRICE_SCALE_MODE_LABELS = [
+  ['normal',  'Normal'],
+  ['log',     'Logarítmica'],
+  ['percent', 'Porcentaje'],
+  ['indexed', 'Indexada a 100'],
+];
 import { generateNVDAData, computeEMA, computeSMA, loadCandles, getSymbolProfile, TF_SECONDS } from './data.js';
 import {
   SMA, EMA, WMA, RSI, MACD, BB, Stochastic, ATR, ADX, VWAP,
   Momentum, OBV, CCI, WilliamsR, Ichimoku,
+  // Tier 2A — additional 20 indicators
+  DonchianChannel, KeltnerChannels, ParabolicSAR, SuperTrend, AroonIndicator,
+  ChaikinMoneyFlow, MFI, TRIX, PivotsHL, DEMA, TEMA, HMA, KAMA, VWMA,
+  PivotPoints, BollingerBandWidth, ChandeMomentumOscillator, PriceROC, ZLEMA,
+  VolumeOscillator,
   INDICATOR_CATALOG, INDICATOR_PALETTE,
 } from './indicators.js';
+import { createDrawingManager } from './drawing-tools.js';
+import { backtest, PRESET_STRATEGIES } from './backtester.js';
+
+// Drawing manager instance — created in mountChart, reused across symbol/TF changes
+let _dm = null;
 
 /* =========================================================================
    GLOBAL STATE + PERSISTENCE
@@ -48,10 +69,17 @@ const state = {
   watchlist:  lsGet(LS.watchlist, ['NVDA','AAPL','MSFT','TSLA','GOOGL','META','AMZN','NFLX','AMD','BTCUSD']),
   alerts:     lsGet(LS.alerts, []),       // [{symbol, op, price, id}]
   compares:   lsGet(LS.compares, []),     // [symbol]
-  layout:     lsGet(LS.layout, { candleBottom: 0.25 }),
+  layout:     lsGet(LS.layout, { candleBottom: 0.25, priceScaleMode: 'normal', watermarkVisible: false, paneHeights: {} }),
   drawings:   lsGet(LS.drawings, []),     // [{id, type:'trendline', p1:{time,price}, p2:{time,price}, color}]
+  signalMarkers: lsGet('tv.signalMarkers', []), // [{time, side:'buy'|'sell', label, color}]
   source:     'mock',
 };
+// Backward-compat: ensure new layout keys exist for users with older persisted state
+if (state.layout.priceScaleMode == null) state.layout.priceScaleMode = 'normal';
+// Watermark disabled by default — user explicitly requested no chart-bg label
+if (state.layout.watermarkVisible == null) state.layout.watermarkVisible = false;
+state.layout.watermarkVisible = false;  // force off until user opts in via Settings → Lienzo
+if (!state.layout.paneHeights) state.layout.paneHeights = {};
 
 function persist() {
   lsSet(LS.symbol, state.symbol);
@@ -63,6 +91,7 @@ function persist() {
   lsSet(LS.compares, state.compares);
   lsSet(LS.layout, state.layout);
   lsSet(LS.drawings, state.drawings);
+  try { localStorage.setItem('tv.signalMarkers', JSON.stringify(state.signalMarkers || [])); } catch {}
 }
 
 function saveDrawings() {
@@ -314,7 +343,34 @@ const G = {
   dblCurve: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 18c3 0 4-10 9-10s7 6 9 6"/><path d="M3 12c3 0 4-6 9-6s7 4 9 4"/></svg>',
 };
 
+// Glyphs for crosshair tool dropdown (1st icon — Cursor selector)
+const CH_GLYPHS = {
+  cross:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>',
+  dot:    '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/></svg>',
+  arrow:  '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l8 16 2-7 7-2z"/></svg>',
+  demo:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4z" fill="currentColor"/></svg>',
+  magic:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 20l13-13M14 4l2 2M18 8l2 2M12 2l1 2M20 4l1 2"/></svg>',
+  eraser: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M16 4l4 4-9 9H7l-3-3z"/><path d="M9 21h12"/></svg>',
+};
+
 const LEFT_TOOL_MENUS = {
+  // 1st icon: Cruz / Cursores
+  crosshair: {
+    width: 260,
+    sections: [
+      { items: [
+        { id: 'ch-cross', label: 'Cruce',          svg: CH_GLYPHS.cross  },
+        { id: 'ch-dot',   label: 'Punto',          svg: CH_GLYPHS.dot    },
+        { id: 'ch-arrow', label: 'Flecha',         svg: CH_GLYPHS.arrow  },
+        { id: 'ch-demo',  label: 'Demostración',   svg: CH_GLYPHS.demo   },
+        { id: 'ch-magic', label: 'Magia',          svg: CH_GLYPHS.magic  },
+      ]},
+      { items: [
+        { id: 'ch-eraser', label: 'Borrador',      svg: CH_GLYPHS.eraser },
+      ]},
+      { isToggle: true, id: 'ch-longpress-hint', label: 'Sugerencia sobre valores al pulsar de forma prolongada' },
+    ]
+  },
   // 5th icon: Predicción y proyección
   predict: {
     width: 280,
@@ -504,7 +560,14 @@ const BB_CALENDAR = '/src/icons/2502a872-6a70-4cfa-b961-de63ebef53c3.svg';
    HTML BUILDERS
    ========================================================================= */
 
+// Icon renderer — uses the SVG sprite (1 HTTP request total) for local icons,
+// fall back to <img> for any external URL. The sprite is loaded once on
+// first <use> reference; subsequent references are instant from cache.
 function img(src, w = 28, h = 28, alt = '') {
+  const m = src && typeof src === 'string' && src.match(/^\/src\/icons\/([a-f0-9-]+)\.svg$/);
+  if (m) {
+    return `<svg width="${w}" height="${h}" aria-label="${alt}" class="ic"><use href="/src/icons-sprite.svg#i-${m[1]}"/></svg>`;
+  }
   return `<img src="${src}" width="${w}" height="${h}" alt="${alt}" loading="lazy" />`;
 }
 
@@ -677,22 +740,64 @@ function buildCenter() {
   <!-- Floating crosshair tooltip -->
   <div class="cross-tip" id="crossTip" style="display:none"></div>
 
-  <!-- Replay panel (toggled by Reproducción button) -->
+  <!-- Floating shift-zoom selection tooltip -->
+  <div class="zoom-tip" id="zoomTip" style="display:none"></div>
+
+  <!-- Price-scale context menu (right-click on price axis) -->
+  <div class="scale-ctx" id="scaleCtx" style="display:none">
+    <div class="ctx-item" data-mode="normal">Normal</div>
+    <div class="ctx-item" data-mode="log">Logarítmica</div>
+    <div class="ctx-item" data-mode="percent">Porcentaje</div>
+    <div class="ctx-item" data-mode="indexed">Indexada a 100</div>
+  </div>
+
+  <!-- Auto-scale / reset button (bottom-right of chart area) -->
+  <button class="scale-btn" id="resetScaleBtn" title="Restablecer escala">⊙</button>
+
+  <!-- Replay panel (toggled by Reproducción button) — TradingView "Reproducir trading" style -->
   <div class="replay-panel" id="replayPanel" style="display:none">
-    <button class="rp-btn" title="Anterior">⏮</button>
+    <button class="rp-select-bar" id="rpSelectBar" title="Seleccionar punto de partida">
+      <span class="rp-scissor">✂</span>
+      <span class="rp-select-label">Seleccionar barra</span>
+      <span class="rp-chev">▾</span>
+    </button>
+    <button class="rp-btn rp-prev" id="rpPrev" title="Anterior">▏◀</button>
     <button class="rp-btn rp-play" id="rpPlay" title="Reproducir">▶</button>
-    <button class="rp-btn" title="Siguiente">⏭</button>
-    <span class="rp-sep"></span>
-    <span class="rp-label">Velocidad:</span>
-    <select class="rp-speed" id="rpSpeed">
+    <button class="rp-btn rp-speed-btn" id="rpSpeedBtn" title="Velocidad">
+      <span id="rpSpeedLabel">1×</span>
+    </button>
+    <span class="rp-tf-pill" id="rpTfPill">1m</span>
+    <button class="rp-btn rp-next-end" id="rpNext" title="Ir al final">▶▏</button>
+    <button class="rp-close" id="rpClose" title="Cerrar">✕</button>
+    <!-- Hidden select for speed (used internally; the button cycles values) -->
+    <select id="rpSpeed" style="display:none">
       <option value="2000">0.5x</option>
       <option value="1000" selected>1x</option>
       <option value="500">2x</option>
       <option value="250">4x</option>
       <option value="100">10x</option>
     </select>
-    <span class="rp-sep"></span>
-    <button class="rp-close" id="rpClose" title="Cerrar">✕</button>
+  </div>
+
+  <!-- Replay "Seleccionar barra" dropdown -->
+  <div class="rp-start-menu" id="rpStartMenu" style="display:none">
+    <div class="rp-start-title">SELECCIONAR PUNTO DE PARTIDA</div>
+    <div class="rp-start-item is-active" data-rs="bar">
+      <span class="rp-start-icon">▏◀</span>
+      <span>Barra</span>
+    </div>
+    <div class="rp-start-item" data-rs="date">
+      <span class="rp-start-icon">📅</span>
+      <span>Fecha…</span>
+    </div>
+    <div class="rp-start-item" data-rs="first">
+      <span class="rp-start-icon">⏮</span>
+      <span>Primera fecha disponible</span>
+    </div>
+    <div class="rp-start-item" data-rs="random">
+      <span class="rp-start-icon">🎲</span>
+      <span>Barra aleatoria</span>
+    </div>
   </div>
 
   <!-- Context menu (right-click on chart) -->
@@ -700,6 +805,8 @@ function buildCenter() {
     <div class="ctx-item" data-act="settings">Configuración…</div>
     <div class="ctx-item" data-act="fullscreen">Pantalla completa</div>
     <div class="ctx-item" data-act="screenshot">Captura de pantalla</div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" data-act="backtest">Backtest…</div>
     <div class="ctx-sep"></div>
     <div class="ctx-item" data-act="reset">Restablecer escala</div>
     <div class="ctx-item" data-act="autoscale">Autoescalar</div>
@@ -803,6 +910,9 @@ function buildBottomBar() {
 <div class="bottombar">
   <div class="bb-ranges">${ranges}</div>
   <div class="bb-sep"><div></div></div>
+  <button class="bb-nav" id="bbGoStart" title="Ir al inicio">⏮</button>
+  <button class="bb-nav" id="bbGoEnd" title="Ir al final">⏭</button>
+  <div class="bb-sep"><div></div></div>
   <button class="bb-calendar" title="Ir a la fecha">${img(BB_CALENDAR)}</button>
   <div class="bb-fill"></div>
   <div class="bb-right">
@@ -841,6 +951,20 @@ let _chart = null;
 let _series = null;
 let _resizeObs = null;
 let _ctx = null; // chart-related shared state
+let _ctx_markersApi = null;     // markers plugin handle for re-applying signal markers
+let _watermarkApi = null;        // text-watermark plugin handle
+
+// Build a properly-shaped marker object from a stored signal marker entry.
+function _buildSignalMarker(sm) {
+  const side = sm.side === 'sell' ? 'sell' : 'buy';
+  return {
+    time: sm.time,
+    position: side === 'buy' ? 'belowBar' : 'aboveBar',
+    color:    sm.color || (side === 'buy' ? '#089981' : '#f23645'),
+    shape:    side === 'buy' ? 'arrowUp' : 'arrowDown',
+    text:     sm.label || (side === 'buy' ? 'B' : 'S'),
+  };
+}
 
 // ---- Chart-type → series builder ----------------------------------------
 function buildMainSeries(chart, chartType, candles) {
@@ -994,8 +1118,40 @@ function toHeikinAshi(candles) {
   return out;
 }
 
+// Insert whitespace records over weekend gaps for intraday timeframes.
+// Returns a new array; original is not mutated. Volume array (built later
+// from this) must align by time, so we keep the same time keys.
+function _withWeekendWhitespace(candles, tf) {
+  if (!candles || !candles.length) return candles;
+  if (tf !== '1h' && tf !== '4h' && tf !== '30m' && tf !== '15m' && tf !== '5m' && tf !== '1m') return candles;
+  const step = TF_SECONDS[tf];
+  if (!step) return candles;
+  const out = [];
+  for (let i = 0; i < candles.length; i++) {
+    out.push(candles[i]);
+    if (i + 1 >= candles.length) continue;
+    const gap = candles[i + 1].time - candles[i].time;
+    if (gap > step * 2) {
+      // Fill the gap with whitespace points at step intervals (cap 96 fillers/gap).
+      let t = candles[i].time + step;
+      const end = candles[i + 1].time;
+      let n = 0;
+      while (t < end && n < 96) {
+        out.push({ time: t });
+        t += step;
+        n++;
+      }
+    }
+  }
+  return out;
+}
+
 function mountChart(container, candles) {
   if (_chart) { _chart.remove(); _chart = null; }
+
+  // Whitespace weekend gaps DISABLED — user prefers continuous bars without
+  // visible weekend gaps (see _withWeekendWhitespace, kept for future opt-in).
+  // candles = _withWeekendWhitespace(candles, state.tf);
 
   // Pane sizing — default candle 75%, volume 25%
   const paneSplit = { top: 0.05, candleBottom: state.layout.candleBottom ?? 0.25 };
@@ -1041,6 +1197,9 @@ function mountChart(container, candles) {
   const series = built.series;
   const seriesKind = built.kind;
 
+  // Real (non-whitespace) candles for derived data (vol/markers/indicators)
+  const realCandles = candles;  // whitespace disabled — candles is already raw
+
   const vol = chart.addSeries(HistogramSeries, {
     priceFormat: { type: 'volume' },
     priceScaleId: '',
@@ -1048,7 +1207,7 @@ function mountChart(container, candles) {
     lastValueVisible: false,
   });
   vol.priceScale().applyOptions({ scaleMargins: { top: 1 - paneSplit.candleBottom, bottom: 0 } });
-  const volData = candles.map(c => ({
+  const volData = realCandles.map(c => ({
     time: c.time,
     value: c.volume,
     color: c.close >= c.open ? '#08998166' : '#f2364566',
@@ -1057,32 +1216,36 @@ function mountChart(container, candles) {
 
   // Earnings / dividend markers (synthetic, quarterly)
   const markers = [];
-  for (let i = 60; i < candles.length; i += 63) {
+  for (let i = 60; i < realCandles.length; i += 63) {
     markers.push({
-      time: candles[i].time,
+      time: realCandles[i].time,
       position: 'belowBar',
       color: '#2962ff',
       shape: 'circle',
       text: 'E',
     });
   }
-  for (let i = 30; i < candles.length; i += 90) {
+  for (let i = 30; i < realCandles.length; i += 90) {
     markers.push({
-      time: candles[i].time,
+      time: realCandles[i].time,
       position: 'belowBar',
       color: '#089981',
       shape: 'circle',
       text: 'D',
     });
   }
+  // Persisted user signal markers
+  for (const sm of (state.signalMarkers || [])) {
+    markers.push(_buildSignalMarker(sm));
+  }
   markers.sort((a, b) => a.time - b.time);
   if (seriesKind === 'ohlc') {
-    try { createSeriesMarkers(series, markers); }
+    try { _ctx_markersApi = createSeriesMarkers(series, markers); }
     catch { if (typeof series.setMarkers === 'function') series.setMarkers(markers); }
   }
 
-  // Last close price line
-  const last = candles[candles.length - 1];
+  // Last close price line — use the most recent real candle
+  const last = realCandles[realCandles.length - 1];
   series.createPriceLine({
     price: last.close,
     color: last.close >= last.open ? '#089981' : '#f23645',
@@ -1109,10 +1272,11 @@ function mountChart(container, candles) {
   _series = series;
   _ctx = {
     chart,
-    candles,
+    candles: realCandles,
+    displayCandles: candles,
     series, vol,
     seriesKind,
-    volByTime: new Map(candles.map(d => [d.time, d.volume])),
+    volByTime: new Map(realCandles.map(d => [d.time, d.volume])),
     paneSplit,
     visible: { vol: true },
     magnet: false,
@@ -1212,14 +1376,36 @@ function mountChart(container, candles) {
       const ch = close - open;
       const pct = open ? (ch / open) * 100 : 0;
       const upCls = ch >= 0 ? 'up' : 'dn';
-      crossTip.innerHTML = `
+      // Main symbol line (OHLC summary)
+      let html = `
         <div class="ct-date">${fmtDate(d.time || p.time)}</div>
-        <div class="ct-row"><span>O</span><b>${fmt(open)}</b></div>
-        <div class="ct-row"><span>H</span><b>${fmt(high)}</b></div>
-        <div class="ct-row"><span>L</span><b>${fmt(low)}</b></div>
-        <div class="ct-row"><span>C</span><b>${fmt(close)}</b></div>
-        <div class="ct-row ${upCls}"><span>Δ</span><b>${(ch>=0?'+':'')+fmt(ch)} (${(pct>=0?'+':'')+fmt(pct)}%)</b></div>
-      `;
+        <div class="ct-sym"><b>${escapeHtml(state.symbol)}</b>
+          <span class="ct-mini">O:${fmt(open)} H:${fmt(high)} L:${fmt(low)} C:${fmt(close)}</span>
+          <span class="ct-${upCls}">(${(ch>=0?'+':'')+fmt(ch)} ${(pct>=0?'+':'')+fmt(pct)}%)</span>
+        </div>`;
+      const v = _ctx.volByTime.get(d.time);
+      if (v != null) html += `<div class="ct-row"><span>Vol</span><b>${fmtVol(v)}</b></div>`;
+      // All indicator series
+      for (const ind of (_ctx.indicators || [])) {
+        for (const s of (ind.seriesList || [])) {
+          const sd = p.seriesData.get(s);
+          if (sd == null) continue;
+          const val = sd.value ?? sd.close;
+          if (val == null) continue;
+          const label = (ind.label || ind.id.toUpperCase());
+          html += `<div class="ct-row"><span style="color:${ind.color}">${escapeHtml(label)}</span><b>${fmt(val)}</b></div>`;
+          break; // one row per indicator (primary)
+        }
+      }
+      // Compare series
+      for (const cmp of (_ctx.compares || [])) {
+        const sd = p.seriesData.get(cmp.series);
+        if (sd == null) continue;
+        const val = sd.value ?? sd.close;
+        if (val == null) continue;
+        html += `<div class="ct-row"><span style="color:${cmp.color}">${escapeHtml(cmp.symbol)}</span><b>${fmt(val)}</b></div>`;
+      }
+      crossTip.innerHTML = html;
       crossTip.style.display = 'block';
       const cw = crossTip.offsetWidth || 140;
       const ch2 = crossTip.offsetHeight || 110;
@@ -1264,12 +1450,258 @@ function mountChart(container, candles) {
   const startT = candles[Math.max(0, candles.length - 250)].time;
   chart.timeScale().setVisibleRange({ from: startT, to: lastT });
 
+  // Apply persisted price-scale mode
+  try {
+    const m = PRICE_SCALE_MODE[state.layout.priceScaleMode] ?? 0;
+    chart.priceScale('right').applyOptions({ mode: m });
+  } catch {}
+
+  // Mount the text watermark (current symbol + TF)
+  _attachWatermark();
+
+  // Restore persisted pane heights (for minimize-pane toggle)
+  try {
+    const ph = state.layout.paneHeights || {};
+    const panes = chart.panes();
+    for (const [k, v] of Object.entries(ph)) {
+      const idx = +k;
+      if (panes[idx] && typeof panes[idx].setHeight === 'function') {
+        try { panes[idx].setHeight(v); } catch {}
+      }
+    }
+  } catch {}
+
   // Wire all DnD + UX once chart exists
   enableDnD(container);
+  enableScaleAxisContextMenu(container);
+  enableResetScaleButton();
+  enableBottomNavButtons();
 
-  // Initialize drawing/trendline subsystem
+  // Initialize drawing/trendline subsystem (inline impl: trendlines)
   initDrawings(container);
+
+  // Initialize drawing-tools.js manager (handles hline / fib / rect — separate
+  // storage key `tv.drawings_dm` so the two systems coexist without clashing).
+  try {
+    if (_dm) { try { _dm.removeAll(); } catch {} }
+    _dm = createDrawingManager(chart, series, container);
+    if (_dm) _dm.loadFromStorage();
+  } catch (e) {
+    console.warn('[chart-view] createDrawingManager failed:', e);
+    _dm = null;
+  }
 }
+
+/* ---------- Tier-1 API additions ---------- */
+
+// Watermark — uses createTextWatermark() from lightweight-charts v5.
+function _attachWatermark() {
+  if (!_chart) return;
+  try {
+    if (_watermarkApi) { try { _watermarkApi.detach(); } catch {} _watermarkApi = null; }
+    const pane = _chart.panes()[0];
+    if (!pane) return;
+    if (!state.layout.watermarkVisible) return;
+    _watermarkApi = createTextWatermark(pane, {
+      horzAlign: 'center',
+      vertAlign: 'center',
+      lines: [{
+        text: `${state.symbol} · ${state.tf}`,
+        color: 'rgba(255,255,255,0.04)',
+        fontSize: 80,
+        fontStyle: 'bold',
+        fontFamily: 'Trebuchet MS, sans-serif',
+      }],
+    });
+  } catch (e) {
+    console.warn('[watermark] attach failed:', e);
+  }
+}
+
+function _updateWatermarkText() {
+  if (!_chart) return;
+  if (!state.layout.watermarkVisible) {
+    if (_watermarkApi) { try { _watermarkApi.detach(); } catch {} _watermarkApi = null; }
+    return;
+  }
+  if (!_watermarkApi) { _attachWatermark(); return; }
+  try {
+    _watermarkApi.applyOptions({
+      lines: [{
+        text: `${state.symbol} · ${state.tf}`,
+        color: 'rgba(255,255,255,0.04)',
+        fontSize: 80,
+        fontStyle: 'bold',
+        fontFamily: 'Trebuchet MS, sans-serif',
+      }],
+    });
+  } catch {}
+}
+
+// Price-scale modes — context menu on right-axis area
+function _setPriceScaleMode(modeKey) {
+  if (!_chart) return;
+  const m = PRICE_SCALE_MODE[modeKey] ?? 0;
+  try { _chart.priceScale('right').applyOptions({ mode: m, autoScale: true }); } catch {}
+  state.layout.priceScaleMode = modeKey;
+  lsSet(LS.layout, state.layout);
+}
+
+function enableScaleAxisContextMenu(container) {
+  const menu = document.getElementById('scaleCtx');
+  if (!menu) return;
+  // Mark active item
+  const refresh = () => {
+    menu.querySelectorAll('.ctx-item').forEach(it => {
+      it.classList.toggle('is-active', it.dataset.mode === state.layout.priceScaleMode);
+    });
+  };
+  container.addEventListener('contextmenu', (ev) => {
+    if (ev.target.closest('.legend, .replay-panel, .modal, .sym-pop, .trade-pop')) return;
+    const r = container.getBoundingClientRect();
+    const x = ev.clientX - r.left;
+    // Right-axis area = within 60px of right edge
+    if (x < r.width - 60) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    // Hide chart context menu if open
+    const cm = document.getElementById('ctxMenu'); if (cm) cm.style.display = 'none';
+    const xp = Math.min(x - 140, r.width - 160);
+    const yp = Math.min(ev.clientY - r.top, r.height - 140);
+    menu.style.left = Math.max(4, xp) + 'px';
+    menu.style.top  = Math.max(4, yp) + 'px';
+    menu.style.display = 'block';
+    refresh();
+  }, true);
+  window.addEventListener('mousedown', (ev) => {
+    if (!ev.target.closest('#scaleCtx')) menu.style.display = 'none';
+  });
+  if (!menu.dataset.wired) {
+    menu.dataset.wired = '1';
+    menu.addEventListener('click', (ev) => {
+      const mode = ev.target.dataset?.mode;
+      if (!mode) return;
+      _setPriceScaleMode(mode);
+      menu.style.display = 'none';
+    });
+  }
+}
+
+function enableResetScaleButton() {
+  const btn = document.getElementById('resetScaleBtn');
+  if (!btn || btn.dataset.wired === '1') {
+    return;
+  }
+  btn.dataset.wired = '1';
+  btn.addEventListener('click', () => {
+    if (!_chart) return;
+    try { _chart.priceScale('right').applyOptions({ autoScale: true }); } catch {}
+    try { _chart.timeScale().resetTimeScale(); } catch {}
+  });
+}
+
+function enableBottomNavButtons() {
+  const goStart = document.getElementById('bbGoStart');
+  const goEnd   = document.getElementById('bbGoEnd');
+  if (goStart && goStart.dataset.wired !== '1') {
+    goStart.dataset.wired = '1';
+    goStart.addEventListener('click', () => {
+      if (!_chart || !_ctx) return;
+      try {
+        const candles = _ctx.candles;
+        if (candles && candles.length) {
+          const startT = candles[0].time;
+          const endT = candles[Math.min(candles.length - 1, 250)].time;
+          _chart.timeScale().setVisibleRange({ from: startT, to: endT });
+        } else {
+          _chart.timeScale().scrollToPosition(-1000, false);
+        }
+      } catch {}
+    });
+  }
+  if (goEnd && goEnd.dataset.wired !== '1') {
+    goEnd.dataset.wired = '1';
+    goEnd.addEventListener('click', () => {
+      if (!_chart) return;
+      try { _chart.timeScale().scrollToRealTime(); } catch {}
+    });
+  }
+}
+
+// addSignalMarker(time, side, label, color) — exposed for testing on window
+function addSignalMarker(time, side, label, color) {
+  const entry = { time, side: side === 'sell' ? 'sell' : 'buy', label: label || '', color: color || null };
+  state.signalMarkers = state.signalMarkers || [];
+  state.signalMarkers.push(entry);
+  try { localStorage.setItem('tv.signalMarkers', JSON.stringify(state.signalMarkers)); } catch {}
+  _redrawAllMarkers();
+  return entry;
+}
+
+function clearSignalMarkers() {
+  state.signalMarkers = [];
+  try { localStorage.setItem('tv.signalMarkers', JSON.stringify(state.signalMarkers)); } catch {}
+  _redrawAllMarkers();
+}
+
+function _redrawAllMarkers() {
+  if (!_ctx || !_ctx.series || _ctx.seriesKind !== 'ohlc') return;
+  const realCandles = _ctx.candles;
+  const markers = [];
+  for (let i = 60; i < realCandles.length; i += 63) {
+    markers.push({ time: realCandles[i].time, position: 'belowBar', color: '#2962ff', shape: 'circle', text: 'E' });
+  }
+  for (let i = 30; i < realCandles.length; i += 90) {
+    markers.push({ time: realCandles[i].time, position: 'belowBar', color: '#089981', shape: 'circle', text: 'D' });
+  }
+  for (const sm of (state.signalMarkers || [])) markers.push(_buildSignalMarker(sm));
+  markers.sort((a, b) => a.time - b.time);
+  try {
+    if (_ctx_markersApi && typeof _ctx_markersApi.setMarkers === 'function') {
+      _ctx_markersApi.setMarkers(markers);
+    } else {
+      _ctx_markersApi = createSeriesMarkers(_ctx.series, markers);
+    }
+  } catch {
+    if (typeof _ctx.series.setMarkers === 'function') _ctx.series.setMarkers(markers);
+  }
+}
+
+// Toggle pane minimize/restore. paneIdx = pane index (0 = main).
+function togglePane(paneIdx) {
+  if (!_chart) return;
+  try {
+    const panes = _chart.panes();
+    const pane = panes[paneIdx];
+    if (!pane || typeof pane.setHeight !== 'function') return;
+    state.layout.paneHeights = state.layout.paneHeights || {};
+    const cur = state.layout.paneHeights[paneIdx];
+    if (cur != null && cur > 0) {
+      // Currently minimized — restore (auto)
+      delete state.layout.paneHeights[paneIdx];
+      try { pane.setHeight(0); } catch {}
+      // Force re-layout: applyOptions on chart triggers full recompute
+      _chart.applyOptions({});
+    } else {
+      // Minimize to 30px
+      try { pane.setHeight(30); state.layout.paneHeights[paneIdx] = 30; } catch {}
+    }
+    lsSet(LS.layout, state.layout);
+  } catch {}
+}
+
+// Expose a few helpers for testing / console use
+try {
+  if (typeof window !== 'undefined') {
+    window.__tvChart = {
+      addSignalMarker, clearSignalMarkers,
+      setPriceScaleMode: _setPriceScaleMode,
+      togglePane,
+      getChart: () => _chart,
+      getCtx:   () => _ctx,
+    };
+  }
+} catch {}
 
 function setPills(price) {
   if (price == null) return;
@@ -1299,6 +1731,7 @@ function enableDnD(container) {
 
 function enableShiftZoom(container) {
   const rectEl = document.getElementById('zoomRect');
+  const zoomTip = document.getElementById('zoomTip');
   let active = false;
   let sx = 0, sy = 0;
 
@@ -1327,11 +1760,64 @@ function enableShiftZoom(container) {
     rectEl.style.top  = top + 'px';
     rectEl.style.width  = Math.abs(x - sx) + 'px';
     rectEl.style.height = Math.abs(y - sy) + 'px';
+    // Live summary tooltip during drag
+    if (zoomTip && _chart && _series) {
+      try {
+        const ts = _chart.timeScale();
+        const t1 = ts.coordinateToTime(Math.min(x, sx));
+        const t2 = ts.coordinateToTime(Math.max(x, sx));
+        const p1 = _series.coordinateToPrice(Math.min(y, sy));
+        const p2 = _series.coordinateToPrice(Math.max(y, sy));
+        let bars = '—', days = '—', pRange = '—', vol = '—';
+        if (t1 != null && t2 != null) {
+          const tFrom = Math.min(t1, t2), tTo = Math.max(t1, t2);
+          const secs = tTo - tFrom;
+          days = secs >= 86400 ? `${Math.round(secs/86400)} días` : `${Math.round(secs/3600)} h`;
+          // Bars via barsInLogicalRange
+          try {
+            const lFrom = ts.coordinateToLogical(Math.min(x, sx));
+            const lTo   = ts.coordinateToLogical(Math.max(x, sx));
+            if (lFrom != null && lTo != null) {
+              const info = _series.barsInLogicalRange({ from: lFrom, to: lTo });
+              if (info && info.barsBefore != null) bars = String(info.barsAfter + info.barsBefore >= 0 ? Math.max(0, info.barsAfter + 0) : 0);
+              if (info && info.barsBefore != null) {
+                // Use absolute count of bars within range
+                bars = String(Math.max(0, Math.round((lTo - lFrom))));
+              }
+            }
+          } catch {}
+          // Volume sum over real candles in range
+          let vsum = 0;
+          for (const c of (_ctx?.candles || [])) {
+            if (c.time >= tFrom && c.time <= tTo) vsum += (c.volume || 0);
+          }
+          vol = fmtVol(vsum);
+        }
+        if (p1 != null && p2 != null) {
+          const lo = Math.min(p1, p2), hi = Math.max(p1, p2);
+          const delta = hi - lo;
+          const pct = lo ? (delta / lo) * 100 : 0;
+          pRange = `${fmt(delta)} (${fmt(pct)}%)`;
+        }
+        zoomTip.innerHTML = `
+          <div class="zt-row"><span>Barras</span><b>${bars}</b></div>
+          <div class="zt-row"><span>Tiempo</span><b>${days}</b></div>
+          <div class="zt-row"><span>Δ Precio</span><b>${pRange}</b></div>
+          <div class="zt-row"><span>Vol Σ</span><b>${vol}</b></div>`;
+        zoomTip.style.display = 'block';
+        let zx = x + 14, zy = y + 14;
+        if (zx + 160 > r.width) zx = x - 160;
+        if (zy + 90 > r.height) zy = y - 90;
+        zoomTip.style.left = zx + 'px';
+        zoomTip.style.top  = zy + 'px';
+      } catch {}
+    }
   });
   window.addEventListener('mouseup', (ev) => {
     if (!active) return;
     active = false;
     rectEl.style.display = 'none';
+    if (zoomTip) zoomTip.style.display = 'none';
     if (!_chart) return;
     const r = container.getBoundingClientRect();
     const ex = ev.clientX - r.left;
@@ -1423,6 +1909,7 @@ function enableContextMenu(container) {
     if (act === 'settings') openSettingsModal();
     if (act === 'fullscreen') toggleFullscreen();
     if (act === 'screenshot') takeScreenshot();
+    if (act === 'backtest') openBacktestStrategyPicker();
     if (act === 'reset' && _chart) _chart.timeScale().resetTimeScale();
     if (act === 'autoscale' && _series) _series.priceScale().applyOptions({ autoScale: true });
   });
@@ -1559,9 +2046,24 @@ function openToolMenu(toolId, anchorEl) {
 
   // Build HTML
   let html = '';
-  for (const section of menu.sections) {
+  for (let si = 0; si < menu.sections.length; si++) {
+    const section = menu.sections[si];
     if (section.divider) html += `<div class="tm-divider"></div>`;
+    // Section-level toggle row (no items, just a single switch + label)
+    if (section.isToggle) {
+      if (si > 0) html += `<div class="tm-divider"></div>`;
+      const on = !!_getToolToggle(section.id);
+      html += `<div class="tm-item tm-toggle-row" data-tool-item="${section.id}" data-toggle="1">
+        <span class="tm-label">${section.label}</span>
+        <span class="tm-toggle${on ? ' on' : ''}" data-toggle-for="${section.id}"></span>
+      </div>`;
+      continue;
+    }
     if (section.title) html += `<div class="tm-section-title">${section.title}</div>`;
+    // Auto-add divider between item-only sections (no title)
+    if (!section.title && si > 0 && !menu.sections[si - 1].isToggle && !menu.sections[si - 1].divider) {
+      html += `<div class="tm-divider"></div>`;
+    }
     for (const it of section.items) {
       if (it.toggle) {
         const on = !!_getToolToggle(it.id);
@@ -1614,6 +2116,25 @@ function openToolMenu(toolId, anchorEl) {
       if (id === 'trend-line') {
         closeToolMenu();
         activateTrendlineMode();
+        ev.stopPropagation();
+        return;
+      }
+      // Drawing-tools.js handlers (hline, fib, rect)
+      if (_dm && id === 'h-line') {
+        closeToolMenu();
+        _dm.activate('hline');
+        ev.stopPropagation();
+        return;
+      }
+      if (_dm && id === 'fib-ret') {
+        closeToolMenu();
+        _dm.activate('fib');
+        ev.stopPropagation();
+        return;
+      }
+      if (_dm && id === 'rect') {
+        closeToolMenu();
+        _dm.activate('rect');
         ev.stopPropagation();
         return;
       }
@@ -1705,6 +2226,7 @@ const DEFAULT_SETTINGS = {
   ca_marginTop:       10,
   ca_marginBottom:    8,
   ca_marginRight:     6,
+  ca_watermarkVisible: false,
   // Comerciar
   tr_buySellBtns:     true,
   tr_oneClick:        false,
@@ -1855,6 +2377,8 @@ function _settingsTabCanvas() {
     ${_cs_row('Parte superior', `${_cs_num('ca_marginTop',0,40,1)} <span class="cs-unit">%</span>`)}
     ${_cs_row('Parte inferior', `${_cs_num('ca_marginBottom',0,40,1)} <span class="cs-unit">%</span>`)}
     ${_cs_row('Derecha', `${_cs_num('ca_marginRight',0,60,1)} <span class="cs-unit">barras</span>`)}
+    ${_cs_section('Marca de agua')}
+    ${_cs_chk('ca_watermarkVisible','Mostrar marca de agua (símbolo + intervalo)')}
   `;
 }
 function _settingsTabTrade() {
@@ -2075,6 +2599,22 @@ function applySettings(s, persist) {
       });
     }
 
+    // Watermark visibility
+    if (typeof s.ca_watermarkVisible === 'boolean') {
+      state.layout.watermarkVisible = s.ca_watermarkVisible;
+      lsSet(LS.layout, state.layout);
+      _updateWatermarkText();
+    }
+
+    // Price scale mode (from "Escalas y líneas" tab)
+    if (s.sc_scaleMode) {
+      const map = { normal: 0, log: 1, percent: 2, percentage: 2, indexed: 3 };
+      const m = map[s.sc_scaleMode] ?? 0;
+      try { _chart.priceScale('right').applyOptions({ mode: m }); } catch {}
+      state.layout.priceScaleMode = (s.sc_scaleMode === 'percentage' ? 'percent' : s.sc_scaleMode);
+      lsSet(LS.layout, state.layout);
+    }
+
     // Volume visibility/colors
     if (_ctx.vol) {
       _ctx.vol.applyOptions({ visible: s.ls_volume });
@@ -2283,16 +2823,169 @@ function applyIndicator(entry, persist = true) {
     seriesList.push(s);
     valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
   }
+  /* ───── Tier 2A: 20 additional indicators ───── */
+  else if (entry.id === 'donchian') {
+    const { upper, middle, lower } = DonchianChannel(candles, entry.params?.period ?? 20);
+    const su = _chart.addSeries(LineSeries, lineOpts(entry.color, 1), paneIndex);
+    const sm = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5, { lineStyle: LineStyle.Dashed }), paneIndex);
+    const sl = _chart.addSeries(LineSeries, lineOpts(entry.color, 1), paneIndex);
+    su.setData(upper); sm.setData(middle); sl.setData(lower);
+    seriesList.push(su, sm, sl);
+    valueByTime.upper = new Map(upper.map(d => [d.time, d.value]));
+    valueByTime.middle = new Map(middle.map(d => [d.time, d.value]));
+    valueByTime.lower = new Map(lower.map(d => [d.time, d.value]));
+  } else if (entry.id === 'kc') {
+    const { upper, middle, lower } = KeltnerChannels(candles, entry.params?.emaPeriod ?? 20, entry.params?.atrMult ?? 2, entry.params?.atrPeriod ?? 10);
+    const su = _chart.addSeries(LineSeries, lineOpts(entry.color, 1), paneIndex);
+    const sm = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    const sl = _chart.addSeries(LineSeries, lineOpts(entry.color, 1), paneIndex);
+    su.setData(upper); sm.setData(middle); sl.setData(lower);
+    seriesList.push(su, sm, sl);
+    valueByTime.upper = new Map(upper.map(d => [d.time, d.value]));
+    valueByTime.middle = new Map(middle.map(d => [d.time, d.value]));
+    valueByTime.lower = new Map(lower.map(d => [d.time, d.value]));
+  } else if (entry.id === 'psar') {
+    const data = ParabolicSAR(candles, entry.params?.start ?? 0.02, entry.params?.increment ?? 0.02, entry.params?.max ?? 0.2);
+    const s = _chart.addSeries(LineSeries, { ...lineOpts(entry.color, 0), priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: true, crosshairMarkerRadius: 2 }, paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'supertrend') {
+    const { upper, lower } = SuperTrend(candles, entry.params?.period ?? 10, entry.params?.multiplier ?? 3);
+    const su = _chart.addSeries(LineSeries, lineOpts('#f23645', 2), paneIndex);
+    const sl = _chart.addSeries(LineSeries, lineOpts('#089981', 2), paneIndex);
+    su.setData(upper); sl.setData(lower);
+    seriesList.push(su, sl);
+    valueByTime.upper = new Map(upper.map(d => [d.time, d.value]));
+    valueByTime.lower = new Map(lower.map(d => [d.time, d.value]));
+  } else if (entry.id === 'aroon') {
+    const { up, down } = AroonIndicator(candles, entry.params?.period ?? 14);
+    const su = _chart.addSeries(LineSeries, lineOpts('#089981', 1.5), paneIndex);
+    const sd = _chart.addSeries(LineSeries, lineOpts('#f23645', 1.5), paneIndex);
+    su.setData(up); sd.setData(down);
+    seriesList.push(su, sd);
+    valueByTime.up = new Map(up.map(d => [d.time, d.value]));
+    valueByTime.down = new Map(down.map(d => [d.time, d.value]));
+  } else if (entry.id === 'cmf') {
+    const data = ChaikinMoneyFlow(candles, entry.params?.period ?? 20);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'mfi') {
+    const data = MFI(candles, entry.params?.period ?? 14);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'trix') {
+    const data = TRIX(candles, entry.params?.period ?? 14);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'pivots-hl') {
+    const { pivotHighs, pivotLows } = PivotsHL(candles, entry.params?.leftBars ?? 10, entry.params?.rightBars ?? 10);
+    // Render as markers via createSeriesMarkers (uses existing helper if exists)
+    const markers = [
+      ...pivotHighs.map(p => ({ time: p.time, position: 'aboveBar', color: '#f23645', shape: 'arrowDown', text: 'H' })),
+      ...pivotLows.map(p => ({ time: p.time, position: 'belowBar', color: '#089981', shape: 'arrowUp', text: 'L' })),
+    ].sort((a, b) => a.time - b.time);
+    try { createSeriesMarkers(_ctx.series, markers); } catch {}
+    valueByTime.primary = new Map();  // markers, no time series
+  } else if (entry.id === 'dema') {
+    const data = DEMA(candles, entry.params?.period ?? 20);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'tema') {
+    const data = TEMA(candles, entry.params?.period ?? 20);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'hma') {
+    const data = HMA(candles, entry.params?.period ?? 20);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'kama') {
+    const data = KAMA(candles, entry.params?.period ?? 10, entry.params?.fast ?? 2, entry.params?.slow ?? 30);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'vwma') {
+    const data = VWMA(candles, entry.params?.period ?? 20);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'pivots') {
+    const { pivot, r1, r2, r3, s1, s2, s3 } = PivotPoints(candles);
+    const sP = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    const sR1 = _chart.addSeries(LineSeries, lineOpts('#f23645', 1, { lineStyle: LineStyle.Dashed }), paneIndex);
+    const sR2 = _chart.addSeries(LineSeries, lineOpts('#f23645', 1, { lineStyle: LineStyle.Dashed }), paneIndex);
+    const sR3 = _chart.addSeries(LineSeries, lineOpts('#f23645', 1, { lineStyle: LineStyle.Dotted }), paneIndex);
+    const sS1 = _chart.addSeries(LineSeries, lineOpts('#089981', 1, { lineStyle: LineStyle.Dashed }), paneIndex);
+    const sS2 = _chart.addSeries(LineSeries, lineOpts('#089981', 1, { lineStyle: LineStyle.Dashed }), paneIndex);
+    const sS3 = _chart.addSeries(LineSeries, lineOpts('#089981', 1, { lineStyle: LineStyle.Dotted }), paneIndex);
+    sP.setData(pivot); sR1.setData(r1); sR2.setData(r2); sR3.setData(r3);
+    sS1.setData(s1); sS2.setData(s2); sS3.setData(s3);
+    seriesList.push(sP, sR1, sR2, sR3, sS1, sS2, sS3);
+    valueByTime.primary = new Map(pivot.map(d => [d.time, d.value]));
+  } else if (entry.id === 'bbw') {
+    const data = BollingerBandWidth(candles, entry.params?.period ?? 20, entry.params?.mult ?? 2);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'cmo') {
+    const data = ChandeMomentumOscillator(candles, entry.params?.period ?? 14);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'roc') {
+    const data = PriceROC(candles, entry.params?.period ?? 12);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'zlema') {
+    const data = ZLEMA(candles, entry.params?.period ?? 20);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'volosc') {
+    const data = VolumeOscillator(candles, entry.params?.fast ?? 5, entry.params?.slow ?? 10);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  }
 
   const record = {
     id: entry.id, params: entry.params || meta.defaults, color: entry.color, uid: entry.uid,
     seriesList, paneIndex, valueByTime, visible: true,
     label: meta.name,
+    lineWidth: entry.lineWidth,
+    lineStyle: entry.lineStyle,
   };
   _ctx.indicators.push(record);
+  // Apply persisted line styling (Tier-1: dynamic series options)
+  if (record.lineWidth != null || record.lineStyle != null) {
+    _indsetApplyLineOpts(record);
+  }
 
   if (persist) {
-    state.indicators.push({ id: entry.id, params: record.params, color: entry.color, uid: entry.uid });
+    state.indicators.push({
+      id: entry.id, params: record.params, color: entry.color, uid: entry.uid,
+      lineWidth: record.lineWidth, lineStyle: record.lineStyle,
+    });
     lsSet(LS.indicators, state.indicators);
   }
   refreshLegendIndicators();
@@ -2368,12 +3061,17 @@ function refreshLegendIndicators() {
 
   for (const ind of _ctx.indicators) {
     const paramStr = formatParams(ind.id, ind.params);
+    const paneBtn = ind.paneIndex > 0
+      ? `<span class="ind-pane pane-min" data-pane="${ind.paneIndex}" title="Minimizar/Restaurar panel">⊟</span>`
+      : '';
     append(`
       <div class="ind-row ind-dyn" draggable="true" data-ind="dyn" data-uid="${ind.uid}">
         <span class="ind-grip">⋮⋮</span>
         <span class="ind-swatch" data-color="${ind.color}" title="Ocultar/Mostrar"></span>
         <span class="ind-name">${escapeHtml(ind.label)} ${paramStr}</span>
         <span class="ind-val" id="indVal_${ind.uid}_primary">—</span>
+        ${paneBtn}
+        <span class="ind-cog" title="Configurar">⚙</span>
         <span class="ind-x" title="Eliminar">✕</span>
       </div>
     `);
@@ -2390,6 +3088,21 @@ function refreshLegendIndicators() {
   }
   enableIndicatorToggle();
   enableIndicatorReorder();
+  if (typeof enableIndicatorSettings === 'function') enableIndicatorSettings();
+  // Pane minimize/restore buttons
+  document.querySelectorAll('.ind-row .pane-min').forEach(btn => {
+    if (btn.dataset.wired === '1') return;
+    btn.dataset.wired = '1';
+    btn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const pi = +btn.dataset.pane;
+      if (!Number.isFinite(pi)) return;
+      togglePane(pi);
+      const minimized = (state.layout.paneHeights || {})[pi] != null;
+      btn.classList.toggle('is-min', minimized);
+      btn.textContent = minimized ? '⊞' : '⊟';
+    });
+  });
 
   // Update data badge
   const badge = document.getElementById('dataBadge');
@@ -2486,6 +3199,7 @@ function updateLegendHeader() {
   if (logoEl) logoEl.textContent = state.symbol[0];
   if (pillTextEl) pillTextEl.textContent = state.symbol;
   if (tfBtn) tfBtn.textContent = state.tf === '1D' ? 'D' : state.tf;
+  _updateWatermarkText();
 }
 
 async function loadSymbol(sym) {
@@ -3325,11 +4039,51 @@ function _indRenderList() {
   const list = document.getElementById('indMList');
   if (!list) return;
 
-  // Strategies / Profiles / Patterns tabs → empty state (no data wired)
+  // Strategies tab → functional list of preset strategies with Backtest buttons
+  if (_indState.topTab === 'strategies') {
+    let strategies = PRESET_STRATEGIES.slice();
+    if (_indState.query) {
+      const q = _indState.query;
+      strategies = strategies.filter(s =>
+        s.name.toLowerCase().includes(q) ||
+        s.id.toLowerCase().includes(q) ||
+        (s.description || '').toLowerCase().includes(q)
+      );
+    }
+    if (!strategies.length) {
+      list.innerHTML = `<div class="ind-m-empty">No hay estrategias disponibles</div>`;
+      return;
+    }
+    list.innerHTML = `<div class="bt-strat-grid">${strategies.map(s => `
+      <div class="bt-strat-card" data-id="${escapeHtml(s.id)}">
+        <div class="bt-strat-card-head">
+          <span class="bt-strat-card-name">${escapeHtml(s.name)}</span>
+        </div>
+        <div class="bt-strat-card-desc">${escapeHtml(s.description || '')}</div>
+        <div class="bt-strat-card-foot">
+          <button class="bt-strat-run" data-id="${escapeHtml(s.id)}">Backtest</button>
+        </div>
+      </div>
+    `).join('')}</div>`;
+    // Wire backtest buttons (delegated once)
+    list.onclick = (ev) => {
+      const btn = ev.target.closest('.bt-strat-run');
+      if (!btn) return;
+      const sid = btn.dataset.id;
+      const strat = PRESET_STRATEGIES.find(x => x.id === sid);
+      if (!strat) return;
+      closeIndicatorsModal();
+      openBacktestConfigModal(strat);
+    };
+    return;
+  } else {
+    // restore default delegated handler for indicators tab (attached by caller)
+    list.onclick = null;
+  }
+
+  // Profiles / Patterns tabs → empty state (no data wired)
   if (_indState.topTab !== 'indicators') {
-    const msg = _indState.topTab === 'strategies'
-      ? 'No hay estrategias disponibles'
-      : (_indState.topTab === 'profiles' ? 'No hay perfiles disponibles' : 'No hay patrones disponibles');
+    const msg = _indState.topTab === 'profiles' ? 'No hay perfiles disponibles' : 'No hay patrones disponibles';
     list.innerHTML = `<div class="ind-m-empty">${msg}</div>`;
     return;
   }
@@ -3934,35 +4688,90 @@ function wireTopbar() {
   document.getElementById('modalX')?.addEventListener('click', closeModal);
   document.getElementById('modalBack')?.addEventListener('click', closeModal);
 
-  // Replay panel toggle
+  // Replay panel toggle — wires the buttons to the functional replay engine
+  // defined below in the BAR REPLAY MODE block.
   const replayPanel = document.getElementById('replayPanel');
   document.getElementById('replayBtn')?.addEventListener('click', () => {
     const showing = replayPanel.style.display !== 'none';
-    replayPanel.style.display = showing ? 'none' : 'flex';
+    if (showing) {
+      replayPanel.style.display = 'none';
+      exitReplayMode();
+    } else {
+      replayPanel.style.display = 'flex';
+      enterReplayMode();
+    }
   });
   document.getElementById('rpClose')?.addEventListener('click', () => {
     replayPanel.style.display = 'none';
-    if (_ctx?.replayTimer) { clearInterval(_ctx.replayTimer); _ctx.replayTimer = null; }
-    document.getElementById('rpPlay').textContent = '▶';
+    exitReplayMode();
   });
-  document.getElementById('rpPlay')?.addEventListener('click', () => {
-    if (!_ctx) return;
-    const btn = document.getElementById('rpPlay');
-    if (_ctx.replayTimer) {
-      clearInterval(_ctx.replayTimer);
-      _ctx.replayTimer = null;
-      btn.textContent = '▶';
+  document.getElementById('rpPlay')?.addEventListener('click', togglePlay);
+  document.getElementById('rpPrev')?.addEventListener('click', () => advanceReplay(-1));
+  document.getElementById('rpNext')?.addEventListener('click', () => advanceReplay(1));
+  document.getElementById('rpSpeed')?.addEventListener('change', (ev) => {
+    setReplaySpeed(+ev.target.value);
+    const lbl = ev.target.options[ev.target.selectedIndex]?.text || '1x';
+    const lblEl = document.getElementById('rpSpeedLabel');
+    if (lblEl) lblEl.textContent = lbl.replace('x', '×');
+  });
+  // Speed button cycles through speeds (0.5× → 1× → 2× → 4× → 10×)
+  document.getElementById('rpSpeedBtn')?.addEventListener('click', () => {
+    const sel = document.getElementById('rpSpeed');
+    if (!sel) return;
+    sel.selectedIndex = (sel.selectedIndex + 1) % sel.options.length;
+    sel.dispatchEvent(new Event('change'));
+  });
+  // TF pill in replay panel reflects current timeframe
+  const rpTfPill = document.getElementById('rpTfPill');
+  if (rpTfPill) rpTfPill.textContent = state.tf || '1m';
+
+  // "Seleccionar barra" dropdown
+  const rpSelectBar = document.getElementById('rpSelectBar');
+  const rpStartMenu = document.getElementById('rpStartMenu');
+  rpSelectBar?.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    if (!rpStartMenu) return;
+    if (rpStartMenu.style.display === 'block') {
+      rpStartMenu.style.display = 'none';
       return;
     }
-    const speed = +document.getElementById('rpSpeed').value;
-    btn.textContent = '⏸';
-    let visible = _chart.timeScale().getVisibleRange();
-    _ctx.replayTimer = setInterval(() => {
-      visible = _chart.timeScale().getVisibleRange();
-      if (!visible) return;
-      const step = (visible.to - visible.from) * 0.02;
-      _chart.timeScale().setVisibleRange({ from: visible.from + step, to: visible.to + step });
-    }, speed);
+    const r = rpSelectBar.getBoundingClientRect();
+    const center = document.getElementById('center');
+    const cr = center.getBoundingClientRect();
+    rpStartMenu.style.left = (r.left - cr.left) + 'px';
+    rpStartMenu.style.bottom = (cr.bottom - r.top + 4) + 'px';
+    rpStartMenu.style.top = 'auto';
+    rpStartMenu.style.display = 'block';
+  });
+  rpStartMenu?.querySelectorAll('.rp-start-item').forEach(it => {
+    it.addEventListener('click', () => {
+      rpStartMenu.querySelectorAll('.rp-start-item').forEach(x => x.classList.remove('is-active'));
+      it.classList.add('is-active');
+      const mode = it.dataset.rs;
+      // Apply start point
+      if (_ctx && _ctx.candles) {
+        const c = _ctx.candles;
+        if (mode === 'first' && c.length) {
+          const t = c[0].time;
+          _chart?.timeScale().setVisibleRange({ from: t, to: c[Math.min(50, c.length - 1)].time });
+        } else if (mode === 'random' && c.length) {
+          const idx = Math.floor(Math.random() * c.length);
+          const t = c[idx].time;
+          const t2 = c[Math.min(c.length - 1, idx + 50)].time;
+          _chart?.timeScale().setVisibleRange({ from: t, to: t2 });
+        }
+        // 'bar' = current selection (no change); 'date' = TODO date picker
+      }
+      rpStartMenu.style.display = 'none';
+    });
+  });
+  // Close start menu on outside click
+  document.addEventListener('mousedown', (ev) => {
+    if (rpStartMenu && rpStartMenu.style.display === 'block') {
+      if (!ev.target.closest('#rpStartMenu') && !ev.target.closest('#rpSelectBar')) {
+        rpStartMenu.style.display = 'none';
+      }
+    }
   });
 
   // Trade dropdown
@@ -3986,10 +4795,7 @@ function wireTopbar() {
   document.getElementById('symbolPill')?.addEventListener('click', (ev) => {
     if (ev.target.closest('.tb-symbol-add')) return;
     ev.stopPropagation();
-    positionPopAtSymbol(symPop);
-    renderSymList(symList);
-    symPop.style.display = 'block';
-    setTimeout(() => symInput.focus(), 0);
+    openSymbolSearchModal();
   });
   symInput?.addEventListener('input', () => renderSymList(symList, symInput.value));
   symList?.addEventListener('click', (ev) => {
@@ -4385,6 +5191,9 @@ function cancelTrendlineMode() {
     try { _chart.removeSeries(_ctx.previewSeries); } catch {}
     _ctx.previewSeries = null;
   }
+  // Deactivate tool button visual state
+  const btn = document.querySelector('.lb-btn[data-tool="trend"]');
+  if (btn) btn.classList.remove('lb-active');
 }
 
 function _finishTrendline(p1, p2) {
@@ -4459,6 +5268,7 @@ function initDrawings(container) {
     const y = ev.clientY - r.top;
     const ts = _chart.timeScale();
     let time = ts.coordinateToTime(x);
+    if (time == null && _ctx.candles && _ctx.candles.length) time = _ctx.candles[_ctx.candles.length - 1].time;
     if (time == null) return;
     // Snap to nearest candle
     time = _findNearestCandleTime(time);
@@ -4493,6 +5303,10 @@ function initDrawings(container) {
     let time = ts.coordinateToTime(x);
     const price = _ctx.series.coordinateToPrice(y);
     if (_ctx.drawingMode === 'trendline') {
+      // Fallback: if click is past the last candle, use last candle's time
+      if (time == null && _ctx.candles && _ctx.candles.length) {
+        time = _ctx.candles[_ctx.candles.length - 1].time;
+      }
       if (time == null || price == null) return;
       time = _findNearestCandleTime(time);
       const point = { time, price };
@@ -4567,6 +5381,7 @@ function initDrawings(container) {
       const ts = _chart.timeScale();
       let t = ts.coordinateToTime(p.point.x);
       const pr = _ctx.series.coordinateToPrice(p.point.y);
+      if (t == null && _ctx.candles && _ctx.candles.length) t = _ctx.candles[_ctx.candles.length - 1].time;
       if (t == null || pr == null) return;
       t = _findNearestCandleTime(t);
       const p1 = _ctx.drawingFirstPoint;
@@ -4593,6 +5408,538 @@ function initDrawings(container) {
   });
 
   _renderHandles(container);
+}
+
+/* =========================================================================
+   INDICATOR SETTINGS MODAL — live editable params per active indicator
+   (added: ⚙ icon in legend opens a modal with per-type controls; live apply
+    drives entry.seriesList[i].setData() without recreating series; Cancel
+    restores snapshot of params+color; Aceptar persists to localStorage.)
+   ========================================================================= */
+
+const _INDSET_TITLES = {
+  sma: 'SMA', ema: 'EMA', wma: 'WMA', bb: 'Bandas de Bollinger',
+  vwap: 'VWAP', ichimoku: 'Ichimoku',
+  rsi: 'RSI', macd: 'MACD', stoch: 'Estocástico', cci: 'CCI',
+  willr: 'Williams %R', adx: 'ADX', mom: 'Momentum', obv: 'OBV', atr: 'ATR',
+};
+
+const _INDSET_SOURCES = [
+  ['close','Cierre'], ['open','Apertura'], ['high','Máximo'], ['low','Mínimo'],
+  ['hl2','HL2'], ['hlc3','HLC3'], ['ohlc4','OHLC4'],
+];
+
+function _indsetMapCandles(candles, src) {
+  if (!src || src === 'close') return candles;
+  return candles.map(c => {
+    let v;
+    switch (src) {
+      case 'open': v = c.open; break;
+      case 'high': v = c.high; break;
+      case 'low':  v = c.low;  break;
+      case 'hl2':  v = (c.high + c.low) / 2; break;
+      case 'hlc3': v = (c.high + c.low + c.close) / 3; break;
+      case 'ohlc4':v = (c.open + c.high + c.low + c.close) / 4; break;
+      default: v = c.close;
+    }
+    return { ...c, close: v };
+  });
+}
+
+function enableIndicatorSettings() {
+  document.querySelectorAll('.ind-row .ind-cog').forEach(cog => {
+    if (cog.dataset.wired === '1') return;
+    cog.dataset.wired = '1';
+    cog.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const row = cog.closest('.ind-row');
+      const uid = row?.dataset?.uid;
+      if (!uid || !_ctx) return;
+      const entry = _ctx.indicators.find(x => x.uid === uid);
+      if (!entry) return;
+      openIndicatorSettingsModal(entry);
+    });
+  });
+}
+
+function _indsetRecompute(entry) {
+  if (!_ctx || !_chart) return;
+  const candles = _indsetMapCandles(_ctx.candles, entry.params?.source);
+  const p = entry.params || {};
+  const sl = entry.seriesList;
+  try {
+    if (entry.id === 'sma' || entry.id === 'ema' || entry.id === 'wma') {
+      const fn = entry.id === 'sma' ? SMA : entry.id === 'ema' ? EMA : WMA;
+      const data = fn(candles, p.period ?? 20);
+      sl[0].setData(data);
+      entry.valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+    } else if (entry.id === 'bb') {
+      const { upper, basis, lower } = BB(candles, p.period ?? 20, p.mult ?? 2);
+      sl[0].setData(upper); sl[1].setData(basis); sl[2].setData(lower);
+      entry.valueByTime.upper = new Map(upper.map(d => [d.time, d.value]));
+      entry.valueByTime.basis = new Map(basis.map(d => [d.time, d.value]));
+      entry.valueByTime.lower = new Map(lower.map(d => [d.time, d.value]));
+    } else if (entry.id === 'vwap') {
+      const data = VWAP(_ctx.candles);
+      sl[0].setData(data);
+      entry.valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+    } else if (entry.id === 'ichimoku') {
+      const ich = Ichimoku(_ctx.candles, p.tenkan ?? 9, p.kijun ?? 26, p.senkouB ?? 52);
+      sl[0].setData(ich.tenkan); sl[1].setData(ich.kijun);
+      sl[2].setData(ich.senkouA); sl[3].setData(ich.senkouB); sl[4].setData(ich.chikou);
+      entry.valueByTime.tenkan = new Map(ich.tenkan.map(d => [d.time, d.value]));
+      entry.valueByTime.kijun  = new Map(ich.kijun.map(d => [d.time, d.value]));
+    } else if (entry.id === 'rsi') {
+      const data = RSI(candles, p.period ?? 14);
+      sl[0].setData(data);
+      entry.valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+    } else if (entry.id === 'macd') {
+      const { macd, signal, histogram } = MACD(candles, p.fast ?? 12, p.slow ?? 26, p.signal ?? 9);
+      sl[0].setData(histogram); sl[1].setData(macd); sl[2].setData(signal);
+      entry.valueByTime.macd = new Map(macd.map(d => [d.time, d.value]));
+      entry.valueByTime.signal = new Map(signal.map(d => [d.time, d.value]));
+    } else if (entry.id === 'stoch') {
+      const { k, d } = Stochastic(_ctx.candles, p.k ?? 14, p.d ?? 3, p.smooth ?? 3);
+      sl[0].setData(k); sl[1].setData(d);
+      entry.valueByTime.k = new Map(k.map(x => [x.time, x.value]));
+      entry.valueByTime.d = new Map(d.map(x => [x.time, x.value]));
+    } else if (entry.id === 'cci') {
+      const data = CCI(_ctx.candles, p.period ?? 20);
+      sl[0].setData(data);
+      entry.valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+    } else if (entry.id === 'willr') {
+      const data = WilliamsR(_ctx.candles, p.period ?? 14);
+      sl[0].setData(data);
+      entry.valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+    } else if (entry.id === 'adx') {
+      const { adx, plusDi, minusDi } = ADX(_ctx.candles, p.period ?? 14);
+      sl[0].setData(adx); sl[1].setData(plusDi); sl[2].setData(minusDi);
+      entry.valueByTime.adx = new Map(adx.map(d => [d.time, d.value]));
+    } else if (entry.id === 'mom') {
+      const data = Momentum(candles, p.period ?? 10);
+      sl[0].setData(data);
+      entry.valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+    } else if (entry.id === 'obv') {
+      const data = OBV(_ctx.candles);
+      sl[0].setData(data);
+      entry.valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+    } else if (entry.id === 'atr') {
+      const data = ATR(_ctx.candles, p.period ?? 14);
+      sl[0].setData(data);
+      entry.valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+    }
+  } catch (e) { /* swallow live-edit errors */ }
+}
+
+function _indsetApplyColor(entry, color) {
+  entry.color = color;
+  if (entry.seriesList && entry.seriesList[0]) {
+    try { entry.seriesList[0].applyOptions({ color }); } catch {}
+  }
+}
+
+function _indsetBuildControls(entry) {
+  const id = entry.id;
+  const p = entry.params || {};
+  const row = (lbl, ctrl) =>
+    `<div class="indset-row"><label class="indset-lbl">${lbl}</label><div class="indset-ctrl">${ctrl}</div></div>`;
+  const num = (key, min, max, step, val) =>
+    `<input class="indset-num" data-key="${key}" type="number" min="${min}" max="${max}" step="${step}" value="${val}">
+     <input class="indset-rng" data-key="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${val}">`;
+  const src = (key, val) => {
+    const opts = _INDSET_SOURCES.map(([v, n]) =>
+      `<option value="${v}" ${v === (val || 'close') ? 'selected' : ''}>${n}</option>`).join('');
+    return `<select class="indset-sel" data-key="${key}">${opts}</select>`;
+  };
+  const anchor = (key, val) => {
+    const opts = ['Session','Day','Week','Month'].map(v =>
+      `<option value="${v}" ${v === (val || 'Session') ? 'selected' : ''}>${v}</option>`).join('');
+    return `<select class="indset-sel" data-key="${key}">${opts}</select>`;
+  };
+
+  let html = '';
+  if (id === 'sma' || id === 'ema' || id === 'wma') {
+    html += row('Período', num('period', 2, 500, 1, p.period ?? 20));
+    html += row('Fuente', src('source', p.source));
+  } else if (id === 'rsi') {
+    html += row('Período', num('period', 2, 100, 1, p.period ?? 14));
+    html += row('Sobrecompra', num('overbought', 50, 95, 1, p.overbought ?? 70));
+    html += row('Sobreventa',  num('oversold',   5, 50, 1, p.oversold   ?? 30));
+    html += row('Fuente', src('source', p.source));
+  } else if (id === 'macd') {
+    html += row('Rápida',  num('fast',   2, 50,  1, p.fast   ?? 12));
+    html += row('Lenta',   num('slow',   5, 100, 1, p.slow   ?? 26));
+    html += row('Señal',   num('signal', 2, 30,  1, p.signal ?? 9));
+    html += row('Fuente',  src('source', p.source));
+  } else if (id === 'bb') {
+    html += row('Período', num('period', 5, 100, 1, p.period ?? 20));
+    html += row('Multiplicador', num('mult', 0.5, 5.0, 0.1, p.mult ?? 2));
+    html += row('Fuente', src('source', p.source));
+  } else if (id === 'stoch') {
+    html += row('%K',     num('k',      5, 50, 1, p.k      ?? 14));
+    html += row('%D',     num('d',      1, 20, 1, p.d      ?? 3));
+    html += row('Suavizado', num('smooth', 1, 10, 1, p.smooth ?? 3));
+  } else if (id === 'atr') {
+    html += row('Período', num('period', 2, 100, 1, p.period ?? 14));
+  } else if (id === 'adx') {
+    html += row('Período', num('period', 5, 50, 1, p.period ?? 14));
+  } else if (id === 'vwap') {
+    html += row('Anclaje', anchor('anchor', p.anchor));
+  } else if (id === 'cci') {
+    html += row('Período', num('period', 5, 100, 1, p.period ?? 20));
+  } else if (id === 'willr') {
+    html += row('Período', num('period', 5, 100, 1, p.period ?? 14));
+  } else if (id === 'mom') {
+    html += row('Período', num('period', 2, 100, 1, p.period ?? 10));
+  } else if (id === 'obv') {
+    html += row('Fuente', src('source', p.source));
+  } else if (id === 'ichimoku') {
+    html += row('Tenkan',  num('tenkan',  5, 20,  1, p.tenkan  ?? 9));
+    html += row('Kijun',   num('kijun',   10, 50, 1, p.kijun   ?? 26));
+    html += row('Senkou B',num('senkouB', 30, 100,1, p.senkouB ?? 52));
+  }
+  html += row('Color', `<input class="indset-color" data-key="__color" type="color" value="${entry.color || '#26a69a'}">`);
+  // Tier-1 extensions: line width + line style
+  const curLW = entry.lineWidth ?? 1.5;
+  const curLS = entry.lineStyle ?? 'solid';
+  html += row('Grosor',
+    `<input class="indset-num" data-key="__lineWidth" type="number" min="1" max="4" step="1" value="${Math.round(curLW)}">
+     <input class="indset-rng" data-key="__lineWidth" type="range" min="1" max="4" step="1" value="${Math.round(curLW)}">`);
+  html += row('Estilo',
+    `<select class="indset-sel" data-key="__lineStyle">
+       <option value="solid"  ${curLS==='solid'?'selected':''}>Sólido</option>
+       <option value="dashed" ${curLS==='dashed'?'selected':''}>Discontinuo</option>
+       <option value="dotted" ${curLS==='dotted'?'selected':''}>Punteado</option>
+       <option value="largeDashed" ${curLS==='largeDashed'?'selected':''}>Trazo largo</option>
+     </select>`);
+  return html;
+}
+
+const _LS_MAP = {
+  solid: LineStyle.Solid,
+  dashed: LineStyle.Dashed,
+  dotted: LineStyle.Dotted,
+  largeDashed: LineStyle.LargeDashed,
+};
+function _indsetApplyLineOpts(entry) {
+  if (!entry || !entry.seriesList) return;
+  const lw = entry.lineWidth ?? 1.5;
+  const ls = _LS_MAP[entry.lineStyle] ?? LineStyle.Solid;
+  for (const s of entry.seriesList) {
+    try { s.applyOptions({ lineWidth: lw, lineStyle: ls }); } catch {}
+  }
+}
+
+function openIndicatorSettingsModal(entry) {
+  document.querySelectorAll('.indset-backdrop').forEach(m => m.remove());
+
+  const snapshot = {
+    params: JSON.parse(JSON.stringify(entry.params || {})),
+    color: entry.color,
+    lineWidth: entry.lineWidth,
+    lineStyle: entry.lineStyle,
+  };
+  const name = _INDSET_TITLES[entry.id] || entry.id.toUpperCase();
+
+  const backdrop = document.createElement('div');
+  backdrop.className = 'indset-backdrop';
+  backdrop.innerHTML = `
+    <div class="indset-modal" role="dialog" aria-modal="true">
+      <div class="indset-head">
+        <span class="indset-title">Configuración de ${escapeHtml(name)}</span>
+        <span class="indset-close" title="Cerrar">×</span>
+      </div>
+      <div class="indset-body">${_indsetBuildControls(entry)}</div>
+      <div class="indset-foot">
+        <button class="indset-btn indset-btn-ghost" data-act="cancel">Cancelar</button>
+        <button class="indset-btn indset-btn-azure" data-act="accept">Aceptar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(backdrop);
+
+  const revert = () => {
+    entry.params = JSON.parse(JSON.stringify(snapshot.params));
+    _indsetApplyColor(entry, snapshot.color);
+    entry.lineWidth = snapshot.lineWidth;
+    entry.lineStyle = snapshot.lineStyle;
+    _indsetApplyLineOpts(entry);
+    _indsetRecompute(entry);
+  };
+
+  const cleanup = () => {
+    document.removeEventListener('keydown', escHandler);
+    backdrop.remove();
+  };
+
+  const close = (commit) => {
+    if (!commit) revert();
+    else {
+      const idx = state.indicators.findIndex(x => x.uid === entry.uid);
+      if (idx >= 0) {
+        state.indicators[idx] = {
+          id: entry.id, params: entry.params, color: entry.color, uid: entry.uid,
+          lineWidth: entry.lineWidth, lineStyle: entry.lineStyle,
+        };
+        lsSet(LS.indicators, state.indicators);
+      }
+    }
+    refreshLegendIndicators();
+    cleanup();
+  };
+
+  const escHandler = (e) => { if (e.key === 'Escape') close(false); };
+  document.addEventListener('keydown', escHandler);
+
+  backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(false); });
+  backdrop.querySelector('.indset-close').addEventListener('click', () => close(false));
+  backdrop.querySelector('[data-act="cancel"]').addEventListener('click', () => close(false));
+  backdrop.querySelector('[data-act="accept"]').addEventListener('click', () => close(true));
+
+  const onChange = (e) => {
+    const t = e.target;
+    const key = t.dataset.key;
+    if (!key) return;
+    if (key === '__color') {
+      _indsetApplyColor(entry, t.value);
+      return;
+    }
+    if (key === '__lineWidth') {
+      entry.lineWidth = parseFloat(t.value);
+      backdrop.querySelectorAll('[data-key="__lineWidth"]').forEach(el => {
+        if (el !== t && (el.type === 'number' || el.type === 'range')) el.value = t.value;
+      });
+      _indsetApplyLineOpts(entry);
+      return;
+    }
+    if (key === '__lineStyle') {
+      entry.lineStyle = t.value;
+      _indsetApplyLineOpts(entry);
+      return;
+    }
+    let val = t.value;
+    if (t.type === 'number' || t.type === 'range') val = parseFloat(val);
+    if (!entry.params) entry.params = {};
+    entry.params[key] = val;
+    backdrop.querySelectorAll(`[data-key="${key}"]`).forEach(el => {
+      if (el !== t && (el.type === 'number' || el.type === 'range')) el.value = val;
+    });
+    _indsetRecompute(entry);
+  };
+  backdrop.querySelectorAll('.indset-num, .indset-rng, .indset-sel, .indset-color')
+    .forEach(el => {
+      el.addEventListener('input', onChange);
+      el.addEventListener('change', onChange);
+    });
+}
+
+/* =========================================================================
+   SYMBOL SEARCH MODAL — large dialog matching TradingView's "Búsqueda de
+   símbolos" (opened by clicking the symbol pill in the top-left).
+   ========================================================================= */
+
+// Cross-exchange listings for popular tickers — replicates TradingView's
+// behavior of showing the same ticker across global exchanges
+const SYMBOL_EXTRA_LISTINGS = {
+  NVDA: [
+    { type: 'dr',             desc: 'NVIDIA Corporation Shs Canadian Depositary Receipt Repr Shs', ex: 'TSX' },
+    { type: 'bond corporate', desc: 'NVIDIA Corporation 2.85% 01-APR-2030',                       ex: 'GETTEX' },
+    { type: 'stock',          desc: 'NVIDIA Corporation',                                          ex: 'BMV' },
+    { type: 'dr',             desc: 'NVIDIA Corporation Shs Cert Deposito Arg Repr 0.04166667 Sh', ex: 'BYMA' },
+    { type: 'stock',          desc: 'NVIDIA Corporation',                                          ex: 'BIVA' },
+    { type: 'stock',          desc: 'NVIDIA Corporation',                                          ex: 'BCS' },
+    { type: 'bond corporate', desc: 'NVIDIA Corporation 2.85% 01-APR-2030',                       ex: 'FWB' },
+    { type: 'stock',          desc: 'NVIDIA Corporation',                                          ex: 'SIX' },
+    { type: 'bond corporate', desc: 'NVIDIA Corporation 2.85% 01-APR-2030',                       ex: 'MUN' },
+    { type: 'bond corporate', desc: 'NVIDIA Corporation 2.85% 01-APR-2030',                       ex: 'DUS' },
+    { type: 'dr',             desc: 'NVIDIA Corporation Shs Canadian Depositary Receipt Repr Shs', ex: 'NEO' },
+  ],
+  AAPL: [
+    { type: 'stock', desc: 'Apple Inc',                ex: 'BMV' },
+    { type: 'stock', desc: 'Apple Inc',                ex: 'BIVA' },
+    { type: 'dr',    desc: 'Apple Inc CEDEAR',         ex: 'BYMA' },
+    { type: 'stock', desc: 'Apple Inc',                ex: 'FWB' },
+    { type: 'stock', desc: 'Apple Inc',                ex: 'SIX' },
+  ],
+  MSFT: [
+    { type: 'stock', desc: 'Microsoft Corporation',    ex: 'BMV' },
+    { type: 'stock', desc: 'Microsoft Corporation',    ex: 'FWB' },
+    { type: 'stock', desc: 'Microsoft Corporation',    ex: 'SIX' },
+  ],
+  TSLA: [
+    { type: 'stock', desc: 'Tesla Inc',                ex: 'FWB' },
+    { type: 'dr',    desc: 'Tesla Inc CEDEAR',         ex: 'BYMA' },
+  ],
+};
+
+// Exchange display colors (small dot/badge to the right of exchange name)
+const EXCHANGE_BADGE_COLORS = {
+  NASDAQ: '#76b900',  TSX: '#e31837',  GETTEX: '#f7a600',  BMV: '#0066cc',
+  BYMA: '#ffcc00',    BIVA: '#28b54b', BCS: '#ff5252',     FWB: '#0033aa',
+  SIX: '#ff0000',     MUN: '#cc0066',  DUS: '#9966cc',     NEO: '#00aaff',
+  NYSE: '#0066cc',    CME: '#003366',  COMEX: '#9966cc',   ICE: '#666666',
+  NSE: '#0099cc',     BSE: '#cc6600',  HKEX: '#cc0000',    JPX: '#000080',
+  LSE: '#003366',     SSE: '#ff0000',  TADAWUL: '#00aa00', ASX: '#ff6600',
+  BINANCE: '#f3ba2f', COINBASE: '#0052ff', KRAKEN: '#5741d9',
+  FX:'#26a69a', FX_IDC:'#26a69a', OANDA:'#1f6bff',
+};
+
+const SYMSEARCH_TABS = [
+  { id: 'all',     label: 'Todos',     filter: () => true },
+  { id: 'stock',   label: 'Acciones',  filter: (r) => r.type === 'stock' || r.type === 'dr' },
+  { id: 'fund',    label: 'Fondos',    filter: (r) => r.type === 'fund' || r.type === 'etf' },
+  { id: 'fut',     label: 'Futuros',   filter: (r) => r.type === 'commodity' || /1!$/.test(r.symbol) },
+  { id: 'forex',   label: 'Forex',     filter: (r) => r.type === 'forex' },
+  { id: 'crypto',  label: 'Cripto',    filter: (r) => r.type === 'crypto' },
+  { id: 'index',   label: 'Índices',   filter: (r) => r.type === 'index' },
+  { id: 'bond',    label: 'Bonos',     filter: (r) => r.type === 'bond corporate' || r.type === 'bond' },
+  { id: 'econ',    label: 'Economía',  filter: (r) => r.type === 'economic' },
+  { id: 'option',  label: 'Opciones',  filter: (r) => r.type === 'option' },
+];
+
+let _ssActiveTab = 'all';
+
+function _expandSymbolCatalog() {
+  // Build full row list (primary listing + cross listings)
+  const rows = [];
+  if (typeof SYMBOL_CATALOG === 'undefined') return rows;
+  for (const it of SYMBOL_CATALOG) {
+    rows.push({
+      symbol: it.symbol,
+      desc: it.name,
+      type: it.type,
+      ex: it.exchange,
+      keywords: it.keywords || [],
+    });
+    const extras = SYMBOL_EXTRA_LISTINGS[it.symbol];
+    if (extras) {
+      for (const x of extras) rows.push({ symbol: it.symbol, ...x, keywords: it.keywords || [] });
+    }
+  }
+  return rows;
+}
+
+function _ssScoreRow(row, q) {
+  if (!q) return 1;
+  const s = row.symbol.toLowerCase();
+  const n = (row.desc || '').toLowerCase();
+  const e = (row.ex || '').toLowerCase();
+  const kw = (row.keywords || []).join(' ').toLowerCase();
+  if (s === q) return 1000;
+  if (s.startsWith(q)) return 500 + (10 - Math.min(10, s.length));
+  if (n.startsWith(q)) return 200;
+  if (kw.includes(q)) return 120;
+  if (n.includes(q)) return 80;
+  if (e.includes(q)) return 40;
+  if (s.includes(q)) return 30;
+  return 0;
+}
+
+function openSymbolSearchModal() {
+  // Reuse if already exists
+  let modal = document.getElementById('symSearchModal');
+  if (modal) { modal.style.display = 'flex'; document.getElementById('symSearchBack').style.display = 'block'; setTimeout(() => modal.querySelector('input')?.focus(), 0); return; }
+
+  const back = document.createElement('div');
+  back.id = 'symSearchBack';
+  back.className = 'symsearch-back';
+  back.addEventListener('click', closeSymbolSearchModal);
+  document.body.appendChild(back);
+
+  modal = document.createElement('div');
+  modal.id = 'symSearchModal';
+  modal.className = 'symsearch-modal';
+  modal.innerHTML = `
+    <div class="ssm-head">
+      <span class="ssm-title">Búsqueda de símbolos</span>
+      <button class="ssm-close" title="Cerrar">✕</button>
+    </div>
+    <div class="ssm-search">
+      <span class="ssm-search-icon">⌕</span>
+      <input class="ssm-search-input" type="text" placeholder="Símbolo, ISIN o CUSIP" value="${state.symbol}" />
+      <button class="ssm-search-clear" title="Borrar">✕</button>
+      <button class="ssm-kbd" title="Atajos">⌨</button>
+    </div>
+    <div class="ssm-tabs">
+      ${SYMSEARCH_TABS.map(t => `<button class="ssm-tab${t.id === _ssActiveTab ? ' is-active' : ''}" data-tab="${t.id}">${t.label}</button>`).join('')}
+    </div>
+    <div class="ssm-list" id="ssmList"></div>
+    <div class="ssm-foot">Buscar utilizando los códigos ISIN y CUSIP</div>
+  `;
+  document.body.appendChild(modal);
+
+  const input = modal.querySelector('.ssm-search-input');
+  const listEl = modal.querySelector('#ssmList');
+
+  const render = () => {
+    const q = (input.value || '').trim().toLowerCase();
+    const tabDef = SYMSEARCH_TABS.find(t => t.id === _ssActiveTab) || SYMSEARCH_TABS[0];
+    const rows = _expandSymbolCatalog()
+      .filter(tabDef.filter)
+      .map(r => ({ row: r, score: _ssScoreRow(r, q) }))
+      .filter(x => q === '' || x.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 100);
+    listEl.innerHTML = rows.map((x, i) => {
+      const r = x.row;
+      const badgeColor = EXCHANGE_BADGE_COLORS[r.ex] || '#888';
+      const typeLabel = ({
+        'stock': 'stock',
+        'dr': 'dr',
+        'bond corporate': 'bond corporate',
+        'bond': 'bond',
+        'crypto': 'crypto',
+        'forex': 'forex',
+        'index': 'index',
+        'commodity': 'commodity',
+        'fund': 'fund',
+        'etf': 'etf',
+      })[r.type] || r.type;
+      return `<div class="ssm-row${i === 0 ? ' is-active' : ''}" data-sym="${r.symbol}">
+        <span class="ssm-eye">👁</span>
+        <span class="ssm-sym">${r.symbol}</span>
+        <span class="ssm-desc">${r.desc || ''}</span>
+        <span class="ssm-type">${typeLabel}</span>
+        <span class="ssm-exch">${r.ex || ''}</span>
+        <span class="ssm-exch-badge" style="background:${badgeColor}">${r.ex?.[0] || ''}</span>
+      </div>`;
+    }).join('') || `<div class="ssm-empty">Sin resultados para "${q}"</div>`;
+  };
+
+  // Wire input
+  input.addEventListener('input', render);
+  modal.querySelector('.ssm-search-clear').addEventListener('click', () => { input.value = ''; input.focus(); render(); });
+  modal.querySelector('.ssm-close').addEventListener('click', closeSymbolSearchModal);
+
+  // Tab clicks
+  modal.querySelectorAll('.ssm-tab').forEach(b => {
+    b.addEventListener('click', () => {
+      _ssActiveTab = b.dataset.tab;
+      modal.querySelectorAll('.ssm-tab').forEach(x => x.classList.toggle('is-active', x.dataset.tab === _ssActiveTab));
+      render();
+    });
+  });
+
+  // Row click
+  listEl.addEventListener('click', (ev) => {
+    const row = ev.target.closest('.ssm-row');
+    if (!row) return;
+    const sym = row.dataset.sym;
+    closeSymbolSearchModal();
+    if (typeof loadSymbol === 'function') loadSymbol(sym);
+    else { state.symbol = sym; lsSet(LS.symbol, sym); location.reload(); }
+  });
+
+  // Esc to close
+  const escHandler = (ev) => { if (ev.key === 'Escape') { closeSymbolSearchModal(); document.removeEventListener('keydown', escHandler); } };
+  document.addEventListener('keydown', escHandler);
+
+  render();
+  setTimeout(() => { input.focus(); input.select(); }, 0);
+}
+
+function closeSymbolSearchModal() {
+  document.getElementById('symSearchModal')?.remove();
+  document.getElementById('symSearchBack')?.remove();
 }
 
 /* =========================================================================
@@ -4632,4 +5979,1179 @@ export function renderChartView(container) {
   document.querySelector('.h-btn')?.addEventListener('click', () => {
     window.location.hash = '#/';
   });
+}
+
+/* =========================================================================
+   BAR REPLAY MODE
+   -------------------------------------------------------------------------
+   Transient (non-persisted) playback engine. Truncates every chart series
+   (main, volume, indicators, compares) to the same prefix of bars so the
+   chart looks like it did at bar `currentBarIdx`. Speed-driven setInterval
+   advances one bar at a time. Exiting restores the full data set.
+   ========================================================================= */
+
+function _replayState() {
+  // Lives on _ctx so it auto-tears-down when chart remounts.
+  if (!_ctx) return null;
+  if (!_ctx._replay) {
+    _ctx._replay = {
+      active: false,
+      currentBarIdx: 0,
+      speedMs: 1000,
+      timer: null,
+      snapshots: [],   // [{series, fullData}]
+      marker: null,    // priceLine on main series at current bar's close
+      badgeEl: null,
+    };
+  }
+  return _ctx._replay;
+}
+
+function _snapshotAllSeries(rp) {
+  rp.snapshots = [];
+  if (!_ctx) return;
+  const push = (s) => {
+    if (!s || typeof s.data !== 'function') return;
+    try {
+      const d = s.data();
+      // s.data() can return readonly array — clone for safe slicing
+      rp.snapshots.push({ series: s, fullData: Array.from(d) });
+    } catch {}
+  };
+  push(_ctx.series);
+  push(_ctx.vol);
+  for (const ind of (_ctx.indicators || [])) {
+    for (const s of (ind.seriesList || [])) push(s);
+  }
+  for (const cmp of (_ctx.compares || [])) {
+    push(cmp.series);
+  }
+}
+
+function _applyReplaySlice(idx) {
+  const rp = _replayState();
+  if (!rp) return;
+  for (const snap of rp.snapshots) {
+    const len = snap.fullData.length;
+    const cut = Math.max(1, Math.min(len, idx + 1));
+    try { snap.series.setData(snap.fullData.slice(0, cut)); } catch {}
+  }
+  _updateReplayMarker(idx);
+  _updateLegendForReplay(idx);
+}
+
+function _updateReplayMarker(idx) {
+  const rp = _replayState();
+  if (!rp || !_ctx || !_ctx.series) return;
+  const candle = _ctx.candles[idx];
+  if (!candle) return;
+  // Remove previous marker
+  if (rp.marker) {
+    try { _ctx.series.removePriceLine(rp.marker); } catch {}
+    rp.marker = null;
+  }
+  try {
+    rp.marker = _ctx.series.createPriceLine({
+      price: candle.close,
+      color: '#ff9800',
+      lineWidth: 1,
+      lineStyle: LineStyle.Dashed,
+      axisLabelVisible: true,
+      title: 'REPLAY',
+    });
+  } catch {}
+}
+
+function _updateLegendForReplay(idx) {
+  if (!_ctx) return;
+  const candle = _ctx.candles[idx];
+  if (!candle) return;
+  // OHLC legend
+  const o = document.getElementById('o');
+  const h = document.getElementById('h');
+  const l = document.getElementById('l');
+  const c = document.getElementById('c');
+  const chg = document.getElementById('chg');
+  const chgPct = document.getElementById('chgPct');
+  const volVal = document.getElementById('volVal');
+  const f = (n) => (n == null || isNaN(n)) ? '—' : (+n).toFixed(2);
+  if (o) o.textContent = f(candle.open);
+  if (h) h.textContent = f(candle.high);
+  if (l) l.textContent = f(candle.low);
+  if (c) c.textContent = f(candle.close);
+  const ch = candle.close - candle.open;
+  const pct = candle.open ? (ch / candle.open) * 100 : 0;
+  const cls = ch >= 0 ? 'up' : 'dn';
+  if (chg) { chg.className = 'ohlc-val ' + cls; chg.textContent = (ch >= 0 ? '+' : '') + f(ch); }
+  if (chgPct) { chgPct.className = 'ohlc-val ' + cls; chgPct.textContent = (pct >= 0 ? '+' : '') + f(pct) + '%'; }
+  if (volVal) volVal.textContent = candle.volume != null ? candle.volume.toLocaleString() : '—';
+  // Indicator values at this bar's time
+  const t = candle.time;
+  for (const ind of (_ctx.indicators || [])) {
+    if (!ind.valueByTime) continue;
+    for (const [k, m] of Object.entries(ind.valueByTime)) {
+      const el = document.getElementById(`indVal_${ind.uid}_${k}`);
+      if (el) {
+        const val = m.get(t);
+        el.textContent = (val != null && !isNaN(val)) ? (+val).toFixed(2) : '—';
+      }
+    }
+  }
+}
+
+function _showReplayBadge() {
+  const rp = _replayState();
+  if (!rp || !_ctx || !_ctx.container) return;
+  if (rp.badgeEl) return;
+  const b = document.createElement('div');
+  b.className = 'replay-badge';
+  b.textContent = 'REPLAY';
+  _ctx.container.appendChild(b);
+  rp.badgeEl = b;
+}
+
+function _hideReplayBadge() {
+  const rp = _replayState();
+  if (!rp) return;
+  if (rp.badgeEl && rp.badgeEl.parentNode) {
+    rp.badgeEl.parentNode.removeChild(rp.badgeEl);
+  }
+  rp.badgeEl = null;
+}
+
+function enterReplayMode() {
+  const rp = _replayState();
+  if (!rp || rp.active) return;
+  if (!_ctx || !_ctx.candles || !_ctx.candles.length) return;
+  rp.active = true;
+  // Pick starting bar = candle nearest to visible-range "to"
+  let startIdx = _ctx.candles.length - 1;
+  try {
+    const vr = _chart.timeScale().getVisibleRange();
+    if (vr && vr.to != null) {
+      const targetT = vr.to;
+      // candles sorted by time → binary-ish linear scan acceptable for typical sizes
+      let best = startIdx, bestDiff = Infinity;
+      for (let i = 0; i < _ctx.candles.length; i++) {
+        const d = Math.abs(_ctx.candles[i].time - targetT);
+        if (d < bestDiff) { bestDiff = d; best = i; }
+      }
+      startIdx = best;
+    }
+  } catch {}
+  // Clamp so there's still room to play forward
+  if (startIdx >= _ctx.candles.length) startIdx = _ctx.candles.length - 1;
+  if (startIdx < 1) startIdx = 1;
+  rp.currentBarIdx = startIdx;
+  _snapshotAllSeries(rp);
+  _applyReplaySlice(startIdx);
+  _showReplayBadge();
+  const speedSel = document.getElementById('rpSpeed');
+  if (speedSel) rp.speedMs = +speedSel.value || 1000;
+  const playBtn = document.getElementById('rpPlay');
+  if (playBtn) playBtn.textContent = '▶';
+}
+
+function exitReplayMode() {
+  const rp = _replayState();
+  if (!rp) return;
+  if (rp.timer) { clearInterval(rp.timer); rp.timer = null; }
+  // Restore full data
+  for (const snap of rp.snapshots) {
+    try { snap.series.setData(snap.fullData); } catch {}
+  }
+  rp.snapshots = [];
+  if (rp.marker && _ctx && _ctx.series) {
+    try { _ctx.series.removePriceLine(rp.marker); } catch {}
+  }
+  rp.marker = null;
+  _hideReplayBadge();
+  rp.active = false;
+  const playBtn = document.getElementById('rpPlay');
+  if (playBtn) playBtn.textContent = '▶';
+  // Refresh legend to last bar
+  if (_ctx && _ctx.lastCandle) _updateLegendForReplay(_ctx.candles.length - 1);
+}
+
+function advanceReplay(steps) {
+  const rp = _replayState();
+  if (!rp || !rp.active || !_ctx) return;
+  const max = _ctx.candles.length - 1;
+  let next = rp.currentBarIdx + steps;
+  if (next < 0) next = 0;
+  if (next > max) {
+    next = max;
+    // Auto-stop at end
+    if (rp.timer) {
+      clearInterval(rp.timer);
+      rp.timer = null;
+      const playBtn = document.getElementById('rpPlay');
+      if (playBtn) playBtn.textContent = '▶';
+    }
+  }
+  rp.currentBarIdx = next;
+  _applyReplaySlice(next);
+}
+
+function setReplaySpeed(ms) {
+  const rp = _replayState();
+  if (!rp) return;
+  rp.speedMs = ms || 1000;
+  if (rp.timer) {
+    clearInterval(rp.timer);
+    rp.timer = setInterval(() => advanceReplay(1), rp.speedMs);
+  }
+}
+
+function togglePlay() {
+  const rp = _replayState();
+  if (!rp) return;
+  if (!rp.active) enterReplayMode();
+  const playBtn = document.getElementById('rpPlay');
+  if (rp.timer) {
+    clearInterval(rp.timer);
+    rp.timer = null;
+    if (playBtn) playBtn.textContent = '▶';
+    return;
+  }
+  // If at end, rewind a bit so play does something useful
+  if (_ctx && rp.currentBarIdx >= _ctx.candles.length - 1) {
+    rp.currentBarIdx = Math.max(1, _ctx.candles.length - 50);
+    _applyReplaySlice(rp.currentBarIdx);
+  }
+  if (playBtn) playBtn.textContent = '⏸';
+  rp.timer = setInterval(() => advanceReplay(1), rp.speedMs || 1000);
+}
+
+/* =========================================================================
+   SYMBOL SEARCH PALETTE (NEW BLOCK — added by symbol-search agent)
+   - Catalog of 150+ tradable symbols across asset classes
+   - Live filter w/ scoring (exact prefix > word prefix > substring)
+   - Keyboard navigation (Up/Down/Enter/Esc), Ctrl+K / Cmd+K hotkey
+   - Recents persisted to localStorage (tv.recentSymbols, max 8 FIFO)
+   - Category chips (Todos / Acciones / Cripto / Forex / Materias primas / Índices)
+   ========================================================================= */
+
+const SYMBOL_CATALOG = [
+  // ---- STOCKS ----
+  { symbol: 'NVDA',  name: 'NVIDIA Corporation',           exchange: 'NASDAQ', type: 'stock', keywords: ['nvidia','gpu','ai','semiconductor','chips'] },
+  { symbol: 'AAPL',  name: 'Apple Inc.',                   exchange: 'NASDAQ', type: 'stock', keywords: ['apple','iphone','mac','ipad'] },
+  { symbol: 'MSFT',  name: 'Microsoft Corporation',        exchange: 'NASDAQ', type: 'stock', keywords: ['microsoft','windows','azure','xbox'] },
+  { symbol: 'GOOGL', name: 'Alphabet Inc. Class A',        exchange: 'NASDAQ', type: 'stock', keywords: ['google','alphabet','search','android'] },
+  { symbol: 'AMZN',  name: 'Amazon.com Inc.',              exchange: 'NASDAQ', type: 'stock', keywords: ['amazon','aws','ecommerce','prime'] },
+  { symbol: 'META',  name: 'Meta Platforms Inc.',          exchange: 'NASDAQ', type: 'stock', keywords: ['meta','facebook','instagram','whatsapp'] },
+  { symbol: 'TSLA',  name: 'Tesla Inc.',                   exchange: 'NASDAQ', type: 'stock', keywords: ['tesla','ev','musk','automotive'] },
+  { symbol: 'NFLX',  name: 'Netflix Inc.',                 exchange: 'NASDAQ', type: 'stock', keywords: ['netflix','streaming','movies'] },
+  { symbol: 'AMD',   name: 'Advanced Micro Devices',       exchange: 'NASDAQ', type: 'stock', keywords: ['amd','cpu','gpu','semiconductor'] },
+  { symbol: 'INTC',  name: 'Intel Corporation',            exchange: 'NASDAQ', type: 'stock', keywords: ['intel','cpu','semiconductor'] },
+  { symbol: 'ORCL',  name: 'Oracle Corporation',           exchange: 'NYSE',   type: 'stock', keywords: ['oracle','database','enterprise'] },
+  { symbol: 'CRM',   name: 'Salesforce Inc.',              exchange: 'NYSE',   type: 'stock', keywords: ['salesforce','crm','cloud'] },
+  { symbol: 'ADBE',  name: 'Adobe Inc.',                   exchange: 'NASDAQ', type: 'stock', keywords: ['adobe','photoshop','creative'] },
+  { symbol: 'CSCO',  name: 'Cisco Systems Inc.',           exchange: 'NASDAQ', type: 'stock', keywords: ['cisco','networking'] },
+  { symbol: 'AVGO',  name: 'Broadcom Inc.',                exchange: 'NASDAQ', type: 'stock', keywords: ['broadcom','semiconductor'] },
+  { symbol: 'QCOM',  name: 'Qualcomm Inc.',                exchange: 'NASDAQ', type: 'stock', keywords: ['qualcomm','snapdragon','mobile'] },
+  { symbol: 'TXN',   name: 'Texas Instruments',            exchange: 'NASDAQ', type: 'stock', keywords: ['texas instruments','semiconductor'] },
+  { symbol: 'IBM',   name: 'International Business Machines', exchange: 'NYSE', type: 'stock', keywords: ['ibm','enterprise','watson'] },
+  { symbol: 'DIS',   name: 'The Walt Disney Company',      exchange: 'NYSE',   type: 'stock', keywords: ['disney','entertainment','parks'] },
+  { symbol: 'NKE',   name: 'Nike Inc.',                    exchange: 'NYSE',   type: 'stock', keywords: ['nike','sportswear','shoes'] },
+  { symbol: 'KO',    name: 'The Coca-Cola Company',        exchange: 'NYSE',   type: 'stock', keywords: ['coca cola','beverage'] },
+  { symbol: 'PEP',   name: 'PepsiCo Inc.',                 exchange: 'NASDAQ', type: 'stock', keywords: ['pepsi','beverage','snacks'] },
+  { symbol: 'WMT',   name: 'Walmart Inc.',                 exchange: 'NYSE',   type: 'stock', keywords: ['walmart','retail'] },
+  { symbol: 'COST',  name: 'Costco Wholesale Corp.',       exchange: 'NASDAQ', type: 'stock', keywords: ['costco','wholesale','retail'] },
+  { symbol: 'HD',    name: 'The Home Depot Inc.',          exchange: 'NYSE',   type: 'stock', keywords: ['home depot','retail','hardware'] },
+  { symbol: 'MCD',   name: "McDonald's Corporation",       exchange: 'NYSE',   type: 'stock', keywords: ['mcdonalds','fast food','restaurants'] },
+  { symbol: 'SBUX',  name: 'Starbucks Corporation',        exchange: 'NASDAQ', type: 'stock', keywords: ['starbucks','coffee'] },
+  { symbol: 'V',     name: 'Visa Inc.',                    exchange: 'NYSE',   type: 'stock', keywords: ['visa','payments','cards'] },
+  { symbol: 'MA',    name: 'Mastercard Inc.',              exchange: 'NYSE',   type: 'stock', keywords: ['mastercard','payments','cards'] },
+  { symbol: 'PYPL',  name: 'PayPal Holdings Inc.',         exchange: 'NASDAQ', type: 'stock', keywords: ['paypal','payments','fintech'] },
+  { symbol: 'JPM',   name: 'JPMorgan Chase & Co.',         exchange: 'NYSE',   type: 'stock', keywords: ['jpmorgan','jp morgan','bank'] },
+  { symbol: 'BAC',   name: 'Bank of America Corp.',        exchange: 'NYSE',   type: 'stock', keywords: ['bank of america','bank'] },
+  { symbol: 'WFC',   name: 'Wells Fargo & Company',        exchange: 'NYSE',   type: 'stock', keywords: ['wells fargo','bank'] },
+  { symbol: 'GS',    name: 'Goldman Sachs Group',          exchange: 'NYSE',   type: 'stock', keywords: ['goldman sachs','investment bank'] },
+  { symbol: 'MS',    name: 'Morgan Stanley',               exchange: 'NYSE',   type: 'stock', keywords: ['morgan stanley','investment bank'] },
+  { symbol: 'C',     name: 'Citigroup Inc.',               exchange: 'NYSE',   type: 'stock', keywords: ['citigroup','citi','bank'] },
+  { symbol: 'BLK',   name: 'BlackRock Inc.',               exchange: 'NYSE',   type: 'stock', keywords: ['blackrock','asset management'] },
+  { symbol: 'AXP',   name: 'American Express Company',     exchange: 'NYSE',   type: 'stock', keywords: ['amex','american express','cards'] },
+  { symbol: 'JNJ',   name: 'Johnson & Johnson',            exchange: 'NYSE',   type: 'stock', keywords: ['johnson','pharma','health'] },
+  { symbol: 'PFE',   name: 'Pfizer Inc.',                  exchange: 'NYSE',   type: 'stock', keywords: ['pfizer','pharma'] },
+  { symbol: 'UNH',   name: 'UnitedHealth Group Inc.',      exchange: 'NYSE',   type: 'stock', keywords: ['unitedhealth','insurance','health'] },
+  { symbol: 'ABBV',  name: 'AbbVie Inc.',                  exchange: 'NYSE',   type: 'stock', keywords: ['abbvie','pharma'] },
+  { symbol: 'MRK',   name: 'Merck & Co. Inc.',             exchange: 'NYSE',   type: 'stock', keywords: ['merck','pharma'] },
+  { symbol: 'LLY',   name: 'Eli Lilly and Company',        exchange: 'NYSE',   type: 'stock', keywords: ['eli lilly','pharma'] },
+  { symbol: 'BMY',   name: 'Bristol-Myers Squibb',         exchange: 'NYSE',   type: 'stock', keywords: ['bristol myers','pharma'] },
+  { symbol: 'GILD',  name: 'Gilead Sciences Inc.',         exchange: 'NASDAQ', type: 'stock', keywords: ['gilead','biotech'] },
+  { symbol: 'AMGN',  name: 'Amgen Inc.',                   exchange: 'NASDAQ', type: 'stock', keywords: ['amgen','biotech'] },
+  { symbol: 'BIIB',  name: 'Biogen Inc.',                  exchange: 'NASDAQ', type: 'stock', keywords: ['biogen','biotech'] },
+  { symbol: 'XOM',   name: 'Exxon Mobil Corporation',      exchange: 'NYSE',   type: 'stock', keywords: ['exxon','oil','energy'] },
+  { symbol: 'CVX',   name: 'Chevron Corporation',          exchange: 'NYSE',   type: 'stock', keywords: ['chevron','oil','energy'] },
+  { symbol: 'COP',   name: 'ConocoPhillips',               exchange: 'NYSE',   type: 'stock', keywords: ['conoco','oil','energy'] },
+  { symbol: 'OXY',   name: 'Occidental Petroleum',         exchange: 'NYSE',   type: 'stock', keywords: ['occidental','oil','energy'] },
+  { symbol: 'SLB',   name: 'Schlumberger N.V.',            exchange: 'NYSE',   type: 'stock', keywords: ['schlumberger','oil services'] },
+  { symbol: 'BA',    name: 'The Boeing Company',           exchange: 'NYSE',   type: 'stock', keywords: ['boeing','aerospace','defense'] },
+  { symbol: 'LMT',   name: 'Lockheed Martin Corporation',  exchange: 'NYSE',   type: 'stock', keywords: ['lockheed','defense','aerospace'] },
+  { symbol: 'RTX',   name: 'RTX Corporation',              exchange: 'NYSE',   type: 'stock', keywords: ['raytheon','rtx','defense'] },
+  { symbol: 'GE',    name: 'General Electric Company',     exchange: 'NYSE',   type: 'stock', keywords: ['ge','general electric','industrial'] },
+  { symbol: 'CAT',   name: 'Caterpillar Inc.',             exchange: 'NYSE',   type: 'stock', keywords: ['caterpillar','machinery'] },
+  { symbol: 'HON',   name: 'Honeywell International',      exchange: 'NASDAQ', type: 'stock', keywords: ['honeywell','industrial'] },
+  { symbol: 'MMM',   name: '3M Company',                   exchange: 'NYSE',   type: 'stock', keywords: ['3m','industrial'] },
+  { symbol: 'F',     name: 'Ford Motor Company',           exchange: 'NYSE',   type: 'stock', keywords: ['ford','automotive'] },
+  { symbol: 'GM',    name: 'General Motors Company',       exchange: 'NYSE',   type: 'stock', keywords: ['gm','general motors','automotive'] },
+  { symbol: 'RIVN',  name: 'Rivian Automotive Inc.',       exchange: 'NASDAQ', type: 'stock', keywords: ['rivian','ev'] },
+  { symbol: 'LCID',  name: 'Lucid Group Inc.',             exchange: 'NASDAQ', type: 'stock', keywords: ['lucid','ev'] },
+  { symbol: 'UBER',  name: 'Uber Technologies Inc.',       exchange: 'NYSE',   type: 'stock', keywords: ['uber','rideshare'] },
+  { symbol: 'LYFT',  name: 'Lyft Inc.',                    exchange: 'NASDAQ', type: 'stock', keywords: ['lyft','rideshare'] },
+  { symbol: 'ABNB',  name: 'Airbnb Inc.',                  exchange: 'NASDAQ', type: 'stock', keywords: ['airbnb','travel'] },
+  { symbol: 'SHOP',  name: 'Shopify Inc.',                 exchange: 'NYSE',   type: 'stock', keywords: ['shopify','ecommerce'] },
+  { symbol: 'SQ',    name: 'Block Inc.',                   exchange: 'NYSE',   type: 'stock', keywords: ['block','square','fintech'] },
+  { symbol: 'ROKU',  name: 'Roku Inc.',                    exchange: 'NASDAQ', type: 'stock', keywords: ['roku','streaming'] },
+  { symbol: 'ZM',    name: 'Zoom Video Communications',    exchange: 'NASDAQ', type: 'stock', keywords: ['zoom','video','communications'] },
+  { symbol: 'DOCU',  name: 'DocuSign Inc.',                exchange: 'NASDAQ', type: 'stock', keywords: ['docusign','esign'] },
+  { symbol: 'CRWD',  name: 'CrowdStrike Holdings Inc.',    exchange: 'NASDAQ', type: 'stock', keywords: ['crowdstrike','security','cyber'] },
+  { symbol: 'OKTA',  name: 'Okta Inc.',                    exchange: 'NASDAQ', type: 'stock', keywords: ['okta','identity','security'] },
+  { symbol: 'DDOG',  name: 'Datadog Inc.',                 exchange: 'NASDAQ', type: 'stock', keywords: ['datadog','observability'] },
+  { symbol: 'SNOW',  name: 'Snowflake Inc.',               exchange: 'NYSE',   type: 'stock', keywords: ['snowflake','data','cloud'] },
+  { symbol: 'PLTR',  name: 'Palantir Technologies Inc.',   exchange: 'NYSE',   type: 'stock', keywords: ['palantir','data','analytics'] },
+  { symbol: 'MDB',   name: 'MongoDB Inc.',                 exchange: 'NASDAQ', type: 'stock', keywords: ['mongodb','database'] },
+  { symbol: 'NET',   name: 'Cloudflare Inc.',              exchange: 'NYSE',   type: 'stock', keywords: ['cloudflare','cdn','security'] },
+  { symbol: 'ZS',    name: 'Zscaler Inc.',                 exchange: 'NASDAQ', type: 'stock', keywords: ['zscaler','security','cyber'] },
+  { symbol: 'PANW',  name: 'Palo Alto Networks Inc.',      exchange: 'NASDAQ', type: 'stock', keywords: ['palo alto','security','cyber'] },
+
+  // ---- INDICES ----
+  { symbol: 'SPX',     name: 'S&P 500 Index',              exchange: 'INDEX', type: 'index', keywords: ['sp500','s&p','spx','us500'] },
+  { symbol: 'NDX',     name: 'Nasdaq 100 Index',           exchange: 'INDEX', type: 'index', keywords: ['nasdaq 100','ndx','us100'] },
+  { symbol: 'DJI',     name: 'Dow Jones Industrial Avg.',  exchange: 'INDEX', type: 'index', keywords: ['dow jones','djia','us30'] },
+  { symbol: 'RUT',     name: 'Russell 2000 Index',         exchange: 'INDEX', type: 'index', keywords: ['russell 2000','rut','smallcap'] },
+  { symbol: 'VIX',     name: 'CBOE Volatility Index',      exchange: 'INDEX', type: 'index', keywords: ['vix','volatility','fear'] },
+  { symbol: 'FTSE',    name: 'FTSE 100 Index',             exchange: 'INDEX', type: 'index', keywords: ['ftse','uk100','london'] },
+  { symbol: 'DAX',     name: 'DAX 40 Index',               exchange: 'INDEX', type: 'index', keywords: ['dax','de40','germany'] },
+  { symbol: 'CAC',     name: 'CAC 40 Index',               exchange: 'INDEX', type: 'index', keywords: ['cac','france','fr40'] },
+  { symbol: 'NI225',   name: 'Nikkei 225 Index',           exchange: 'INDEX', type: 'index', keywords: ['nikkei','japan','jp225'] },
+  { symbol: 'HSI',     name: 'Hang Seng Index',            exchange: 'INDEX', type: 'index', keywords: ['hang seng','hong kong','hk50'] },
+  { symbol: 'SHCOMP',  name: 'Shanghai Composite Index',   exchange: 'INDEX', type: 'index', keywords: ['shanghai','china','composite'] },
+  { symbol: 'ASX',     name: 'S&P/ASX 200 Index',          exchange: 'INDEX', type: 'index', keywords: ['asx','australia','au200'] },
+  { symbol: 'IBEX',    name: 'IBEX 35 Index',              exchange: 'INDEX', type: 'index', keywords: ['ibex','spain','es35'] },
+
+  // ---- FOREX ----
+  { symbol: 'EURUSD', name: 'Euro / US Dollar',            exchange: 'FX', type: 'forex', keywords: ['eur','usd','euro','dollar'] },
+  { symbol: 'GBPUSD', name: 'British Pound / US Dollar',   exchange: 'FX', type: 'forex', keywords: ['gbp','usd','cable','pound'] },
+  { symbol: 'USDJPY', name: 'US Dollar / Japanese Yen',    exchange: 'FX', type: 'forex', keywords: ['usd','jpy','yen'] },
+  { symbol: 'USDCHF', name: 'US Dollar / Swiss Franc',     exchange: 'FX', type: 'forex', keywords: ['usd','chf','swiss','franc'] },
+  { symbol: 'AUDUSD', name: 'Australian Dollar / US Dollar', exchange: 'FX', type: 'forex', keywords: ['aud','usd','aussie'] },
+  { symbol: 'NZDUSD', name: 'New Zealand Dollar / US Dollar', exchange: 'FX', type: 'forex', keywords: ['nzd','usd','kiwi'] },
+  { symbol: 'USDCAD', name: 'US Dollar / Canadian Dollar', exchange: 'FX', type: 'forex', keywords: ['usd','cad','loonie'] },
+  { symbol: 'EURGBP', name: 'Euro / British Pound',        exchange: 'FX', type: 'forex', keywords: ['eur','gbp'] },
+  { symbol: 'EURJPY', name: 'Euro / Japanese Yen',         exchange: 'FX', type: 'forex', keywords: ['eur','jpy'] },
+  { symbol: 'EURCHF', name: 'Euro / Swiss Franc',          exchange: 'FX', type: 'forex', keywords: ['eur','chf'] },
+  { symbol: 'GBPJPY', name: 'British Pound / Japanese Yen', exchange: 'FX', type: 'forex', keywords: ['gbp','jpy'] },
+  { symbol: 'AUDJPY', name: 'Australian Dollar / Japanese Yen', exchange: 'FX', type: 'forex', keywords: ['aud','jpy'] },
+  { symbol: 'EURAUD', name: 'Euro / Australian Dollar',    exchange: 'FX', type: 'forex', keywords: ['eur','aud'] },
+  { symbol: 'GBPAUD', name: 'British Pound / Australian Dollar', exchange: 'FX', type: 'forex', keywords: ['gbp','aud'] },
+  { symbol: 'USDMXN', name: 'US Dollar / Mexican Peso',    exchange: 'FX', type: 'forex', keywords: ['usd','mxn','peso'] },
+  { symbol: 'USDTRY', name: 'US Dollar / Turkish Lira',    exchange: 'FX', type: 'forex', keywords: ['usd','try','lira'] },
+
+  // ---- CRYPTO ----
+  { symbol: 'BTCUSD',   name: 'Bitcoin / US Dollar',       exchange: 'CRYPTO', type: 'crypto', keywords: ['btc','bitcoin'] },
+  { symbol: 'ETHUSD',   name: 'Ethereum / US Dollar',      exchange: 'CRYPTO', type: 'crypto', keywords: ['eth','ethereum','ether'] },
+  { symbol: 'BNBUSD',   name: 'BNB / US Dollar',           exchange: 'CRYPTO', type: 'crypto', keywords: ['bnb','binance coin'] },
+  { symbol: 'SOLUSD',   name: 'Solana / US Dollar',        exchange: 'CRYPTO', type: 'crypto', keywords: ['sol','solana'] },
+  { symbol: 'XRPUSD',   name: 'Ripple / US Dollar',        exchange: 'CRYPTO', type: 'crypto', keywords: ['xrp','ripple'] },
+  { symbol: 'ADAUSD',   name: 'Cardano / US Dollar',       exchange: 'CRYPTO', type: 'crypto', keywords: ['ada','cardano'] },
+  { symbol: 'DOGEUSD',  name: 'Dogecoin / US Dollar',      exchange: 'CRYPTO', type: 'crypto', keywords: ['doge','dogecoin'] },
+  { symbol: 'AVAXUSD',  name: 'Avalanche / US Dollar',     exchange: 'CRYPTO', type: 'crypto', keywords: ['avax','avalanche'] },
+  { symbol: 'DOTUSD',   name: 'Polkadot / US Dollar',      exchange: 'CRYPTO', type: 'crypto', keywords: ['dot','polkadot'] },
+  { symbol: 'MATICUSD', name: 'Polygon / US Dollar',       exchange: 'CRYPTO', type: 'crypto', keywords: ['matic','polygon'] },
+  { symbol: 'SHIBUSD',  name: 'Shiba Inu / US Dollar',     exchange: 'CRYPTO', type: 'crypto', keywords: ['shib','shiba'] },
+  { symbol: 'TRXUSD',   name: 'TRON / US Dollar',          exchange: 'CRYPTO', type: 'crypto', keywords: ['trx','tron'] },
+  { symbol: 'LTCUSD',   name: 'Litecoin / US Dollar',      exchange: 'CRYPTO', type: 'crypto', keywords: ['ltc','litecoin'] },
+  { symbol: 'LINKUSD',  name: 'Chainlink / US Dollar',     exchange: 'CRYPTO', type: 'crypto', keywords: ['link','chainlink'] },
+  { symbol: 'ATOMUSD',  name: 'Cosmos / US Dollar',        exchange: 'CRYPTO', type: 'crypto', keywords: ['atom','cosmos'] },
+  { symbol: 'UNIUSD',   name: 'Uniswap / US Dollar',       exchange: 'CRYPTO', type: 'crypto', keywords: ['uni','uniswap','dex'] },
+  { symbol: 'NEARUSD',  name: 'NEAR Protocol / US Dollar', exchange: 'CRYPTO', type: 'crypto', keywords: ['near'] },
+  { symbol: 'APTUSD',   name: 'Aptos / US Dollar',         exchange: 'CRYPTO', type: 'crypto', keywords: ['apt','aptos'] },
+  { symbol: 'XLMUSD',   name: 'Stellar / US Dollar',       exchange: 'CRYPTO', type: 'crypto', keywords: ['xlm','stellar','lumens'] },
+  { symbol: 'ETCUSD',   name: 'Ethereum Classic / US Dollar', exchange: 'CRYPTO', type: 'crypto', keywords: ['etc','ethereum classic'] },
+
+  // ---- COMMODITIES ----
+  { symbol: 'GC1!', name: 'Gold Futures',                  exchange: 'COMEX',  type: 'commodity', keywords: ['gold','xau','metals'] },
+  { symbol: 'SI1!', name: 'Silver Futures',                exchange: 'COMEX',  type: 'commodity', keywords: ['silver','xag','metals'] },
+  { symbol: 'HG1!', name: 'Copper Futures',                exchange: 'COMEX',  type: 'commodity', keywords: ['copper','metals'] },
+  { symbol: 'PL1!', name: 'Platinum Futures',              exchange: 'NYMEX',  type: 'commodity', keywords: ['platinum','metals'] },
+  { symbol: 'CL1!', name: 'WTI Crude Oil Futures',         exchange: 'NYMEX',  type: 'commodity', keywords: ['oil','crude','wti','energy'] },
+  { symbol: 'BZ1!', name: 'Brent Crude Oil Futures',       exchange: 'ICE',    type: 'commodity', keywords: ['oil','brent','crude','energy'] },
+  { symbol: 'NG1!', name: 'Natural Gas Futures',           exchange: 'NYMEX',  type: 'commodity', keywords: ['natural gas','gas','energy'] },
+  { symbol: 'ZC1!', name: 'Corn Futures',                  exchange: 'CBOT',   type: 'commodity', keywords: ['corn','grain','agriculture'] },
+  { symbol: 'ZS1!', name: 'Soybean Futures',               exchange: 'CBOT',   type: 'commodity', keywords: ['soybean','soy','grain','agriculture'] },
+  { symbol: 'ZW1!', name: 'Wheat Futures',                 exchange: 'CBOT',   type: 'commodity', keywords: ['wheat','grain','agriculture'] },
+
+  // ---- SPANISH (IBEX 35) ----
+  { symbol: 'SAN',  name: 'Banco Santander',               exchange: 'BME', type: 'stock', keywords: ['santander','banco','spain'] },
+  { symbol: 'BBVA', name: 'Banco Bilbao Vizcaya Argentaria', exchange: 'BME', type: 'stock', keywords: ['bbva','banco','spain'] },
+  { symbol: 'IBE',  name: 'Iberdrola',                     exchange: 'BME', type: 'stock', keywords: ['iberdrola','utility','spain'] },
+  { symbol: 'TEF',  name: 'Telefónica',                    exchange: 'BME', type: 'stock', keywords: ['telefonica','telecom','spain'] },
+  { symbol: 'REP',  name: 'Repsol',                        exchange: 'BME', type: 'stock', keywords: ['repsol','energy','spain'] },
+  { symbol: 'ELE',  name: 'Endesa',                        exchange: 'BME', type: 'stock', keywords: ['endesa','utility','spain'] },
+  { symbol: 'GRF',  name: 'Grifols',                       exchange: 'BME', type: 'stock', keywords: ['grifols','pharma','spain'] },
+  { symbol: 'NTGY', name: 'Naturgy Energy Group',          exchange: 'BME', type: 'stock', keywords: ['naturgy','gas','utility','spain'] },
+  { symbol: 'AMS',  name: 'Amadeus IT Group',              exchange: 'BME', type: 'stock', keywords: ['amadeus','travel','tech','spain'] },
+  { symbol: 'AENA', name: 'Aena',                          exchange: 'BME', type: 'stock', keywords: ['aena','airports','spain'] },
+  { symbol: 'MTS',  name: 'ArcelorMittal',                 exchange: 'BME', type: 'stock', keywords: ['arcelormittal','steel','spain'] },
+  { symbol: 'IDR',  name: 'Indra Sistemas',                exchange: 'BME', type: 'stock', keywords: ['indra','tech','spain'] },
+  { symbol: 'ACS',  name: 'ACS Actividades de Construcción', exchange: 'BME', type: 'stock', keywords: ['acs','construction','spain'] },
+  { symbol: 'CLNX', name: 'Cellnex Telecom',               exchange: 'BME', type: 'stock', keywords: ['cellnex','telecom','spain'] },
+];
+
+const SS_TYPE_COLORS = {
+  stock:     '#2962ff',
+  crypto:    '#f7a600',
+  forex:     '#089981',
+  commodity: '#f2c94c',
+  index:     '#9c27b0',
+};
+const SS_TYPE_LABELS = {
+  stock:     'Acción',
+  crypto:    'Cripto',
+  forex:     'Forex',
+  commodity: 'Materia prima',
+  index:     'Índice',
+};
+const SS_CATEGORIES = [
+  { id: 'all',       label: 'Todos',           type: null },
+  { id: 'stock',     label: 'Acciones',        type: 'stock' },
+  { id: 'crypto',    label: 'Cripto',          type: 'crypto' },
+  { id: 'forex',     label: 'Forex',           type: 'forex' },
+  { id: 'commodity', label: 'Materias primas', type: 'commodity' },
+  { id: 'index',     label: 'Índices',         type: 'index' },
+];
+const SS_RECENTS_KEY = 'tv.recentSymbols';
+const SS_RECENTS_MAX = 8;
+
+function _ssGetRecents() {
+  try { const v = JSON.parse(localStorage.getItem(SS_RECENTS_KEY) || '[]'); return Array.isArray(v) ? v : []; }
+  catch { return []; }
+}
+function _ssAddRecent(sym) {
+  const cur = _ssGetRecents().filter(s => s !== sym);
+  cur.unshift(sym);
+  while (cur.length > SS_RECENTS_MAX) cur.pop();
+  try { localStorage.setItem(SS_RECENTS_KEY, JSON.stringify(cur)); } catch {}
+}
+
+function _ssEscape(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// Scoring: exact symbol = 200, symbol prefix = 100+, name prefix = 80, name word prefix = 50,
+// keyword exact = 90, keyword prefix = 60, substring fallbacks (40/15/12).
+function _ssScore(item, q) {
+  if (!q) return 1;
+  const ql = q.toLowerCase();
+  const sym = item.symbol.toLowerCase();
+  const nm = item.name.toLowerCase();
+  const ex = item.exchange.toLowerCase();
+  let best = 0;
+  if (sym === ql) best = Math.max(best, 200);
+  if (sym.startsWith(ql)) best = Math.max(best, 100 + (10 - Math.min(10, sym.length)));
+  if (nm.startsWith(ql)) best = Math.max(best, 80);
+  for (const w of nm.split(/[\s\.\-\/]+/)) if (w.startsWith(ql)) { best = Math.max(best, 50); break; }
+  for (const k of (item.keywords || [])) {
+    const kl = k.toLowerCase();
+    if (kl === ql) best = Math.max(best, 90);
+    else if (kl.startsWith(ql)) best = Math.max(best, 60);
+    else if (kl.includes(ql)) best = Math.max(best, 25);
+  }
+  if (sym.includes(ql)) best = Math.max(best, 40);
+  if (nm.includes(ql)) best = Math.max(best, 15);
+  if (ex.includes(ql)) best = Math.max(best, 12);
+  return best;
+}
+
+function _ssRowHTML(item, active) {
+  const color = SS_TYPE_COLORS[item.type] || '#787b86';
+  const letter = item.symbol.charAt(0);
+  return `<div class="sp-row${active ? ' sp-row-active' : ''}" data-sym="${_ssEscape(item.symbol)}">
+    <div class="sp-logo" style="background:${color}">${_ssEscape(letter)}</div>
+    <div class="sp-meta">
+      <div class="sp-sym">${_ssEscape(item.symbol)}</div>
+      <div class="sp-name">${_ssEscape(item.name)}</div>
+    </div>
+    <div class="sp-right">
+      <span class="sp-exch">${_ssEscape(item.exchange)}</span>
+      <span class="sp-pill" style="background:${color}22;color:${color}">${SS_TYPE_LABELS[item.type] || item.type}</span>
+    </div>
+  </div>`;
+}
+
+let _ssState = { query: '', cat: 'all', active: 0, items: [] };
+
+function _ssComputeItems() {
+  const q = _ssState.query.trim();
+  const catType = SS_CATEGORIES.find(c => c.id === _ssState.cat)?.type || null;
+  let pool = SYMBOL_CATALOG;
+  if (catType) pool = pool.filter(s => s.type === catType);
+  if (!q) {
+    if (_ssState.cat === 'all') {
+      const recs = _ssGetRecents();
+      const recItems = recs.map(s => SYMBOL_CATALOG.find(x => x.symbol === s)).filter(Boolean);
+      const recSet = new Set(recItems.map(i => i.symbol));
+      const rest = pool.filter(i => !recSet.has(i.symbol));
+      return { recents: recItems, items: rest };
+    }
+    return { recents: [], items: pool };
+  }
+  const scored = pool.map(it => ({ it, sc: _ssScore(it, q) })).filter(x => x.sc > 0);
+  scored.sort((a, b) => b.sc - a.sc || a.it.symbol.localeCompare(b.it.symbol));
+  return { recents: [], items: scored.map(x => x.it) };
+}
+
+function _ssRenderBody(pal) {
+  const body = pal.querySelector('.sp-body-list');
+  if (!body) return;
+  const { recents, items } = _ssComputeItems();
+  _ssState.items = [...recents, ...items];
+  if (_ssState.active >= _ssState.items.length) _ssState.active = 0;
+  if (_ssState.items.length === 0) {
+    body.innerHTML = `<div class="sp-empty">Sin resultados para "${_ssEscape(_ssState.query)}"</div>`;
+    return;
+  }
+  let html = '';
+  if (recents.length) {
+    html += `<div class="sp-section">RECIENTES</div>`;
+    recents.forEach((it, i) => { html += _ssRowHTML(it, i === _ssState.active); });
+    if (items.length) html += `<div class="sp-section">TODOS LOS SÍMBOLOS</div>`;
+  }
+  const offset = recents.length;
+  items.forEach((it, i) => { html += _ssRowHTML(it, (i + offset) === _ssState.active); });
+  body.innerHTML = html;
+  body.querySelectorAll('.sp-row').forEach(el => {
+    el.addEventListener('click', () => _ssSelect(el.dataset.sym));
+    el.addEventListener('mouseenter', () => {
+      const sym = el.dataset.sym;
+      const idx = _ssState.items.findIndex(x => x.symbol === sym);
+      if (idx >= 0) { _ssState.active = idx; _ssUpdateActive(pal); }
+    });
+  });
+  const activeEl = body.querySelector('.sp-row-active');
+  if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+}
+
+function _ssUpdateActive(pal) {
+  pal.querySelectorAll('.sp-row').forEach(r => {
+    const sym = r.dataset.sym;
+    const idx = _ssState.items.findIndex(x => x.symbol === sym);
+    r.classList.toggle('sp-row-active', idx === _ssState.active);
+  });
+  const activeEl = pal.querySelector('.sp-row-active');
+  if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+}
+
+function _ssSelect(sym) {
+  if (!sym) return;
+  _ssAddRecent(sym);
+  closeSymbolSearchPalette();
+  try {
+    if (typeof loadSymbol === 'function') { loadSymbol(sym); return; }
+  } catch {}
+  try {
+    state.symbol = sym;
+    if (typeof persist === 'function') persist();
+    location.reload();
+  } catch (e) {
+    console.error('[symbol-search] fallback failed:', e);
+  }
+}
+
+function closeSymbolSearchPalette() {
+  const pal = document.getElementById('searchPalette');
+  if (pal) pal.style.display = 'none';
+}
+
+function openSymbolSearchPalette() {
+  try { if (typeof closeAllPops === 'function') closeAllPops(); } catch {}
+  let pal = document.getElementById('searchPalette');
+  const center = document.getElementById('center') || document.body;
+  if (!pal) {
+    pal = document.createElement('div');
+    pal.id = 'searchPalette';
+    pal.className = 'sp-symsearch';
+    pal.innerHTML = `
+      <div class="sp-ss-head">
+        <span class="sp-ss-title">Buscar símbolo</span>
+        <button class="sp-ss-close" id="ssClose" title="Cerrar">✕</button>
+      </div>
+      <div class="sp-ss-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="ssInput" placeholder="Buscar símbolo, nombre, exchange..." autocomplete="off" spellcheck="false"/>
+      </div>
+      <div class="sp-ss-chips">
+        ${SS_CATEGORIES.map(c => `<button class="sp-chip${c.id === 'all' ? ' sp-chip-on' : ''}" data-cat="${c.id}">${c.label}</button>`).join('')}
+      </div>
+      <div class="sp-body-list"></div>
+    `;
+    center.appendChild(pal);
+
+    pal.querySelector('#ssClose').addEventListener('click', () => closeSymbolSearchPalette());
+    const input = pal.querySelector('#ssInput');
+    input.addEventListener('input', () => {
+      _ssState.query = input.value;
+      _ssState.active = 0;
+      _ssRenderBody(pal);
+    });
+    input.addEventListener('keydown', (ev) => {
+      if (ev.key === 'ArrowDown') {
+        ev.preventDefault();
+        if (_ssState.items.length) _ssState.active = (_ssState.active + 1) % _ssState.items.length;
+        _ssUpdateActive(pal);
+      } else if (ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        if (_ssState.items.length) _ssState.active = (_ssState.active - 1 + _ssState.items.length) % _ssState.items.length;
+        _ssUpdateActive(pal);
+      } else if (ev.key === 'Enter') {
+        ev.preventDefault();
+        const it = _ssState.items[_ssState.active];
+        if (it) _ssSelect(it.symbol);
+      } else if (ev.key === 'Escape') {
+        ev.preventDefault();
+        closeSymbolSearchPalette();
+      }
+    });
+    pal.querySelectorAll('.sp-chip').forEach(ch => {
+      ch.addEventListener('click', () => {
+        pal.querySelectorAll('.sp-chip').forEach(x => x.classList.remove('sp-chip-on'));
+        ch.classList.add('sp-chip-on');
+        _ssState.cat = ch.dataset.cat;
+        _ssState.active = 0;
+        _ssRenderBody(pal);
+        pal.querySelector('#ssInput')?.focus();
+      });
+    });
+  }
+  _ssState.query = '';
+  _ssState.active = 0;
+  _ssState.cat = 'all';
+  const input = pal.querySelector('#ssInput');
+  if (input) input.value = '';
+  pal.querySelectorAll('.sp-chip').forEach(x => x.classList.toggle('sp-chip-on', x.dataset.cat === 'all'));
+  pal.style.display = 'flex';
+  _ssRenderBody(pal);
+  setTimeout(() => input?.focus(), 0);
+}
+
+// Bindings: intercept #searchPaletteBtn click + Ctrl/Cmd+K hotkey (capture phase to override prior handler)
+(function initSymbolSearchBindings() {
+  document.addEventListener('click', (ev) => {
+    const btn = ev.target.closest && ev.target.closest('#searchPaletteBtn');
+    if (!btn) return;
+    ev.stopImmediatePropagation();
+    ev.preventDefault();
+    const pal = document.getElementById('searchPalette');
+    if (pal && pal.style.display !== 'none' && pal.style.display !== '') {
+      closeSymbolSearchPalette();
+    } else {
+      openSymbolSearchPalette();
+    }
+  }, true);
+
+  window.addEventListener('keydown', (ev) => {
+    if ((ev.ctrlKey || ev.metaKey) && (ev.key === 'k' || ev.key === 'K')) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const pal = document.getElementById('searchPalette');
+      if (pal && pal.style.display !== 'none' && pal.style.display !== '') {
+        closeSymbolSearchPalette();
+      } else {
+        openSymbolSearchPalette();
+      }
+    }
+  }, true);
+
+  document.addEventListener('mousedown', (ev) => {
+    const pal = document.getElementById('searchPalette');
+    if (!pal || pal.style.display === 'none' || pal.style.display === '') return;
+    if (ev.target.closest('#searchPalette') || ev.target.closest('#searchPaletteBtn')) return;
+    closeSymbolSearchPalette();
+  });
+})();
+
+/* =========================================================================
+   BACKTESTER UI — config modal, results modal, CSV export
+   ========================================================================= */
+
+const BT_RESULTS_KEY = 'tv.backtestResults';
+const BT_RESULTS_MAX = 5;
+let _btEquityChart = null;
+let _btDDChart = null;
+
+function openBacktestStrategyPicker() {
+  // Quick picker → opens strategies list as a tiny modal
+  _btCloseAll();
+  const back = document.createElement('div');
+  back.className = 'bt-back';
+  back.id = 'btPickBack';
+  const m = document.createElement('div');
+  m.className = 'bt-modal bt-modal-sm';
+  m.id = 'btPickModal';
+  m.innerHTML = `
+    <div class="bt-head">
+      <span class="bt-title">Seleccionar estrategia</span>
+      <button class="bt-x" id="btPickX" title="Cerrar" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="bt-body">
+      <div class="bt-strat-grid">${PRESET_STRATEGIES.map(s => `
+        <div class="bt-strat-card" data-id="${escapeHtml(s.id)}">
+          <div class="bt-strat-card-head"><span class="bt-strat-card-name">${escapeHtml(s.name)}</span></div>
+          <div class="bt-strat-card-desc">${escapeHtml(s.description || '')}</div>
+          <div class="bt-strat-card-foot">
+            <button class="bt-strat-run" data-id="${escapeHtml(s.id)}">Backtest</button>
+          </div>
+        </div>
+      `).join('')}</div>
+    </div>
+  `;
+  document.body.appendChild(back);
+  document.body.appendChild(m);
+  const close = () => { back.remove(); m.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  back.addEventListener('click', close);
+  m.querySelector('#btPickX').addEventListener('click', close);
+  m.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('.bt-strat-run');
+    if (!btn) return;
+    const sid = btn.dataset.id;
+    const strat = PRESET_STRATEGIES.find(x => x.id === sid);
+    if (!strat) return;
+    close();
+    openBacktestConfigModal(strat);
+  });
+}
+
+function openBacktestConfigModal(strategy) {
+  _btCloseAll();
+  const back = document.createElement('div');
+  back.className = 'bt-back';
+  back.id = 'btCfgBack';
+  const m = document.createElement('div');
+  m.className = 'bt-modal';
+  m.id = 'btCfgModal';
+  m.innerHTML = `
+    <div class="bt-head">
+      <span class="bt-title">Backtest — ${escapeHtml(strategy.name)}</span>
+      <button class="bt-x" id="btCfgX" title="Cerrar" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="bt-body">
+      <form id="btCfgForm" class="bt-form" autocomplete="off">
+        <div class="bt-grid">
+          <label class="bt-field">
+            <span>Capital inicial ($)</span>
+            <input type="number" name="initialCapital" value="10000" min="1" step="1"/>
+            <span class="bt-err" data-err="initialCapital"></span>
+          </label>
+          <label class="bt-field">
+            <span>Tamaño de posición</span>
+            <select name="positionSize">
+              <option value="fixed_dollar">Dólares fijos</option>
+              <option value="fixed_pct">% del capital</option>
+              <option value="kelly">Kelly</option>
+              <option value="atr">ATR (riesgo %)</option>
+            </select>
+          </label>
+          <label class="bt-field">
+            <span>Valor del tamaño</span>
+            <input type="number" name="positionSizeValue" value="1000" min="0.0001" step="any"/>
+            <span class="bt-err" data-err="positionSizeValue"></span>
+          </label>
+          <label class="bt-field">
+            <span>Comisión (fracción)</span>
+            <input type="number" name="commission" value="0.001" min="0" step="0.0001"/>
+            <span class="bt-err" data-err="commission"></span>
+          </label>
+          <label class="bt-field">
+            <span>Slippage</span>
+            <select name="slippage">
+              <option value="none">Ninguno</option>
+              <option value="pct" selected>% fijo</option>
+              <option value="almgren">Almgren-Chriss</option>
+            </select>
+          </label>
+          <label class="bt-field">
+            <span>Valor del slippage</span>
+            <input type="number" name="slippageValue" value="0.0005" min="0" step="0.0001"/>
+          </label>
+        </div>
+        <div class="bt-grid">
+          <div class="bt-field bt-row">
+            <label class="bt-check"><input type="checkbox" name="useSL" checked/> <span>Stop Loss</span></label>
+            <select name="slType">
+              <option value="pct" selected>%</option>
+              <option value="atr">ATR</option>
+            </select>
+            <input type="number" name="slValue" value="0.02" min="0" step="any"/>
+          </div>
+          <div class="bt-field bt-row">
+            <label class="bt-check"><input type="checkbox" name="useTP" checked/> <span>Take Profit</span></label>
+            <select name="tpType">
+              <option value="pct" selected>%</option>
+              <option value="atr">ATR</option>
+            </select>
+            <input type="number" name="tpValue" value="0.05" min="0" step="any"/>
+          </div>
+          <div class="bt-field bt-row">
+            <label class="bt-check"><input type="checkbox" name="useTrail"/> <span>Trailing stop</span></label>
+            <select name="trailType">
+              <option value="pct" selected>%</option>
+              <option value="atr">ATR</option>
+            </select>
+            <input type="number" name="trailValue" value="0.03" min="0" step="any"/>
+          </div>
+          <div class="bt-field bt-row">
+            <label class="bt-check"><input type="checkbox" name="allowShort"/> <span>Permitir cortos</span></label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="bt-foot">
+      <button class="bt-btn bt-btn-ghost" id="btCfgCancel">Cancelar</button>
+      <button class="bt-btn bt-btn-primary" id="btCfgRun">Ejecutar backtest</button>
+    </div>
+  `;
+  document.body.appendChild(back);
+  document.body.appendChild(m);
+  const close = () => { back.remove(); m.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  back.addEventListener('click', close);
+  m.querySelector('#btCfgX').addEventListener('click', close);
+  m.querySelector('#btCfgCancel').addEventListener('click', close);
+  m.querySelector('#btCfgRun').addEventListener('click', (ev) => {
+    ev.preventDefault();
+    const form = m.querySelector('#btCfgForm');
+    const fd = new FormData(form);
+    // clear errors
+    m.querySelectorAll('.bt-err').forEach(e => e.textContent = '');
+    const num = (k) => Number(fd.get(k));
+    let valid = true;
+    const setErr = (k, msg) => {
+      valid = false;
+      const el = m.querySelector(`[data-err="${k}"]`);
+      if (el) el.textContent = msg;
+    };
+    const initialCapital = num('initialCapital');
+    if (!isFinite(initialCapital) || initialCapital <= 0) setErr('initialCapital', 'Debe ser > 0');
+    const positionSizeValue = num('positionSizeValue');
+    if (!isFinite(positionSizeValue) || positionSizeValue <= 0) setErr('positionSizeValue', 'Debe ser > 0');
+    const commission = num('commission');
+    if (!isFinite(commission) || commission < 0) setErr('commission', 'Debe ser ≥ 0');
+    if (!valid) return;
+    const opts = {
+      initialCapital,
+      positionSize: fd.get('positionSize'),
+      positionSizeValue,
+      commission,
+      slippage: fd.get('slippage'),
+      slippageValue: Number(fd.get('slippageValue')) || 0,
+      allowShort: fd.get('allowShort') === 'on',
+      stopLoss: fd.get('useSL') === 'on' ? { type: fd.get('slType'), value: Number(fd.get('slValue')) || 0 } : null,
+      takeProfit: fd.get('useTP') === 'on' ? { type: fd.get('tpType'), value: Number(fd.get('tpValue')) || 0 } : null,
+      trailingStop: fd.get('useTrail') === 'on' ? { type: fd.get('trailType'), value: Number(fd.get('trailValue')) || 0 } : null,
+    };
+    runBacktestAndShow(strategy, opts);
+    close();
+  });
+}
+
+function runBacktestAndShow(strategy, opts) {
+  const candles = (_ctx && _ctx.candles) || [];
+  if (!candles.length) {
+    alert('No hay datos cargados para ejecutar el backtest.');
+    return;
+  }
+  let result;
+  try {
+    result = backtest(candles, strategy.fn, opts);
+  } catch (e) {
+    console.error('[backtest] failed', e);
+    alert('Error ejecutando backtest: ' + (e && e.message || e));
+    return;
+  }
+  // Persist to localStorage (last 5, FIFO)
+  try {
+    const slim = {
+      ts: Date.now(),
+      strategyId: strategy.id,
+      strategyName: strategy.name,
+      options: opts,
+      metrics: result.metrics,
+      tradesCount: result.trades.length,
+    };
+    let arr = [];
+    try { arr = JSON.parse(localStorage.getItem(BT_RESULTS_KEY) || '[]'); } catch {}
+    arr.push(slim);
+    while (arr.length > BT_RESULTS_MAX) arr.shift();
+    localStorage.setItem(BT_RESULTS_KEY, JSON.stringify(arr));
+  } catch (e) { /* ignore */ }
+  openBacktestResultsModal(strategy, result, opts);
+}
+
+function openBacktestResultsModal(strategy, result, opts) {
+  _btCloseAll();
+  const candles = (_ctx && _ctx.candles) || [];
+  const fmtTime = (t) => {
+    if (t == null) return '';
+    const n = typeof t === 'number' ? t : Number(t);
+    if (!isFinite(n)) return String(t);
+    const d = new Date(n * 1000);
+    return d.toISOString().slice(0, 10);
+  };
+  const startTime = candles.length ? candles[0].time : null;
+  const endTime = candles.length ? candles[candles.length - 1].time : null;
+  const m = result.metrics || {};
+  const pct = (v) => (v == null || !isFinite(v)) ? '—' : (v * 100).toFixed(2) + '%';
+  const num = (v, d=2) => (v == null || !isFinite(v)) ? '—' : Number(v).toFixed(d);
+  const money = (v) => (v == null || !isFinite(v)) ? '—' : '$' + Number(v).toFixed(2);
+  const colorReturn = (v) => v == null ? '' : (v >= 0 ? 'bt-pos' : 'bt-neg');
+  const ds = m.deflatedSharpe;
+  const dsClass = ds == null ? 'bt-ds-na' : (ds > 1 ? 'bt-ds-good' : (ds >= 0.5 ? 'bt-ds-warn' : 'bt-ds-bad'));
+  const dsLabel = ds == null ? 'N/A' : (ds > 1 ? 'Robusto' : (ds >= 0.5 ? 'Marginal' : 'Probable falso positivo'));
+
+  const back = document.createElement('div');
+  back.className = 'bt-back';
+  back.id = 'btResBack';
+  const w = document.createElement('div');
+  w.className = 'bt-modal bt-modal-lg';
+  w.id = 'btResModal';
+  w.innerHTML = `
+    <div class="bt-head">
+      <div class="bt-title-wrap">
+        <span class="bt-title">Resultados: ${escapeHtml(strategy.name)}</span>
+        <span class="bt-sub">${candles.length} barras · ${fmtTime(startTime)} → ${fmtTime(endTime)}</span>
+      </div>
+      <button class="bt-x" id="btResX" title="Cerrar" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="bt-body bt-body-scroll">
+      <div class="bt-ds-card ${dsClass}">
+        <div class="bt-ds-l"><span class="bt-ds-label">Deflated Sharpe</span><span class="bt-ds-tag">${dsLabel}</span></div>
+        <div class="bt-ds-v">${num(ds, 3)}</div>
+      </div>
+      <div class="bt-metrics-grid">
+        <div class="bt-met"><span class="bt-met-l">Total Return</span><span class="bt-met-v ${colorReturn(m.totalReturn)}">${pct(m.totalReturn)}</span></div>
+        <div class="bt-met"><span class="bt-met-l">CAGR</span><span class="bt-met-v ${colorReturn(m.cagr)}">${pct(m.cagr)}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Sharpe</span><span class="bt-met-v">${num(m.sharpe, 3)}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Sortino</span><span class="bt-met-v">${num(m.sortino, 3)}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Calmar</span><span class="bt-met-v">${num(m.calmar, 3)}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Max DD</span><span class="bt-met-v bt-neg">${pct(m.maxDrawdown)}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Win Rate</span><span class="bt-met-v">${pct(m.winRate)}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Profit Factor</span><span class="bt-met-v">${num(m.profitFactor, 2)}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Total Trades</span><span class="bt-met-v">${m.totalTrades ?? 0}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Winning</span><span class="bt-met-v bt-pos">${m.winningTrades ?? 0}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Losing</span><span class="bt-met-v bt-neg">${m.losingTrades ?? 0}</span></div>
+        <div class="bt-met"><span class="bt-met-l">Expectancy</span><span class="bt-met-v">${money(m.expectancy)}</span></div>
+      </div>
+
+      <div class="bt-chart-section">
+        <div class="bt-chart-title">Equity curve</div>
+        <div id="btEquityChart" class="bt-chart-host" style="height:280px"></div>
+      </div>
+      <div class="bt-chart-section">
+        <div class="bt-chart-title">Drawdown</div>
+        <div id="btDDChart" class="bt-chart-host" style="height:120px"></div>
+      </div>
+
+      <div class="bt-trades-section">
+        <button class="bt-collapse-toggle" id="btTradesToggle" aria-expanded="true">Trades (${result.trades.length})</button>
+        <div class="bt-trades-wrap" id="btTradesWrap">
+          ${_btRenderTradesTable(result.trades)}
+        </div>
+      </div>
+    </div>
+    <div class="bt-foot">
+      <button class="bt-btn bt-btn-ghost" id="btResClose">Cerrar</button>
+      <button class="bt-btn bt-btn-primary" id="btResCsv">Exportar CSV</button>
+    </div>
+  `;
+  document.body.appendChild(back);
+  document.body.appendChild(w);
+
+  const close = () => {
+    if (_btEquityChart) { try { _btEquityChart.remove(); } catch {} _btEquityChart = null; }
+    if (_btDDChart) { try { _btDDChart.remove(); } catch {} _btDDChart = null; }
+    back.remove(); w.remove();
+    document.removeEventListener('keydown', onKey);
+  };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  back.addEventListener('click', close);
+  w.querySelector('#btResX').addEventListener('click', close);
+  w.querySelector('#btResClose').addEventListener('click', close);
+  w.querySelector('#btResCsv').addEventListener('click', () => _btExportCsv(strategy, result));
+  w.querySelector('#btTradesToggle').addEventListener('click', (ev) => {
+    const wrap = w.querySelector('#btTradesWrap');
+    const open = wrap.style.display !== 'none';
+    wrap.style.display = open ? 'none' : '';
+    ev.currentTarget.setAttribute('aria-expanded', String(!open));
+  });
+
+  // Build charts after DOM is in
+  setTimeout(() => _btBuildCharts(result), 0);
+}
+
+function _btRenderTradesTable(trades) {
+  if (!trades || !trades.length) {
+    return `<div class="bt-empty">No se generaron operaciones.</div>`;
+  }
+  const fmt = (t) => {
+    if (t == null) return '';
+    const n = typeof t === 'number' ? t : Number(t);
+    if (!isFinite(n)) return String(t);
+    return new Date(n * 1000).toISOString().slice(0, 10);
+  };
+  const rows = trades.slice(0, 50).map(t => `
+    <tr>
+      <td>${escapeHtml(fmt(t.entryTime))}</td>
+      <td>${escapeHtml(fmt(t.exitTime))}</td>
+      <td>${escapeHtml(t.side || '')}</td>
+      <td>${(t.qty != null ? Number(t.qty).toFixed(4) : '')}</td>
+      <td class="${(t.pnl||0) >= 0 ? 'bt-pos' : 'bt-neg'}">${(t.pnl != null ? Number(t.pnl).toFixed(2) : '')}</td>
+      <td class="${(t.pnlPct||0) >= 0 ? 'bt-pos' : 'bt-neg'}">${(t.pnlPct != null ? (Number(t.pnlPct) * 100).toFixed(2) + '%' : '')}</td>
+      <td>${(t.durationBars != null ? t.durationBars : ((t.exitIdx != null && t.entryIdx != null) ? (t.exitIdx - t.entryIdx) : ''))}</td>
+      <td>${escapeHtml(t.exitReason || '')}</td>
+    </tr>
+  `).join('');
+  const moreNote = trades.length > 50 ? `<div class="bt-trades-more">Mostrando 50 de ${trades.length} operaciones.</div>` : '';
+  return `
+    <div class="bt-trades-scroll">
+      <table class="bt-trades-table">
+        <thead><tr>
+          <th>Entry</th><th>Exit</th><th>Side</th><th>Qty</th><th>PnL</th><th>PnL %</th><th>Duration</th><th>Exit reason</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    ${moreNote}
+  `;
+}
+
+function _btBuildCharts(result) {
+  const eqHost = document.getElementById('btEquityChart');
+  const ddHost = document.getElementById('btDDChart');
+  if (!eqHost || !ddHost) return;
+  const eq = (result.equityCurve || []).filter(p => p && p.time != null && isFinite(p.equity));
+  if (!eq.length) {
+    eqHost.innerHTML = '<div class="bt-empty">Sin datos de equity.</div>';
+    ddHost.innerHTML = '<div class="bt-empty">Sin datos de drawdown.</div>';
+    return;
+  }
+  // Dedup time values (lightweight-charts requires strictly ascending unique times)
+  const seen = new Set();
+  const eqData = [];
+  for (const p of eq) {
+    const t = Number(p.time);
+    if (seen.has(t)) continue;
+    seen.add(t);
+    eqData.push({ time: t, value: Number(p.equity) });
+  }
+  eqData.sort((a, b) => a.time - b.time);
+
+  // Drawdown series
+  let peak = -Infinity;
+  const ddData = eqData.map(p => {
+    if (p.value > peak) peak = p.value;
+    const dd = peak > 0 ? (p.value - peak) / peak : 0; // negative or zero
+    return { time: p.time, value: dd * 100 };
+  });
+
+  const baseOpts = {
+    layout: { background: { color: '#0f0f0f' }, textColor: '#dbdbdb' },
+    grid: { vertLines: { color: '#1c1c1c' }, horzLines: { color: '#1c1c1c' } },
+    rightPriceScale: { borderColor: '#2e2e2e' },
+    timeScale: { borderColor: '#2e2e2e', timeVisible: true },
+    crosshair: { mode: 0 },
+    handleScroll: true, handleScale: true,
+  };
+
+  try {
+    _btEquityChart = createChart(eqHost, { ...baseOpts, height: 280 });
+    const eqSer = _btEquityChart.addSeries(AreaSeries, {
+      lineColor: '#2962ff', topColor: 'rgba(41,98,255,0.4)', bottomColor: 'rgba(41,98,255,0.02)', lineWidth: 2,
+    });
+    eqSer.setData(eqData);
+    // markers from signals
+    const sigs = (result.signals || [])
+      .filter(s => s && s.time != null)
+      .map(s => ({
+        time: Number(s.time),
+        position: s.type === 'buy' ? 'belowBar' : 'aboveBar',
+        color: s.type === 'buy' ? '#089981' : '#f23645',
+        shape: s.type === 'buy' ? 'arrowUp' : 'arrowDown',
+        text: s.type === 'buy' ? 'B' : 'S',
+      }))
+      .filter(s => isFinite(s.time))
+      .sort((a, b) => a.time - b.time);
+    // dedup marker times
+    const sigSeen = new Set();
+    const sigClean = sigs.filter(s => { if (sigSeen.has(s.time)) return false; sigSeen.add(s.time); return true; });
+    if (sigClean.length) {
+      try { createSeriesMarkers(eqSer, sigClean); } catch {}
+    }
+    _btEquityChart.timeScale().fitContent();
+  } catch (e) {
+    console.error('[backtest] equity chart failed', e);
+    eqHost.innerHTML = '<div class="bt-empty">No se pudo crear el gráfico.</div>';
+  }
+
+  try {
+    _btDDChart = createChart(ddHost, { ...baseOpts, height: 120 });
+    const ddSer = _btDDChart.addSeries(AreaSeries, {
+      lineColor: '#f23645', topColor: 'rgba(242,54,69,0.02)', bottomColor: 'rgba(242,54,69,0.4)', lineWidth: 1,
+    });
+    ddSer.setData(ddData);
+    _btDDChart.timeScale().fitContent();
+  } catch (e) {
+    console.error('[backtest] drawdown chart failed', e);
+    ddHost.innerHTML = '<div class="bt-empty">No se pudo crear el gráfico.</div>';
+  }
+}
+
+function _btExportCsv(strategy, result) {
+  const fmt = (t) => {
+    if (t == null) return '';
+    const n = typeof t === 'number' ? t : Number(t);
+    if (!isFinite(n)) return String(t);
+    return new Date(n * 1000).toISOString().slice(0, 10);
+  };
+  const esc = (s) => {
+    const str = String(s ?? '');
+    return /[",\n]/.test(str) ? '"' + str.replace(/"/g, '""') + '"' : str;
+  };
+  const header = 'Entry Time,Exit Time,Side,Qty,Entry Price,Exit Price,PnL,PnL %,Duration (bars),Exit Reason';
+  const lines = [header];
+  for (const t of (result.trades || [])) {
+    lines.push([
+      esc(fmt(t.entryTime)),
+      esc(fmt(t.exitTime)),
+      esc(t.side || ''),
+      (t.qty != null ? Number(t.qty).toFixed(6) : ''),
+      (t.entry != null ? Number(t.entry).toFixed(4) : (t.entryPrice != null ? Number(t.entryPrice).toFixed(4) : '')),
+      (t.exit != null ? Number(t.exit).toFixed(4) : (t.exitPrice != null ? Number(t.exitPrice).toFixed(4) : '')),
+      (t.pnl != null ? Number(t.pnl).toFixed(4) : ''),
+      (t.pnlPct != null ? (Number(t.pnlPct) * 100).toFixed(4) : ''),
+      (t.durationBars != null ? t.durationBars : ((t.exitIdx != null && t.entryIdx != null) ? (t.exitIdx - t.entryIdx) : '')),
+      esc(t.exitReason || ''),
+    ].join(','));
+  }
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `backtest_${strategy.id}_${Date.now()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 100);
+}
+
+function _btCloseAll() {
+  ['btPickBack','btPickModal','btCfgBack','btCfgModal','btResBack','btResModal'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.remove();
+  });
+  if (_btEquityChart) { try { _btEquityChart.remove(); } catch {} _btEquityChart = null; }
+  if (_btDDChart) { try { _btDDChart.remove(); } catch {} _btDDChart = null; }
 }
