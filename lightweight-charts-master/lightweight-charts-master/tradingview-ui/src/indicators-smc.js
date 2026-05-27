@@ -142,10 +142,13 @@ export const OB_CATALOG = {
   render: 'overlay',
   overlayHints: {
     shape: 'rectangle',
+    markerShape: 'square',
     fields: ['top', 'bottom'],
     colorBy: 'type',
     colors: { bullish: 'rgba(8,153,129,0.25)', bearish: 'rgba(242,54,69,0.25)' },
+    markerColors: { bullish: '#089981', bearish: '#f23645' },
     sizeBy: 'strength',
+    label: { size: 10, padding: 2, position: 'inside' },
   },
 };
 
@@ -239,10 +242,12 @@ export const BOS_CATALOG = {
   render: 'overlay',
   overlayHints: {
     shape: 'marker',
+    markerShapes: { 'bos-up': 'triangle-up', 'bos-down': 'triangle-down' },
     fields: ['priceLevel'],
     colorBy: 'type',
     colors: { 'bos-up': '#089981', 'bos-down': '#f23645' },
     labels: { 'bos-up': 'BOS', 'bos-down': 'BOS' },
+    label: { size: 9, padding: 2, color: '#d1d4dc', background: 'rgba(19,23,34,0.85)' },
   },
 };
 
@@ -305,10 +310,12 @@ export const CHOCH_CATALOG = {
   render: 'overlay',
   overlayHints: {
     shape: 'marker',
+    markerShapes: { 'choch-up': 'triangle-up', 'choch-down': 'triangle-down' },
     fields: ['priceLevel'],
     colorBy: 'type',
     colors: { 'choch-up': '#26c6da', 'choch-down': '#ec407a' },
     labels: { 'choch-up': 'CHoCH', 'choch-down': 'CHoCH' },
+    label: { size: 9, padding: 2, color: '#d1d4dc', background: 'rgba(19,23,34,0.85)' },
   },
 };
 
@@ -381,10 +388,13 @@ export const SWEEPS_CATALOG = {
   render: 'overlay',
   overlayHints: {
     shape: 'marker',
+    markerShape: 'circle',
+    markerShapes: { up: 'circle', down: 'circle' },
     fields: ['swept'],
     colorBy: 'direction',
     colors: { up: '#f23645', down: '#089981' },
     labels: { up: 'Sweep', down: 'Sweep' },
+    label: { size: 9, padding: 2, color: '#d1d4dc', background: 'rgba(19,23,34,0.85)' },
   },
 };
 

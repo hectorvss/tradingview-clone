@@ -1,0 +1,251 @@
+/* /markets/world/spain — Agent C. Prefijo .es- (España) para evitar colisiones. */
+
+.es-root {
+  font-family: "Trebuchet MS", -apple-system, BlinkMacSystemFont, Roboto, Ubuntu, sans-serif;
+  color: #dbdbdb;
+  background: #0f0f0f;
+  padding: 0 40px 80px;
+  max-width: 1395px;
+  margin: 0 auto;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.es-root *, .es-root *::before, .es-root *::after { box-sizing: border-box; }
+.es-root button { font-family: inherit; background: none; border: 0; color: inherit; cursor: pointer; padding: 0; }
+.es-root a { color: inherit; text-decoration: none; }
+.es-root svg { display: block; }
+.es-root table { border-collapse: separate; border-spacing: 0; width: 100%; }
+.es-root h1, .es-root h2, .es-root h3, .es-root p { margin: 0; }
+
+/* ====== Header ====== */
+.es-pageHead { padding: 32px 0 40px; }
+.es-crumbs { font-size: 13px; color: #8c8c8c; margin-bottom: 28px; }
+.es-crumbs a { color: #8c8c8c; }
+.es-crumbs span { padding: 0 6px; }
+.es-crumbs .es-crumbCur { color: #b8b8b8; padding: 0; }
+.es-titleWrap { display: flex; justify-content: center; }
+.es-title {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 44px; line-height: 1; font-weight: 700; color: #f0f3fa;
+}
+.es-flagLg { font-size: 40px; line-height: 1; }
+.es-titleArr { font-size: 24px; color: #8c8c8c; margin-left: 4px; }
+
+/* ====== Sections ====== */
+.es-section { padding: 32px 0 32px; }
+.es-section + .es-section { border-top: 1px solid #1f1f1f; }
+.es-secHead { margin: 0 0 18px; }
+.es-secTitle {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 28px; line-height: 36px; font-weight: 700; color: #f0f3fa;
+}
+.es-secTitleMulti { line-height: 36px; }
+.es-chev { color: #8c8c8c; font-weight: 400; font-size: 24px; }
+.es-subHead { margin: 24px 0 12px; }
+.es-subTitle { font-size: 18px; font-weight: 700; color: #b8b8b8; display: inline-flex; align-items: center; gap: 6px; }
+.es-subTitle .es-chev { font-size: 18px; }
+
+.es-link { display: inline-flex; align-items: center; gap: 4px; color: #2962ff; font-size: 13px; margin-top: 12px; font-weight: 500; }
+
+/* ====== Delta / pill ====== */
+.es-delta { font-weight: 700; font-size: 13px; }
+.es-pos { color: #089981; }
+.es-neg { color: #f23645; }
+.es-flat { color: #8c8c8c; }
+.es-pill { padding: 4px 12px; border-radius: 4px; font-weight: 700; font-size: 13px; color: #fff; min-width: 70px; text-align: center; }
+.es-pillPos { background: #089981; }
+.es-pillNeg { background: #f23645; }
+.es-unit { color: #8c8c8c; font-size: 11px; text-transform: uppercase; font-weight: 400; letter-spacing: 0.4px; }
+.es-D { color: #ff9800; font-size: 9px; font-weight: 700; margin-left: 1px; vertical-align: super; }
+
+/* ====== Icons ====== */
+.es-iconCircle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  font-weight: 700; font-size: 14px; flex-shrink: 0;
+  background: #1f1f1f; color: #fff;
+}
+.es-flag { display: inline-block; font-size: 16px; vertical-align: middle; }
+.es-flagBig { font-size: 20px; }
+.es-flagSvg {
+  display: inline-flex; align-items: center; justify-content: center;
+  vertical-align: middle; border-radius: 50%; overflow: hidden;
+  background: #2e2e2e; flex-shrink: 0;
+}
+.es-flagSvg svg { width: 100%; height: 100%; display: block; }
+.es-title .es-flagSvg { margin-right: 6px; }
+.es-fxSym .es-flagSvg { margin-right: 8px; }
+
+/* ====== Sección 1: índices + chart ====== */
+.es-idxWrap { position: relative; padding-top: 8px; }
+.es-idxList { display: flex; gap: 0; position: relative; }
+.es-idxCard {
+  flex: 1; padding: 16px 20px; min-width: 0;
+  border-radius: 28px; transition: background 0.15s;
+}
+.es-idxCard.es-idxActive { background: #2a2a2a; }
+.es-idxRow1 { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.es-idxIcon {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 13px;
+}
+.es-idxName { color: #dbdbdb; font-size: 14px; font-weight: 400; }
+.es-idxRow2 { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; padding-left: 42px; }
+.es-idxPrice { color: #dbdbdb; font-weight: 700; font-size: 14px; }
+
+.es-arrowBtn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #2a2a2a; color: #dbdbdb;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.es-arrowOverlay { position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 2; }
+.es-arrowRight { position: absolute; right: 0; top: 24px; }
+
+.es-chart { position: relative; height: 280px; margin-top: 12px; padding-right: 80px; }
+.es-chartSvg { width: 100%; height: 100%; }
+.es-yAxis { position: absolute; right: 4px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: space-between; color: #8c8c8c; font-size: 11px; padding: 4px 0; }
+.es-yHl { background: #f23645; color: #fff; padding: 1px 6px; border-radius: 2px; align-self: flex-end; }
+.es-xAxis { display: flex; justify-content: space-between; padding: 8px 80px 0 0; color: #8c8c8c; font-size: 11px; }
+
+.es-chartFoot { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
+.es-rangeBtns { display: flex; gap: 4px; }
+.es-rngBtn { padding: 6px 12px; border-radius: 4px; color: #8c8c8c; font-size: 13px; font-weight: 600; }
+.es-rngBtn.es-rngActive { background: #2a2a2a; color: #f0f3fa; }
+.es-chartIcons { display: flex; gap: 4px; }
+.es-iconBtn { width: 32px; height: 32px; border-radius: 4px; color: #8c8c8c; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
+.es-iconBtn.es-iconActive { background: #2a2a2a; color: #f0f3fa; }
+
+/* ====== Sección 2: trending cards ====== */
+.es-trendRow { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; padding: 4px 0; }
+.es-card { background: #181818; border: 1px solid #2a2a2a; border-radius: 8px; padding: 16px; }
+.es-trendCard { min-height: 116px; }
+.es-trendTop { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.es-trendName { min-width: 0; flex: 1; }
+.es-tk { color: #dbdbdb; font-size: 12px; font-weight: 700; display: inline-block; background: #2a2a2a; padding: 1px 6px; border-radius: 3px; }
+.es-name { color: #8c8c8c; font-size: 13px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.es-trendBottom { display: flex; justify-content: space-between; align-items: baseline; }
+.es-priceLine { color: #b8b8b8; font-size: 14px; font-weight: 600; }
+
+/* ====== Sección 2: 2 columnas ranking ====== */
+.es-twoCol { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding-top: 8px; }
+.es-rankCol { min-width: 0; }
+.es-rankList { border-top: 1px solid #2a2a2a; }
+.es-rankRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center; gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #1f1f1f;
+}
+.es-rankLeft { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.es-rankName { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.es-rankTitle { color: #b8b8b8; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px; }
+.es-rankTk { display: inline-block; background: #2a2a2a; color: #dbdbdb; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 700; align-self: flex-start; }
+.es-rankPrice { color: #b8b8b8; font-size: 13px; font-weight: 600; text-align: right; white-space: nowrap; }
+
+/* ====== Calendar cards ====== */
+.es-calRow { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 4px 0; }
+.es-calCard { display: flex; flex-direction: column; gap: 10px; min-height: 120px; }
+.es-calTop { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #8c8c8c; }
+.es-calDate { font-weight: 600; }
+.es-calBadge { color: #ff9800; }
+.es-calMid { display: flex; align-items: center; gap: 10px; }
+.es-calName { min-width: 0; }
+.es-calFoot { display: flex; gap: 24px; }
+.es-calFoot3 { gap: 16px; }
+.es-calLbl { color: #8c8c8c; font-size: 11px; text-transform: capitalize; }
+.es-calVal { color: #b8b8b8; font-size: 12px; font-weight: 600; }
+.es-calChart { color: #2962ff; font-size: 12px; }
+
+.es-emptyState {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 48px 0; color: #4a4a4a; gap: 12px;
+}
+.es-emptyState p { color: #4a4a4a; font-size: 13px; }
+
+/* ====== Sección 3-7: futures, etfs, bonds corp ====== */
+.es-futList, .es-etfList { border-top: 1px solid #2a2a2a; }
+.es-futRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center; gap: 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid #1f1f1f;
+}
+.es-futLeft { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+/* ====== Sección 4: Forex table ====== */
+.es-forexTbl { font-size: 13px; border: 1px solid #2a2a2a; border-radius: 4px; overflow: hidden; }
+.es-forexTbl th {
+  text-align: center; padding: 12px 16px;
+  font-weight: 400; color: #8c8c8c; font-size: 13px;
+  background: #181818; border-bottom: 1px solid #2a2a2a;
+}
+.es-forexTbl th:first-child, .es-forexTbl td:first-child { text-align: left; padding-left: 20px; }
+.es-forexTbl td { padding: 16px; text-align: center; border-bottom: 1px solid #1f1f1f; }
+.es-forexTbl tr:last-child td { border-bottom: 0; }
+.es-fxSym { color: #b8b8b8; font-size: 14px; font-weight: 600; }
+.es-fxPrice { color: #b8b8b8; font-size: 14px; font-weight: 600; }
+.es-fxCell { color: #f0f3fa; font-weight: 600; font-size: 13px; }
+.es-fxPct { color: #b8b8b8; font-size: 10px; margin-left: 2px; font-weight: 400; }
+
+/* ====== Sección 5: bonds chart + table ====== */
+.es-bondsHeader { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.es-customBtn {
+  padding: 8px 16px; border: 1px solid #2a2a2a; border-radius: 4px;
+  color: #b8b8b8; font-size: 12px; font-weight: 600;
+}
+.es-bondsChartWrap { padding: 16px 0; }
+.es-bondsSvg { width: 100%; height: 320px; }
+.es-axisLbl { fill: #8c8c8c; font-size: 11px; font-family: inherit; }
+.es-bondsLegend { display: flex; justify-content: center; gap: 24px; color: #8c8c8c; font-size: 12px; margin-bottom: 16px; }
+.es-bondsLegend > span { display: inline-flex; align-items: center; gap: 6px; }
+.es-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+.es-bondsTbl { font-size: 13px; }
+.es-bondsTbl th {
+  text-align: right; padding: 14px 12px; font-weight: 400; color: #8c8c8c; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #2a2a2a;
+}
+.es-bondsTbl th:first-child { text-align: left; padding-left: 0; }
+.es-bondsTbl td { padding: 14px 12px; text-align: right; color: #b8b8b8; border-bottom: 1px solid #1f1f1f; }
+.es-bondsTbl td:first-child { text-align: left; padding-left: 0; display: flex; gap: 12px; align-items: center; }
+.es-bondsTbl tr:last-child td { border-bottom: 0; }
+.es-tagSym { display: inline-block; background: #2a2a2a; color: #dbdbdb; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 700; }
+.es-bondTerm { color: #b8b8b8; }
+
+/* ====== Sección 6: bonds corp ====== */
+.es-twoColCorp { padding-top: 0; }
+.es-corpHead { display: grid; grid-template-columns: 1fr 180px 140px; padding: 10px 0 10px 48px; border-bottom: 1px solid #2a2a2a; color: #8c8c8c; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+.es-corpHead-r { text-align: right; }
+.es-corpRow { position: relative; display: grid; grid-template-columns: 1fr 180px 140px; align-items: center; gap: 12px; padding: 14px 0 14px 48px; border-bottom: 1px solid #1f1f1f; }
+.es-corpRow > .es-iconCircle { position: absolute; left: 0; top: 14px; }
+.es-corpName { color: #b8b8b8; font-size: 13px; min-width: 0; }
+.es-corpYield { text-align: right; color: #b8b8b8; font-weight: 600; }
+.es-corpDate { text-align: right; color: #b8b8b8; }
+.es-corpRow .es-rankTk { margin-top: 4px; }
+
+/* ====== Sección 8: Economía ====== */
+.es-pibTabs { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 4px 0 16px; }
+.es-pibTab {
+  text-align: left; padding: 12px 20px; border-radius: 28px; border: 1px solid #2a2a2a;
+  color: #dbdbdb;
+}
+.es-pibTab.es-pibActive { background: #2a2a2a; border-color: #2a2a2a; }
+.es-pibTabName { color: #dbdbdb; font-size: 13px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.es-pibTabVal { font-size: 14px; font-weight: 700; color: #f0f3fa; }
+.es-pibChartWrap { padding: 16px 0; position: relative; }
+.es-pibSvg { width: 100%; height: 360px; }
+.es-pibFoot { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; }
+
+.es-econGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px 48px; padding-top: 24px; }
+.es-econTbl { font-size: 13px; margin-top: 4px; }
+.es-econTbl th { text-align: left; padding: 10px 0; color: #8c8c8c; font-size: 11px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #2a2a2a; }
+.es-econTbl td { padding: 12px 0; color: #b8b8b8; border-bottom: 1px solid #1f1f1f; }
+.es-econTbl tr:last-child td { border-bottom: 0; }
+.es-econTbl .es-ta-r { text-align: right; }
+
+/* ====== Forex cell fallback ====== */
+.es-fxCell span { display: inline; }

@@ -125,6 +125,58 @@ const CSS = `
 .s6-imp.l3 i:nth-child(-n+3),
 .s6-imp.l2 i:nth-child(-n+2),
 .s6-imp.l1 i:nth-child(-n+1) { background: #f7525f; }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.s6-country,
+.mo-cal-card,
+.s6-related { transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease; cursor: pointer; }
+.s6-country:hover,
+.mo-cal-card:hover,
+.s6-related:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  border-color: #2962ff;
+}
+.s6-country:active,
+.mo-cal-card:active,
+.s6-related:active { opacity: .7; transform: translateY(-1px); }
+
+.s6-filters button,
+.s6-sw { transition: background-color 100ms ease, color 100ms ease, opacity 100ms ease; cursor: pointer; }
+.s6-filters button:active,
+.s6-sw:active { opacity: .7; }
+
+.s6-tooltip { transition: opacity 150ms ease, transform 150ms ease; }
+
+/* Empty state */
+.s6-empty {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 140px; color: #787b86; font-size: 13px; text-align: center;
+}
+
+/* Shimmer for map / chart placeholders */
+.s6-map:empty,
+[id^="s6-chart"]:empty {
+  background: linear-gradient(90deg, #131722 0%, #1e222d 50%, #131722 100%);
+  background-size: 200% 100%;
+  animation: s6-shimmer 1.4s ease-in-out infinite;
+  border-radius: 4px;
+}
+@keyframes s6-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Responsive — calendar row 4-col -> 2-col -> 1-col */
+@media (max-width: 1200px) {
+  .mo-cal-row { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 768px) {
+  .mo-cal-row { grid-template-columns: 1fr !important; }
+  .s6-filters button,
+  .s6-sw { min-height: 36px; padding: 8px 12px; }
+  .s6-country { min-height: 44px; }
+}
 `;
 
 // Inflation buckets -> colour swatches (matches legend below).

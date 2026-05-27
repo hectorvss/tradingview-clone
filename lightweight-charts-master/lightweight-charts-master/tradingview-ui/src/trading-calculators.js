@@ -16,6 +16,7 @@
 // Dark theme matching TradingView. CSS is injected exactly once per page.
 
 import { createChart, AreaSeries } from 'lightweight-charts';
+import { ensurePolishStyles, emptyStateHTML } from './ui-polish.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -462,6 +463,7 @@ function saveHistoryEntry(entry) {
 export function createCalculatorsPanel(container, opts = {}) {
   if (!container) throw new Error('createCalculatorsPanel: container required');
   ensureStyles();
+  ensurePolishStyles();
 
   const state = {
     active: opts.activeCalc || 'position',

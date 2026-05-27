@@ -84,47 +84,63 @@ function injectStyles() {
 }
 
 /* ===== Compare modal ===== */
+@keyframes cmpmd-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cmpmd-pop-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
 .cmpmd-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
-  z-index: 99990;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #d1d4dc;
+  animation: cmpmd-fade-in .15s ease-out;
 }
 .cmpmd {
   width: min(1080px, 96vw);
-  height: min(720px, 92vh);
+  max-width: 1080px;
+  height: min(720px, 90vh);
+  max-height: 90vh;
   background: #131722;
   border: 1px solid #2a2e39;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+  animation: cmpmd-pop-in .15s ease-out;
 }
+.cmpmd:focus { outline: none; }
 .cmpmd-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background: #1a1f2c;
+  padding: 14px 18px;
+  background: #131722;
   border-bottom: 1px solid #2a2e39;
 }
-.cmpmd-title { font-size: 14px; font-weight: 600; }
+.cmpmd-title { font-size: 14px; font-weight: 600; color: #f0f3fa; }
 .cmpmd-close {
+  width: 24px; height: 24px;
   background: transparent;
   color: #787b86;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 0;
   border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  line-height: 1;
 }
 .cmpmd-close:hover { background: #2a2e39; color: #d1d4dc; }
+.cmpmd-close:focus-visible { outline: 2px solid #2962ff; outline-offset: 1px; }
 .cmpmd-body {
   flex: 1 1 auto;
   display: grid;
@@ -139,7 +155,13 @@ function injectStyles() {
   flex-direction: column;
   gap: 12px;
   background: #0f131c;
+  scrollbar-width: thin;
+  scrollbar-color: #2a2e39 transparent;
 }
+.cmpmd-side::-webkit-scrollbar { width: 8px; }
+.cmpmd-side::-webkit-scrollbar-thumb { background: #2a2e39; border-radius: 4px; }
+.cmpmd-side::-webkit-scrollbar-thumb:hover { background: #363a45; }
+.cmpmd-side::-webkit-scrollbar-track { background: transparent; }
 .cmpmd-main {
   display: flex;
   flex-direction: column;
@@ -277,14 +299,17 @@ function injectStyles() {
   background: #2a2e39;
   color: #d1d4dc;
   border: 1px solid #2a2e39;
-  padding: 6px 14px;
+  height: 32px;
+  padding: 0 14px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
+  display: inline-flex; align-items: center; justify-content: center;
 }
 .cmpmd-btn:hover { background: #353a47; }
-.cmpmd-btn.primary { background: #3179f5; border-color: #3179f5; color: #fff; }
-.cmpmd-btn.primary:hover { background: #2563eb; }
+.cmpmd-btn:focus-visible { outline: 2px solid #2962ff; outline-offset: 1px; }
+.cmpmd-btn.primary { background: #2962ff; border-color: #2962ff; color: #fff; }
+.cmpmd-btn.primary:hover { background: #1976d2; border-color: #1976d2; }
 .cmpmd-btn.ghost { background: transparent; }
 .cmpmd-empty {
   display: flex; align-items: center; justify-content: center;
@@ -961,10 +986,13 @@ export function createSymbolCompareModal(opts = {}) {
   // Result handling
   let resolveResult = null;
   const resultPromise = new Promise((res) => { resolveResult = res; });
+  const prevFocus = document.activeElement;
 
   function close(result) {
     try { destroyChart(); } catch (_) {}
     try { overlay.remove(); } catch (_) {}
+    document.removeEventListener('keydown', escListener);
+    try { if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus(); } catch (_) {}
     if (resolveResult) { resolveResult(result); resolveResult = null; }
     if (typeof opts.onClose === 'function') opts.onClose(result);
   }
@@ -992,17 +1020,32 @@ export function createSymbolCompareModal(opts = {}) {
 
   document.addEventListener('keydown', escListener);
   function escListener(e) {
-    if (e.key === 'Escape') {
-      document.removeEventListener('keydown', escListener);
-      close(null);
+    if (e.key === 'Escape') { close(null); return; }
+    if (e.key === 'Tab') {
+      const modal = overlay.querySelector('.cmpmd');
+      if (!modal) return;
+      const focusable = Array.from(modal.querySelectorAll(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )).filter(n => n.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
   }
+
+  // Prevent click-through from modal interior collapsing modal
+  const cmpEl = overlay.querySelector('.cmpmd');
+  if (cmpEl) cmpEl.addEventListener('mousedown', (ev) => ev.stopPropagation());
 
   // Initial paint
   renderChips();
   renderNorm();
   renderPeriod();
   renderChart();
+
+  // Focus first input (search box) on open
+  setTimeout(() => { try { els.search.focus(); } catch (_) {} }, 0);
 
   return {
     result: resultPromise,

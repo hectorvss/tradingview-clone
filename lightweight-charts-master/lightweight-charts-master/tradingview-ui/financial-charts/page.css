@@ -1,0 +1,355 @@
+/* financial-charts/page.css — visual refinement layered atop styles.css */
+
+/* ===== Page chrome ===== */
+.container-TEzbVuOC,
+.root-TEzbVuOC {
+  background: var(--tv-color-bg-primary, #0c0e15);
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+
+/* ===== Header (chart title + presets row) ===== */
+.header-XwjQSORw {
+  padding: 16px 24px 12px;
+  border-bottom: 1px solid var(--tv-color-grey-18, #1e222d);
+}
+.header__row-XwjQSORw {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.header__presets-XwjQSORw {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.presetNameButton-ElLTBowi {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--tv-color-text-primary, #d1d4dc);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.presetNameButton-ElLTBowi:hover {
+  background: var(--tv-color-grey-18, #1e222d);
+}
+.stateWrapper-S7kwiPK4 {
+  font-size: 11px;
+  color: var(--tv-color-text-muted, #787b86);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.chartHeaderControls-pSw9Lpo7 {
+  display: flex;
+  gap: 8px;
+}
+.chartHeaderControls-pSw9Lpo7 button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--tv-color-grey-24, #2a2e39);
+  color: var(--tv-color-text-secondary, #b2b5be);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.chartHeaderControls-pSw9Lpo7 button:hover {
+  background: var(--tv-color-grey-18, #1e222d);
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+
+/* ===== Content layout: wizard sidebar + chart ===== */
+.content-TEzbVuOC {
+  display: flex;
+  gap: 0;
+  min-height: calc(100vh - 64px - 60px);
+}
+.wizardPanel-saWVwMpB {
+  width: 280px;
+  flex: 0 0 280px;
+  padding: 16px;
+  border-right: 1px solid var(--tv-color-grey-18, #1e222d);
+  background: var(--tv-color-bg-primary, #0c0e15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* preset dropdown pill at top of wizard */
+.pill-c7mhnUnO {
+  display: inline-flex;
+  align-items: center;
+  background: var(--tv-color-grey-18, #1e222d);
+  border-radius: 16px;
+  font-size: 12px;
+  color: var(--tv-color-text-secondary, #b2b5be);
+  padding: 4px 12px;
+  height: 28px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.pill-c7mhnUnO:hover {
+  background: var(--tv-color-grey-24, #2a2e39);
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+.blinkForeground-c7mhnUnO {
+  color: inherit;
+}
+
+/* ===== Symbol / metric panel groups ===== */
+.panelGroup-saWVwMpB {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.panelGroup__header-saWVwMpB {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--tv-color-text-muted, #787b86);
+  margin-bottom: 4px;
+}
+.panelGroup__tags-saWVwMpB {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.panelGroup__tags-saWVwMpB > * {
+  background: var(--tv-color-grey-18, #1e222d);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--tv-color-text-primary, #d1d4dc);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* "Mostrar gráficos de precios" checkbox */
+.showPriceCharts-saWVwMpB {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+.checkbox-jT3yIbx6 {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid var(--tv-color-grey-30, #363a45);
+  background: transparent;
+  accent-color: var(--tv-color-primary, #2962ff);
+}
+.label-jT3yIbx6 {
+  font-size: 13px;
+  color: var(--tv-color-text-secondary, #b2b5be);
+  cursor: pointer;
+}
+
+/* ===== Main chart area ===== */
+.mainPanel-zoXipyYV {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--tv-color-bg-primary, #0c0e15);
+  position: relative;
+  min-width: 0;
+}
+.chartWrapper-zoXipyYV {
+  flex: 1;
+  position: relative;
+  background: transparent;
+  min-height: 400px;
+}
+.tv-lightweight-charts {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Legend overlay on the chart */
+.legend-zoXipyYV,
+.legend-JF9Ht_ie {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(19, 23, 34, 0.85);
+  border: 1px solid var(--tv-color-grey-18, #1e222d);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  z-index: 5;
+  backdrop-filter: blur(4px);
+}
+.legendLine-JF9Ht_ie {
+  font-size: 12px;
+  color: var(--tv-color-text-secondary, #b2b5be);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.6;
+}
+.togglerWrapper-JF9Ht_ie {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 4px;
+}
+
+/* ===== Bottom timeframe controls ===== */
+.bottomControls-zoXipyYV {
+  padding: 12px 24px;
+  border-top: 1px solid var(--tv-color-grey-18, #1e222d);
+}
+.container-KzjYSOih,
+.wrap-KzjYSOih {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+.block-KzjYSOih {
+  padding: 8px 20px;
+  font-size: 13px;
+  color: var(--tv-color-text-muted, #787b86);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.block-KzjYSOih:hover {
+  background: var(--tv-color-grey-18, #1e222d);
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+.block-KzjYSOih.active,
+.block-KzjYSOih[aria-pressed="true"],
+.block-KzjYSOih[data-active="true"] {
+  background: var(--tv-color-grey-24, #2a2e39);
+  color: var(--tv-color-text-primary, #d1d4dc);
+  font-weight: 600;
+}
+
+/* ===== Modal dialog "Añadir símbolo" ===== */
+.backdrop-f4TzBb9d {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+.wrapper-b8SxMnzX {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 80px;
+  z-index: 1001;
+  pointer-events: none;
+}
+.wrapper-b8SxMnzX > * { pointer-events: auto; }
+
+.dialog-qyCw0PaN {
+  background: var(--tv-color-grey-12, #131722);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  width: 640px;
+  max-width: calc(100vw - 48px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.container-BZKENkhT {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--tv-color-grey-18, #1e222d);
+}
+.ellipsis-BZKENkhT {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--tv-color-text-primary, #d1d4dc);
+  margin: 0;
+}
+
+/* Search input */
+.inputContainer-ZXzPWcCf,
+.inputContainer-lANubSc2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 20px 12px;
+  padding: 8px 12px;
+  background: var(--tv-color-grey-7, #0a0c11);
+  border: 1px solid var(--tv-color-grey-24, #2a2e39);
+  border-radius: 8px;
+  height: 40px;
+}
+.inputContainer-lANubSc2:focus-within {
+  border-color: var(--tv-color-primary, #2962ff);
+}
+.search-lANubSc2 {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--tv-color-text-primary, #d1d4dc);
+  font-size: 14px;
+  outline: none;
+}
+.search-lANubSc2::placeholder {
+  color: var(--tv-color-text-muted, #787b86);
+}
+
+/* Tabs + filter pills row */
+.box-NqYuLwbg,
+.wrapper-C5jbOtb_ {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 20px;
+  flex-wrap: wrap;
+}
+.box-NqYuLwbg .pill-c7mhnUnO,
+.wrapper-C5jbOtb_ .pill-c7mhnUnO {
+  height: 28px;
+  font-size: 13px;
+}
+.box-NqYuLwbg .pill-c7mhnUnO.active,
+.box-NqYuLwbg .pill-c7mhnUnO[data-active="true"] {
+  background: var(--tv-color-grey-30, #363a45);
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+
+/* List of search results */
+.scrollWrap-cDg9MxE_,
+.wrap-dlewR1s1 {
+  max-height: 420px;
+  overflow-y: auto;
+}
+.listContainer-dlewR1s1 {
+  display: flex;
+  flex-direction: column;
+}
+.listContainer-dlewR1s1 > * {
+  display: grid;
+  grid-template-columns: 32px 80px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  font-size: 13px;
+  color: var(--tv-color-text-primary, #d1d4dc);
+  border-bottom: 1px solid var(--tv-color-grey-15, #181b25);
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+.listContainer-dlewR1s1 > *:hover {
+  background: var(--tv-color-grey-18, #1e222d);
+}
+.listContainer-dlewR1s1 > *:last-child {
+  border-bottom: none;
+}

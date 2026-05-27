@@ -1,0 +1,193 @@
+/* /markets/corporate-actions — Agent D. Figma 25:242044 / 25:246643 / 25:249843. */
+
+.ca-root {
+  background: #131722;
+  color: #dbdbdb;
+  font-family: 'Trebuchet MS', 'Roboto', sans-serif;
+  min-height: 100%;
+  padding: 0 0 60px;
+}
+
+.ca-container {
+  max-width: 1315px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* Breadcrumb */
+.ca-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 32px 0 16px;
+  font-size: 13px;
+  color: #8c8c8c;
+}
+.ca-breadcrumbs a {
+  color: #8c8c8c;
+  text-decoration: none;
+}
+.ca-breadcrumbs a:hover { color: #dbdbdb; }
+.ca-breadcrumbs .ca-sep { color: #4a4a4a; }
+
+/* Hero */
+.ca-hero {
+  text-align: center;
+  padding: 24px 0 32px;
+}
+.ca-hero h1 {
+  font-family: 'Trebuchet MS', 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 56px;
+  line-height: 64px;
+  color: #f0f3fa;
+  margin: 0 0 20px;
+  letter-spacing: -0.5px;
+}
+.ca-hero p {
+  max-width: 760px;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 24px;
+  color: #8c8c8c;
+}
+
+/* Tabs */
+.ca-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 0 16px;
+  border-bottom: 1px solid #2e2e2e;
+}
+.ca-tab {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 17px;
+  background: #1f1f1f;
+  border: 1px solid #2e2e2e;
+  color: #dbdbdb;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.ca-tab:hover { background: #2e2e2e; color: #f0f3fa; }
+.ca-tab.is-active {
+  background: #f2f2f2;
+  border-color: #f2f2f2;
+  color: #0f0f0f;
+  font-weight: 500;
+}
+.ca-tab-cta {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px 0 16px;
+  border-radius: 17px;
+  background: #000;
+  border: 1px solid #2e2e2e;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+}
+.ca-tab-cta:hover { background: #1a1a1a; }
+.ca-tab-cta svg { width: 14px; height: 14px; }
+
+/* List */
+.ca-list { margin: 0; padding: 0; list-style: none; }
+.ca-list-header,
+.ca-row {
+  display: grid;
+  grid-template-columns: 113px 87px 1fr 130px;
+  align-items: center;
+  column-gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid #2e2e2e;
+  font-size: 14px;
+  line-height: 18px;
+}
+.ca-list-header {
+  color: #8c8c8c;
+  font-size: 13px;
+  padding: 16px 0;
+}
+.ca-list-header .ca-c-headline { padding-left: 28px; }
+
+.ca-c-time { color: #8c8c8c; }
+.ca-c-instr {
+  display: flex;
+  align-items: center;
+}
+.ca-c-instr .ca-logo-wrap {
+  display: inline-flex;
+  margin-left: -3px;
+}
+.ca-c-instr .ca-logo-wrap:first-child { margin-left: 0; }
+.ca-c-instr .ca-logo {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2a2e39;
+  box-shadow: 0 0 0 1px #131722;
+  object-fit: cover;
+  overflow: hidden;
+}
+.ca-c-instr .ca-logo--fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.ca-c-headline {
+  color: #dbdbdb;
+  font-weight: 500;
+  font-size: 15px;
+  padding-left: 28px;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ca-c-headline:hover { color: #2962ff; }
+.ca-c-provider { color: #8c8c8c; }
+
+.ca-row:hover { background: rgba(255, 255, 255, 0.02); }
+
+/* Footer link */
+.ca-footer-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+  color: #2962ff;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.ca-footer-cta:hover { text-decoration: underline; }
+
+/* Empty state */
+.ca-empty {
+  display: block;
+  padding: 60px 0;
+  text-align: center;
+  color: #8c8c8c;
+  font-size: 14px;
+  list-style: none;
+}

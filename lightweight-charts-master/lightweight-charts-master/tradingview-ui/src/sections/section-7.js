@@ -132,9 +132,36 @@ const CSS = `
 }
 .mo-broker-card.is-hidden { display: none !important; }
 
-.mo-broker-btn { cursor: pointer; transition: filter .15s ease, transform .1s ease; }
+.mo-broker-btn { cursor: pointer; transition: filter .15s ease, transform .1s ease, opacity .1s ease; }
 .mo-broker-btn:hover { filter: brightness(1.1); }
-.mo-broker-btn:active { transform: translateY(1px); }
+.mo-broker-btn:active { transform: translateY(1px); opacity: .8; }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.mo-broker-card { cursor: pointer; }
+.mo-broker-card:hover { border-color: #2962ff; }
+.mo-broker-card:active { opacity: .85; transform: translateY(-1px); }
+
+.mo7-filter,
+.mo7-sort__select { transition: background-color 100ms ease, color 100ms ease, border-color 100ms ease, opacity 100ms ease; }
+.mo7-filter:active { opacity: .7; }
+
+/* Empty state */
+.mo7-empty {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 160px; color: #787b86; font-size: 14px; text-align: center;
+  grid-column: 1 / -1;
+}
+
+/* Responsive — broker grid 4-col -> 2-col -> 1-col */
+@media (max-width: 1200px) {
+  .mo-broker-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 768px) {
+  .mo-broker-grid { grid-template-columns: 1fr !important; }
+  .mo7-filter { min-height: 36px; padding: 8px 14px; }
+  .mo7-sort__select { min-height: 36px; }
+  .mo-broker-btn { min-height: 44px; }
+}
 `;
 
 /* ---------------------------------------------------------------- */

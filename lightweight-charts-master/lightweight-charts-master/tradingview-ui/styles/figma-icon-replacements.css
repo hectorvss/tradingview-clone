@@ -1,0 +1,59 @@
+/* Figma Icon Replacements
+ * Figma component instances (Component 1, Component 2, ...) are rendered as
+ * generic placeholders here. A JS pass identifies them via their parent
+ * container class and swaps in the appropriate SVG from /icons/.
+ */
+
+.figma-icon {
+  display: inline-block;
+  position: relative;
+  color: var(--tv-color-text-secondary);
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.figma-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* Placeholder rendering: a faint rounded box until JS replaces with real SVG */
+.figma-icon::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--tv-color-grey-24);
+  border-radius: 4px;
+  opacity: 0.4;
+}
+
+.figma-icon.is-loaded::before {
+  display: none;
+}
+
+/* Component slots — JS reads data-component and injects the right glyph.
+ * The selectors below are placeholders that exist primarily so authors can
+ * target specific Figma component IDs from CSS if a one-off override is needed.
+ */
+.figma-icon[data-component="Component 1"] { /* placeholder — JS will swap */ }
+.figma-icon[data-component="Component 2"] { /* placeholder — JS will swap */ }
+.figma-icon[data-component="Component 3"] { /* placeholder — JS will swap */ }
+.figma-icon[data-component="Component 4"] { /* placeholder — JS will swap */ }
+.figma-icon[data-component="Component 5"] { /* placeholder — JS will swap */ }
+.figma-icon[data-component="Component 6"] { /* placeholder — JS will swap */ }
+.figma-icon[data-component="Component 7"] { /* placeholder — JS will swap */ }
+.figma-icon[data-component="Component 8"] { /* placeholder — JS will swap */ }
+
+/* Runtime-replaced placeholders: hide the grey box and let the inline SVG show. */
+.figma-icon--replaced::before { display: none !important; }
+.figma-icon--replaced svg { width: 100%; height: 100%; display: block; color: var(--tv-color-text-secondary); }
+
+/* Semantic color hooks for icons */
+.figma-icon.is-positive { color: var(--tv-color-positive); }
+.figma-icon.is-negative { color: var(--tv-color-negative); }
+.figma-icon.is-accent   { color: var(--tv-color-accent-blue); }
+.figma-icon.is-muted    { color: var(--tv-color-text-muted); }

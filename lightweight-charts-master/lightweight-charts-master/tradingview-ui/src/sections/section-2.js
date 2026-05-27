@@ -425,6 +425,64 @@ const CSS = `
   display: flex; align-items: center; gap: 6px;
 }
 .mo2-news__sep { color: var(--grey-29, #4a4a4a); }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.mo2-idea,
+.mo2-earn,
+.mo2-news,
+.mo2-card { transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease; cursor: pointer; }
+.mo2-idea:hover,
+.mo2-earn:hover,
+.mo2-news:hover,
+.mo2-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  border-color: #2962ff;
+}
+.mo2-idea:active,
+.mo2-earn:active,
+.mo2-news:active,
+.mo2-card:active { opacity: .7; transform: translateY(-1px); }
+.mo2-row { transition: background-color 120ms ease; }
+.mo2-row:hover { background: #1e222d; }
+.mo2-row:active { opacity: .7; }
+.mo2-up, .mo2-down, .mo2-flat { transition: background-color 100ms ease, color 100ms ease; }
+
+/* Loading shimmer */
+[id^="mo2-"]:empty,
+.mo2-spark:empty,
+.mo2-chart:empty {
+  background: linear-gradient(90deg, #131722 0%, #1e222d 50%, #131722 100%);
+  background-size: 200% 100%;
+  animation: mo2-shimmer 1.4s ease-in-out infinite;
+  border-radius: 4px;
+}
+@keyframes mo2-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty state */
+.mo2-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 140px; color: #787b86; font-size: 13px; text-align: center; gap: 6px;
+}
+
+/* Touch-friendly tap targets on mobile */
+.mo2-hscroll__btn { transition: background-color 100ms ease, opacity 100ms ease; }
+.mo2-hscroll__btn:active { opacity: .6; }
+
+/* Responsive grids */
+@media (max-width: 1200px) {
+  .mo2-sec { padding: 20px 24px 48px; }
+  .mo2-2col { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 768px) {
+  .mo2-sec { padding: 16px 12px 32px; }
+  .mo2-h1__title { font-size: 22px; }
+  .mo2-row, .mo2-news, .mo2-earn { min-height: 44px; }
+  .mo2-hscroll__btn { min-width: 44px; min-height: 44px; }
+}
 `;
 
 /* ---------------------------------------------------------------- */
@@ -452,7 +510,7 @@ function renderHeader() {
   return `
     <div class="mo2-h1">
       <span class="mo2-h1__flag" aria-hidden="true"></span>
-      <a class="mo2-h1__title" href="https://es.tradingview.com/markets/stocks-spain/" target="_blank" rel="noopener">Acciones españolas</a>
+      <a class="mo2-h1__title" href="#/screener">Acciones españolas</a>
     </div>
   `;
 }
@@ -460,7 +518,7 @@ function renderHeader() {
 function renderWidgetHead(title, href) {
   return `
     <div class="mo2-w__head">
-      <a class="mo2-w__title" href="${href}" target="_blank" rel="noopener">${title}</a>
+      <a class="mo2-w__title" href="${href}">${title}</a>
     </div>
   `;
 }
@@ -468,7 +526,7 @@ function renderWidgetHead(title, href) {
 function renderFooter(label, href) {
   return `
     <div class="mo2-w__footer">
-      <a class="mo2-w__more" href="${href}" target="_blank" rel="noopener">${label}</a>
+      <a class="mo2-w__more" href="${href}">${label}</a>
     </div>
   `;
 }
@@ -497,7 +555,7 @@ function renderW1() {
   const cards = TRENDS.map(renderTrendCard).join('');
   return `
     <section class="mo2-w" id="mo2-trends">
-      ${renderWidgetHead('Tendencias de la comunidad', 'https://es.tradingview.com/markets/stocks-spain/')}
+      ${renderWidgetHead('Tendencias de la comunidad', '#/screener')}
       <div class="mo2-hscroll">
         <div class="mo2-hscroll__inner">${cards}</div>
         <button type="button" class="mo2-hscroll__btn" data-dir="right" aria-label="Desplazar a la derecha">›</button>
@@ -536,7 +594,7 @@ function renderW2() {
   const cards = IDEAS.map(renderIdeaCard).join('');
   return `
     <section class="mo2-w" id="mo2-ideas">
-      ${renderWidgetHead('Ideas de trading', 'https://es.tradingview.com/markets/stocks-spain/ideas/')}
+      ${renderWidgetHead('Ideas de trading', '#/news')}
       <div class="mo2-hscroll">
         <div class="mo2-hscroll__inner">
           ${cards}
@@ -575,14 +633,14 @@ function renderW3W4() {
   return `
     <section class="mo2-w mo2-2col" id="mo2-active-volatile">
       <div>
-        ${renderWidgetHead('Acciones con el mayor volumen', 'https://es.tradingview.com/markets/stocks-spain/market-movers-active/')}
+        ${renderWidgetHead('Acciones con el mayor volumen', '#/screener')}
         <div class="mo2-rows">${vol}</div>
-        ${renderFooter('Ver todas las acciones con el mayor volumen →', 'https://es.tradingview.com/markets/stocks-spain/market-movers-active/')}
+        ${renderFooter('Ver todas las acciones con el mayor volumen →', '#/screener')}
       </div>
       <div>
-        ${renderWidgetHead('Acciones más volátiles', 'https://es.tradingview.com/markets/stocks-spain/market-movers-most-volatile/')}
+        ${renderWidgetHead('Acciones más volátiles', '#/screener')}
         <div class="mo2-rows">${vlt}</div>
-        ${renderFooter('Ver todas las acciones más volátiles →', 'https://es.tradingview.com/markets/stocks-spain/market-movers-most-volatile/')}
+        ${renderFooter('Ver todas las acciones más volátiles →', '#/screener')}
       </div>
     </section>
   `;
@@ -594,14 +652,14 @@ function renderW5W6() {
   return `
     <section class="mo2-w mo2-2col" id="mo2-gainers-losers">
       <div>
-        ${renderWidgetHead('Acciones ganadoras', 'https://es.tradingview.com/markets/stocks-spain/market-movers-gainers/')}
+        ${renderWidgetHead('Acciones ganadoras', '#/screener')}
         <div class="mo2-rows">${g}</div>
-        ${renderFooter('Ver todas las acciones que más están subiendo →', 'https://es.tradingview.com/markets/stocks-spain/market-movers-gainers/')}
+        ${renderFooter('Ver todas las acciones que más están subiendo →', '#/screener')}
       </div>
       <div>
-        ${renderWidgetHead('Acciones perdedoras', 'https://es.tradingview.com/markets/stocks-spain/market-movers-losers/')}
+        ${renderWidgetHead('Acciones perdedoras', '#/screener')}
         <div class="mo2-rows">${l}</div>
-        ${renderFooter('Ver todas las acciones que más están bajando →', 'https://es.tradingview.com/markets/stocks-spain/market-movers-losers/')}
+        ${renderFooter('Ver todas las acciones que más están bajando →', '#/screener')}
       </div>
     </section>
   `;
@@ -627,7 +685,7 @@ function renderW7() {
   const cards = EARNINGS.map(renderEarningsCard).join('');
   return `
     <section class="mo2-w" id="mo2-earnings">
-      ${renderWidgetHead('Calendario de beneficios', 'https://es.tradingview.com/earnings-calendar/')}
+      ${renderWidgetHead('Calendario de beneficios', '#/calendar')}
       <div class="mo2-hscroll">
         <div class="mo2-hscroll__inner">
           ${cards}
@@ -635,7 +693,7 @@ function renderW7() {
         </div>
         <button type="button" class="mo2-hscroll__btn" data-dir="right" aria-label="Desplazar a la derecha">›</button>
       </div>
-      ${renderFooter('Ver el calendario de beneficios completo →', 'https://es.tradingview.com/earnings-calendar/')}
+      ${renderFooter('Ver el calendario de beneficios completo →', '#/calendar')}
     </section>
   `;
 }
@@ -643,19 +701,19 @@ function renderW7() {
 function renderW8() {
   return `
     <section class="mo2-w" id="mo2-ipo">
-      ${renderWidgetHead('Calendario de las OPV', 'https://es.tradingview.com/ipo-calendar/')}
+      ${renderWidgetHead('Calendario de las OPV', '#/calendar')}
       <div class="mo2-empty">
         <div class="mo2-empty__icon">📅</div>
         <div>Ningún informe programado</div>
       </div>
-      ${renderFooter('Ver el calendario de las OPV completo →', 'https://es.tradingview.com/ipo-calendar/')}
+      ${renderFooter('Ver el calendario de las OPV completo →', '#/calendar')}
     </section>
   `;
 }
 
 function renderNewsCard(n) {
   return `
-    <a class="mo2-news" href="https://es.tradingview.com/markets/stocks-spain/news/" target="_blank" rel="noopener">
+    <a class="mo2-news" href="#/news">
       ${avatar(n, 'sm')}
       <div class="mo2-news__text">
         <span class="mo2-news__title">${n.title}</span>
@@ -669,9 +727,9 @@ function renderW9() {
   const items = NEWS.map(renderNewsCard).join('');
   return `
     <section class="mo2-w" id="mo2-news">
-      ${renderWidgetHead('Noticias sobre acciones españolas', 'https://es.tradingview.com/markets/stocks-spain/news/')}
+      ${renderWidgetHead('Noticias sobre acciones españolas', '#/news')}
       <div class="mo2-newsgrid">${items}</div>
-      ${renderFooter('Ver más →', 'https://es.tradingview.com/markets/stocks-spain/news/')}
+      ${renderFooter('Ver más →', '#/news')}
     </section>
   `;
 }

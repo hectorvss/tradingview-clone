@@ -133,6 +133,25 @@ const CSS = `
 @media (prefers-reduced-motion: reduce) {
   .mo-lf-marquee-track { animation: none; }
 }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.mo-lf-card { transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease; }
+.mo-lf-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,.45);
+}
+.mo-lf-card:active { opacity: .85; transform: translateY(-1px); }
+.mo-lf-card-icon { transition: background-color 100ms ease, color 100ms ease, transform 150ms ease; }
+.mo-lf-card:hover .mo-lf-card-icon { transform: scale(1.06); background: rgba(41,98,255,0.2); }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .mo-lf-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .mo-lf-cards { grid-template-columns: 1fr; padding: 0 16px; margin: 20px auto 32px; }
+  .mo-lf-card { min-height: 44px; padding: 18px; }
+  .mo-lf-marquee-item { font-size: 28px; letter-spacing: 6px; }
+}
 `;
 
 function injectStyle() {

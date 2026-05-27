@@ -308,36 +308,49 @@ function injectStylesOnce() {
     if (typeof document === 'undefined') return;
     if (document.getElementById('tv-drawing-templates-styles')) return;
     const css = `
+@keyframes tv-dtm-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tv-dtm-pop-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+}
 .tv-dtm-overlay {
-    position: fixed; inset: 0; z-index: 99999;
-    background: rgba(10, 12, 18, 0.65);
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     display: flex; align-items: center; justify-content: center;
     font-family: -apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, sans-serif;
     color: #d1d4dc;
-    backdrop-filter: blur(2px);
+    animation: tv-dtm-fade-in .15s ease-out;
 }
 .tv-dtm-modal {
     width: min(720px, 94vw);
-    max-height: 86vh;
-    background: #1e222d;
+    max-width: 720px;
+    max-height: 90vh;
+    background: #131722;
     border: 1px solid #2a2e39;
     border-radius: 8px;
-    box-shadow: 0 12px 48px rgba(0,0,0,0.55);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.6);
     display: flex; flex-direction: column;
     overflow: hidden;
+    animation: tv-dtm-pop-in .15s ease-out;
 }
+.tv-dtm-modal:focus { outline: none; }
 .tv-dtm-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 18px;
     border-bottom: 1px solid #2a2e39;
     background: #131722;
 }
-.tv-dtm-title { font-size: 15px; font-weight: 600; color: #f0f3fa; }
+.tv-dtm-title { font-size: 14px; font-weight: 600; color: #f0f3fa; }
 .tv-dtm-close {
+    width: 24px; height: 24px;
     background: transparent; border: 0; color: #787b86; cursor: pointer;
-    font-size: 22px; line-height: 1; padding: 4px 8px; border-radius: 4px;
+    font-size: 22px; line-height: 1; padding: 0; border-radius: 4px;
+    display: inline-flex; align-items: center; justify-content: center;
 }
 .tv-dtm-close:hover { background: #2a2e39; color: #f0f3fa; }
+.tv-dtm-close:focus-visible { outline: 2px solid #2962ff; outline-offset: 1px; }
 .tv-dtm-toolbar {
     display: flex; flex-wrap: wrap; gap: 8px;
     padding: 12px 18px;
@@ -347,19 +360,27 @@ function injectStylesOnce() {
 .tv-dtm-btn {
     background: #2a2e39; color: #d1d4dc;
     border: 1px solid #363a45; border-radius: 4px;
-    padding: 7px 12px; font-size: 12px; cursor: pointer;
+    height: 32px; padding: 0 14px; font-size: 13px; cursor: pointer;
     transition: background 0.12s, border-color 0.12s;
     font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center;
 }
 .tv-dtm-btn:hover { background: #363a45; border-color: #4a4f5c; }
+.tv-dtm-btn:focus-visible { outline: 2px solid #2962ff; outline-offset: 1px; }
 .tv-dtm-btn.primary { background: #2962ff; border-color: #2962ff; color: #fff; }
-.tv-dtm-btn.primary:hover { background: #1e53e5; border-color: #1e53e5; }
+.tv-dtm-btn.primary:hover { background: #1976d2; border-color: #1976d2; }
 .tv-dtm-btn.danger { color: #ef5350; }
 .tv-dtm-btn.danger:hover { background: #3a2326; border-color: #ef5350; }
 .tv-dtm-list {
     flex: 1; overflow-y: auto;
     padding: 8px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #2a2e39 transparent;
 }
+.tv-dtm-list::-webkit-scrollbar { width: 8px; }
+.tv-dtm-list::-webkit-scrollbar-thumb { background: #2a2e39; border-radius: 4px; }
+.tv-dtm-list::-webkit-scrollbar-thumb:hover { background: #363a45; }
+.tv-dtm-list::-webkit-scrollbar-track { background: transparent; }
 .tv-dtm-empty {
     padding: 32px 18px; text-align: center; color: #787b86; font-size: 13px;
 }
@@ -415,14 +436,18 @@ function injectStylesOnce() {
     display: flex; justify-content: flex-end; gap: 8px;
 }
 .tv-dtm-prompt {
-    position: fixed; inset: 0; z-index: 100000;
+    position: fixed; inset: 0; z-index: 10000;
     background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     display: flex; align-items: center; justify-content: center;
+    animation: tv-dtm-fade-in .15s ease-out;
 }
 .tv-dtm-prompt-box {
-    background: #1e222d; border: 1px solid #363a45; border-radius: 6px;
+    background: #131722; border: 1px solid #2a2e39; border-radius: 8px;
     padding: 18px; width: min(380px, 92vw);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+    animation: tv-dtm-pop-in .15s ease-out;
 }
 .tv-dtm-prompt-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #f0f3fa; }
 .tv-dtm-prompt-input {
@@ -582,6 +607,7 @@ function createDrawingTemplateManager(opts = {}) {
     let overlayEl = null;
     let listEl = null;
     let lastCurrentDrawings = null;
+    let prevFocusEl = null;
 
     function emitChange() {
         if (onChange) {
@@ -866,9 +892,16 @@ function createDrawingTemplateManager(opts = {}) {
         footerClose.addEventListener('click', closeModal);
         const footer = el('div', { class: 'tv-dtm-footer' }, [footerClose]);
 
-        const modal = el('div', { class: 'tv-dtm-modal' }, [header, toolbar, listEl, footer]);
+        const modal = el('div', {
+            class: 'tv-dtm-modal',
+            role: 'dialog',
+            'aria-modal': 'true',
+            'aria-label': 'Plantillas de dibujo',
+            tabindex: '-1',
+        }, [header, toolbar, listEl, footer]);
+        modal.addEventListener('mousedown', (ev) => ev.stopPropagation());
         overlayEl = el('div', { class: 'tv-dtm-overlay' }, [modal]);
-        overlayEl.addEventListener('click', (ev) => {
+        overlayEl.addEventListener('mousedown', (ev) => {
             if (ev.target === overlayEl) closeModal();
         });
         document.addEventListener('keydown', onGlobalKey);
@@ -877,7 +910,18 @@ function createDrawingTemplateManager(opts = {}) {
     }
 
     function onGlobalKey(ev) {
-        if (ev.key === 'Escape' && overlayEl) closeModal();
+        if (ev.key === 'Escape' && overlayEl) { closeModal(); return; }
+        if (ev.key === 'Tab' && overlayEl) {
+            const modal = overlayEl.querySelector('.tv-dtm-modal');
+            if (!modal) return;
+            const focusable = Array.from(modal.querySelectorAll(
+                'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            )).filter(n => n.offsetParent !== null);
+            if (!focusable.length) return;
+            const first = focusable[0], last = focusable[focusable.length - 1];
+            if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+            else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+        }
     }
 
     function closeModal() {
@@ -889,13 +933,23 @@ function createDrawingTemplateManager(opts = {}) {
         document.removeEventListener('keydown', onGlobalKey);
         const menu = document.querySelector('.tv-dtm-builtin-menu');
         if (menu) menu.remove();
+        try { if (prevFocusEl && typeof prevFocusEl.focus === 'function') prevFocusEl.focus(); } catch (e) {}
+        prevFocusEl = null;
     }
 
     function open(currentDrawings) {
         if (typeof document === 'undefined') return;
         lastCurrentDrawings = Array.isArray(currentDrawings) ? currentDrawings : null;
         if (overlayEl) { closeModal(); }
+        prevFocusEl = document.activeElement;
         buildModal();
+        // focus first interactive: the close button in header
+        setTimeout(() => {
+            try {
+                const first = overlayEl && overlayEl.querySelector('.tv-dtm-close');
+                if (first) first.focus();
+            } catch (e) {}
+        }, 0);
     }
 
     function destroy() {

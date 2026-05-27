@@ -362,6 +362,56 @@ const CSS = `
 @media (max-width: 700px) {
   .sec3-ideas, .sec3-news { grid-template-columns: 1fr; }
 }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.sec3-card,
+.sec3-idea,
+.sec3-news-item,
+.sec3-trending-item,
+.sec3-row { transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease; cursor: pointer; }
+.sec3-card:hover,
+.sec3-idea:hover,
+.sec3-news-item:hover,
+.sec3-trending-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  border-color: #2962ff;
+}
+.sec3-card:active,
+.sec3-idea:active,
+.sec3-news-item:active,
+.sec3-trending-item:active,
+.sec3-row:active { opacity: .7; transform: translateY(-1px); }
+.sec3-row:hover { background: #1e222d; }
+
+/* Loading shimmer for charts */
+[id^="sec3-chart-"]:empty,
+[id^="sec3-spark-"]:empty,
+.sec3-chart:empty,
+.sec3-spark:empty {
+  background: linear-gradient(90deg, #131722 0%, #1e222d 50%, #131722 100%);
+  background-size: 200% 100%;
+  animation: sec3-shimmer 1.4s ease-in-out infinite;
+  border-radius: 4px;
+}
+@keyframes sec3-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty state */
+.sec3-empty {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 140px; color: #787b86; font-size: 13px; text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .sec3-trending { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+@media (max-width: 768px) {
+  .sec3-row, .sec3-news-item, .sec3-trending-item { min-height: 44px; }
+}
 `;
 
 /* ───────────────────────── HELPERS ───────────────────────── */

@@ -1,0 +1,158 @@
+/* TradingView Design Tokens
+ * Generated from Figma variable definitions.
+ * Use these CSS custom properties throughout the UI for consistent theming.
+ */
+
+:root {
+  /* ============================================================
+   * COLORS
+   * ============================================================ */
+
+  /* Semantic colors */
+  --tv-color-bg-base: #0f0f0f;
+  --tv-color-bg-panel: #121212;
+  --tv-color-bg-elevated: #1f1f1f;
+  --tv-color-bg-hover: #2e2e2e;
+  --tv-color-bg-active: #3d3d3d;
+  --tv-color-text-primary: #ffffff;
+  --tv-color-text-secondary: #b8b8b8;
+  --tv-color-text-muted: #8c8c8c;
+  --tv-color-text-disabled: #636363;
+  --tv-color-border: #2e2e2e;
+  --tv-color-border-strong: #4a4a4a;
+  --tv-color-accent-blue: #2962ff;
+  --tv-color-accent-blue-hover: #5b9cf6;
+  --tv-color-accent-blue-light: #82b1ff;
+  --tv-color-accent-blue-glow: #448aff33;
+  --tv-color-positive: #22ab94;
+  --tv-color-negative: #f7525f;
+  --tv-color-negative-dark: #d22144;
+  --tv-color-warning: #ff9100;
+  --tv-color-warning-glow: #ff980033;
+  --tv-color-info: #00bce6;
+
+  /* Raw white / black */
+  --tv-color-white: #ffffff;
+  --tv-color-black: #000000;
+  --tv-color-black-0: #00000000;
+
+  /* Raw grey scale */
+  --tv-color-grey-6: #0f0f0f;
+  --tv-color-grey-7: #121212;
+  --tv-color-grey-12: #1f1f1f;
+  --tv-color-grey-18: #2e2e2e;
+  --tv-color-grey-24: #3d3d3d;
+  --tv-color-grey-29: #4a4a4a;
+  --tv-color-grey-34: #575757;
+  --tv-color-grey-35: #55595b;
+  --tv-color-grey-39: #636363;
+  --tv-color-grey-55: #8c8c8c;
+  --tv-color-grey-72: #b8b8b8;
+  --tv-color-grey-86: #dbdbdb;
+  --tv-color-grey-95: #f2f2f2;
+  --tv-color-grey-96: #f0f3fa;
+
+  /* Raw azure / blue scale */
+  --tv-color-azure-12: #1a1e21;
+  --tv-color-azure-15: #092143;
+  --tv-color-azure-28: #004c8d;
+  --tv-color-azure-32: #205785;
+  --tv-color-azure-58: #2962ff;
+  --tv-color-azure-63-20: #448aff33;
+  --tv-color-azure-66: #5b9cf6;
+  --tv-color-azure-75: #82b1ff;
+  --tv-color-blue-3: #06060a;
+
+  /* Raw cyan */
+  --tv-color-cyan-40: #22ab94;
+  --tv-color-cyan-45: #00bce6;
+
+  /* Raw red */
+  --tv-color-red-48: #d22144;
+  --tv-color-red-65: #f7525f;
+
+  /* Raw orange */
+  --tv-color-orange-50: #ff9100;
+  --tv-color-orange-50-20: #ff980033;
+
+  /* Raw magenta */
+  --tv-color-magenta-49: #d500f9;
+  --tv-color-magenta-50: #96609f;
+
+  /* ============================================================
+   * FONT FAMILIES
+   * ============================================================ */
+  --tv-font-inter: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --tv-font-roboto: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* ============================================================
+   * FONT WEIGHTS
+   * ============================================================ */
+  --tv-fw-regular: 400;
+  --tv-fw-medium: 500;
+  --tv-fw-bold: 700;
+
+  /* ============================================================
+   * FONT SIZES
+   * ============================================================ */
+  --tv-fs-10: 10px;
+  --tv-fs-11: 11px;
+  --tv-fs-12: 12px;
+  --tv-fs-13: 13px;
+  --tv-fs-14: 14px;
+  --tv-fs-16: 16px;
+  --tv-fs-18: 18px;
+  --tv-fs-20: 20px;
+  --tv-fs-24: 24px;
+  --tv-fs-28: 28px;
+  --tv-fs-36: 36px;
+
+  /* ============================================================
+   * LINE HEIGHTS
+   * ============================================================ */
+  --tv-lh-16: 16px;
+  --tv-lh-18: 18px;
+  --tv-lh-24: 24px;
+  --tv-lh-28: 28px;
+  --tv-lh-44: 44px;
+
+  /* ============================================================
+   * SPACINGS
+   * ============================================================ */
+  --tv-space-xxs: 4px;
+  --tv-space-xs: 8px;
+  --tv-space-s: 16px;
+  --tv-space-5: 5px;
+  --tv-space-20: 20px;
+  --tv-space-xl: 64px;
+
+  /* ============================================================
+   * WIDTHS / HEIGHTS (common UI sizes)
+   * ============================================================ */
+  --tv-width-sidebar: 64px;
+  --tv-width-panel: 280px;
+  --tv-height-toolbar: 44px;
+  --tv-height-row: 28px;
+  --tv-height-control: 24px;
+
+  /* ============================================================
+   * RADII
+   * ============================================================ */
+  --tv-radius-sm: 4.5px;
+  --tv-radius-md: 11.5px;
+  --tv-radius-pill: 9999px;
+
+  /* ============================================================
+   * STROKE WEIGHTS
+   * ============================================================ */
+  --tv-stroke-0-8: 0.8px;
+  --tv-stroke-1: 1px;
+  --tv-stroke-1-33: 1.333px;
+  --tv-stroke-2: 2px;
+  --tv-stroke-4: 4px;
+
+  /* ============================================================
+   * MISC
+   * ============================================================ */
+  --tv-opacity-full: 1;
+}

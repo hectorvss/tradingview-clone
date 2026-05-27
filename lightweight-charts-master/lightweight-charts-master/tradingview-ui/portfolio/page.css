@@ -1,0 +1,228 @@
+/* portfolio/page.css — visual refinement */
+
+/* ── Page base ─────────────────────────────────────── */
+body {
+  background: #000;
+  color: var(--tv-color-text-primary);
+  font-family: var(--tv-font-inter, "Inter", -apple-system, BlinkMacSystemFont, sans-serif);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* layout-only helper wrappers — keep them transparent */
+.figma-label,
+.figma-root,
+.tv-portfolio-page-root,
+.container-ILOteJAY {
+  background: transparent;
+}
+
+/* The text spans inside figma-text should inherit colour */
+.figma-text {
+  color: inherit;
+  font-family: inherit;
+  letter-spacing: 0;
+}
+
+/* ── Page title "Carteras" ─────────────────────────── */
+.cardsHeader-hYpQtUqr,
+.headerTitle-hYpQtUqr {
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+.headerTitle-hYpQtUqr {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: -0.2px;
+}
+.headerTitle-hYpQtUqr .figma-text {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ── Action-card grid (CSV / manual / watchlist / paper) ─ */
+.cards-hYpQtUqr {
+  /* keep absolute layout from inline styles, just give the container space */
+}
+
+.creationItem-QcHa5Zyb {
+  background: var(--tv-color-grey-12, #131722);
+  border: 1px solid var(--tv-color-grey-30, #2a2e39);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+  box-sizing: border-box;
+}
+.creationItem-QcHa5Zyb:hover {
+  background: var(--tv-color-grey-15, #1a1d27);
+  border-color: var(--tv-color-grey-50, #434651);
+}
+
+.creationIcon-QcHa5Zyb {
+  color: var(--tv-color-text-primary, #d1d4dc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.creationTitle-QcHa5Zyb {
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+.creationTitle-QcHa5Zyb .figma-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 24px;
+}
+
+.description-QcHa5Zyb {
+  color: var(--tv-color-text-muted, #787b86);
+}
+.description-QcHa5Zyb .figma-text {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--tv-color-text-muted, #787b86);
+  line-height: 18px;
+  text-align: center;
+}
+
+/* ── Hero card "Empiece en segundos" ───────────────── */
+.card-l3x84Fov {
+  background: var(--tv-color-grey-12, #131722);
+  border: 1px solid var(--tv-color-grey-30, #2a2e39);
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.textContainerWrapper-l3x84Fov {
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+.textContainer-l3x84Fov {
+  color: inherit;
+}
+
+.titleWrapper-l3x84Fov {
+  color: inherit;
+}
+
+.slideTitle-l3x84Fov {
+  color: #fff;
+  font-weight: 700;
+}
+.slideTitle-l3x84Fov .figma-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 28px;
+}
+.slideTitle-l3x84Fov.is-inactive {
+  color: var(--tv-color-grey-50, #434651);
+}
+.slideTitle-l3x84Fov.is-inactive .figma-text {
+  color: var(--tv-color-grey-50, #434651);
+  font-weight: 700;
+}
+
+.subtext-l3x84Fov {
+  color: var(--tv-color-text-muted, #787b86);
+}
+.subtext-l3x84Fov .figma-text {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--tv-color-text-muted, #787b86);
+  line-height: 22px;
+}
+
+/* media side (right) — webm/screenshot placeholder */
+.mediaWrapper-l3x84Fov {
+  background: transparent;
+}
+.imageWrapper-l3x84Fov {
+  background: var(--tv-color-grey-15, #1a1d27);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ── Slider controls ──────────────────────────────── */
+.btnWrapper-l3x84Fov {
+  color: var(--tv-color-text-secondary, #b2b5be);
+}
+.sliderButton-l3x84Fov {
+  background: var(--tv-color-grey-15, #1a1d27);
+  border: 1px solid var(--tv-color-grey-30, #2a2e39);
+  border-radius: 6px;
+  color: var(--tv-color-text-primary, #d1d4dc);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease;
+}
+.sliderButton-l3x84Fov:hover {
+  background: var(--tv-color-grey-30, #2a2e39);
+}
+
+.sliderControlWrapper-l3x84Fov {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tv-color-text-muted, #787b86);
+}
+.sliderControlText-l3x84Fov {
+  font-variant-numeric: tabular-nums;
+  color: var(--tv-color-text-muted, #787b86);
+}
+.sliderControlText-l3x84Fov .figma-text {
+  font-size: 13px;
+  color: var(--tv-color-text-muted, #787b86);
+  font-variant-numeric: tabular-nums;
+}
+
+.pause-l3x84Fov .sliderButton-l3x84Fov.is-pause {
+  background: var(--tv-color-grey-15, #1a1d27);
+  border: 1px solid var(--tv-color-grey-30, #2a2e39);
+  border-radius: 6px;
+}
+
+/* ── Toast: "Sus datos se han actualizado correctamente" ─ */
+.wrap-LCLd8JNY {
+  background: var(--tv-color-grey-15, #1a1d27);
+  border: 1px solid var(--tv-color-grey-30, #2a2e39);
+  border-radius: 8px;
+  color: var(--tv-color-text-primary, #d1d4dc);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.label-LCLd8JNY .figma-text {
+  font-size: 13px;
+  color: var(--tv-color-text-primary, #d1d4dc);
+  line-height: 18px;
+}
+
+/* ── Header / navbar polish ───────────────────────── */
+.tv-header {
+  background: var(--tv-color-bg-base, #0c0e15);
+  border-bottom: 1px solid var(--tv-color-grey-30, #2a2e39);
+}
+.js-offer-button {
+  background: linear-gradient(135deg, #2962ff, #b6509e);
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Right widget bar ─────────────────────────────── */
+.layout__area--right,
+.widgetbar-wrap {
+  background: var(--tv-color-bg-base, #0c0e15);
+  border-left: 1px solid var(--tv-color-grey-30, #2a2e39);
+}
+.toolbar-S4V6IoxY {
+  background: transparent;
+}
+.separator-gZVyfVJP {
+  background: var(--tv-color-grey-30, #2a2e39);
+  height: 1px;
+  opacity: 0.6;
+}

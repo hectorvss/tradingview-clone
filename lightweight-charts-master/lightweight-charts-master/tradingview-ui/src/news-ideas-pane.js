@@ -8,6 +8,8 @@
 //   lightweightCharts       - optional reference to the lightweight-charts module
 //                             (auto-imported from CDN if missing, falls back to canvas sparkline)
 
+import { ensurePolishStyles, emptyStateHTML } from './ui-polish.js';
+
 // ---------------------------------------------------------------------------
 // One-time CSS injection
 // ---------------------------------------------------------------------------
@@ -645,6 +647,7 @@ function renderMiniChart(el, seed, side, lwcModule) {
 export function createNewsIdeasPane(container, opts = {}) {
   if (!container) throw new Error('createNewsIdeasPane: container is required');
   ensureStyles();
+  ensurePolishStyles();
 
   const state = {
     tab: opts.defaultTab || 'news',
@@ -783,7 +786,7 @@ export function createNewsIdeasPane(container, opts = {}) {
     list.innerHTML = '';
     const items = state.news.filter((n) => state.newsFilter === 'Todas' || n.category === state.newsFilter);
     if (!items.length) {
-      list.innerHTML = '<div class="nip-empty">Sin noticias en este filtro.</div>';
+      list.innerHTML = emptyStateHTML('No hay noticias disponibles', 'Cambia el filtro o pulsa "Actualizar" para regenerar el feed.', '📰');
       return;
     }
     const frag = document.createDocumentFragment();
@@ -835,6 +838,10 @@ export function createNewsIdeasPane(container, opts = {}) {
     clearMiniCharts();
     list.innerHTML = '';
     const items = sortIdeas(state.ideas);
+    if (!items.length) {
+      list.innerHTML = emptyStateHTML('No hay ideas disponibles', 'Cuando otros traders compartan ideas aparecerán aquí.', '💡');
+      return;
+    }
     const frag = document.createDocumentFragment();
     items.forEach((it) => {
       const div = document.createElement('div');
@@ -885,6 +892,10 @@ export function createNewsIdeasPane(container, opts = {}) {
     clearMiniCharts();
     list.innerHTML = '';
     const items = sortIdeas(state.analysis);
+    if (!items.length) {
+      list.innerHTML = emptyStateHTML('No hay análisis disponibles', 'El feed de análisis está vacío. Vuelve a actualizar más tarde.', '📊');
+      return;
+    }
     const frag = document.createDocumentFragment();
     const chartsToInit = [];
     items.forEach((it) => {

@@ -8,15 +8,21 @@ function injectStyles() {
   if (typeof document === 'undefined') return;
   if (document.getElementById(STYLE_ID)) return;
   const css = `
-.otdw-widget{font:12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#d1d4dc;background:#131722;border:1px solid #2a2e39;border-radius:4px;display:flex;flex-direction:column;overflow:hidden;user-select:none}
+@keyframes otdw-slide-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.otdw-widget{font:12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#d1d4dc;background:#131722;border:1px solid #2a2e39;border-radius:4px;display:flex;flex-direction:column;overflow:hidden;user-select:none;animation:otdw-slide-in .2s ease-out}
 .otdw-widget *{box-sizing:border-box}
 .otdw-header{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#1e222d;border-bottom:1px solid #2a2e39;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#787b86;flex-shrink:0}
 .otdw-header-actions{display:flex;gap:4px}
 .otdw-iconbtn{background:transparent;border:0;color:#787b86;cursor:pointer;padding:2px 4px;border-radius:2px;font-size:12px;line-height:1}
 .otdw-iconbtn:hover{background:#2a2e39;color:#d1d4dc}
-.otdw-body{overflow-y:auto;flex:1;min-height:0}
+.otdw-iconbtn:focus-visible{outline:2px solid #2962ff;outline-offset:1px}
+.otdw-body{overflow-y:auto;flex:1;min-height:0;scrollbar-width:thin;scrollbar-color:#2a2e39 transparent}
 .otdw-body::-webkit-scrollbar{width:8px}
-.otdw-body::-webkit-scrollbar-thumb{background:#363a45;border-radius:4px}
+.otdw-body::-webkit-scrollbar-thumb{background:#2a2e39;border-radius:4px}
+.otdw-body::-webkit-scrollbar-thumb:hover{background:#363a45}
 .otdw-body::-webkit-scrollbar-track{background:transparent}
 
 /* Object Tree */

@@ -58,6 +58,16 @@ const CSS = `
   height: 1px;
   background: var(--grey-29, #4a4a4a);
 }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.mo-rb .rb-icon { transition: background-color 100ms ease, color 100ms ease, transform 100ms ease, opacity 100ms ease; }
+.mo-rb .rb-icon:hover { color: #2962ff; }
+.mo-rb .rb-icon:active { opacity: .6; transform: translateX(-50%) scale(.92); }
+.mo-rb .rb-icon:focus-visible { outline: 2px solid #2962ff; outline-offset: -2px; }
+
+@media (max-width: 1200px) {
+  .mo-rb { display: none; }
+}
 `;
 
 // 11 icons — mirrors chart-view.js RIGHT_ICONS so behavior is identical.

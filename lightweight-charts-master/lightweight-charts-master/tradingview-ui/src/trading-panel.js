@@ -12,6 +12,10 @@ function injectStyles() {
   if (typeof document === 'undefined') return;
   if (document.getElementById(STYLE_ID)) return;
   const css = `
+  @keyframes tv-tp-slide-in {
+    from { opacity: 0; transform: translateX(12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
   .tv-tp, .tv-dom, .tv-tape {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     color: #d1d4dc;
@@ -25,6 +29,7 @@ function injectStyles() {
     flex-direction: column;
     overflow: hidden;
     user-select: none;
+    animation: tv-tp-slide-in .2s ease-out;
   }
   .tv-tp *, .tv-dom *, .tv-tape * { box-sizing: border-box; }
 
@@ -42,13 +47,16 @@ function injectStyles() {
   }
   .tv-tp__tab {
     background: transparent; color: #9aa2b1; border: none;
-    padding: 6px 10px; cursor: pointer; font-size: 12px;
+    padding: 8px 12px; cursor: pointer; font-size: 12px;
     border-radius: 4px 4px 0 0;
+    border-bottom: 2px solid transparent;
+    transition: color .12s ease, border-color .15s ease, background .12s ease;
   }
-  .tv-tp__tab:hover { color: #f1f3f6; background: #1c2030; }
+  .tv-tp__tab:hover { color: #f1f3f6; background: #1e222d; }
+  .tv-tp__tab:focus-visible { outline: 2px solid #2962ff; outline-offset: -2px; }
   .tv-tp__tab.is-active {
-    color: #f1f3f6; background: #1c2030;
-    border-bottom: 2px solid #2962ff;
+    color: #f1f3f6;
+    border-bottom-color: #2962ff;
   }
   .tv-tp__body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
   .tv-tp__side {
@@ -69,8 +77,10 @@ function injectStyles() {
     border: 1px solid #2a2e39; border-radius: 4px;
     padding: 6px 8px; font-size: 12px; outline: none;
     font-variant-numeric: tabular-nums;
+    text-align: right;
   }
   .tv-tp__field input:focus { border-color: #2962ff; }
+  .tv-tp__field input:focus-visible { box-shadow: 0 0 0 1px #2962ff; }
   .tv-tp__field input:disabled { opacity: .45; cursor: not-allowed; }
   .tv-tp__grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .tv-tp__risk {
@@ -93,7 +103,10 @@ function injectStyles() {
   .tv-tp__btn:hover { filter: brightness(1.1); }
   .tv-tp__btn:active { filter: brightness(.92); }
   .tv-tp__btn--buy { background: #26a69a; }
+  .tv-tp__btn--buy:hover { background: #2bbbad; }
   .tv-tp__btn--sell { background: #ef5350; }
+  .tv-tp__btn--sell:hover { background: #f4625f; }
+  .tv-tp__btn:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
   .tv-tp__history {
     border-top: 1px solid #2a2e39; padding: 8px 10px; max-height: 160px; overflow-y: auto;
   }

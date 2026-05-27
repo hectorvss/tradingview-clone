@@ -6,6 +6,7 @@
 // Self-contained: synthetic data, inline CSS, mini lightweight-chart for history.
 
 import { createChart, LineSeries } from 'lightweight-charts';
+import { ensurePolishStyles, emptyStateHTML } from './ui-polish.js';
 
 // ---------------------------------------------------------------------------
 // One-time CSS injection (TradingView dark palette)
@@ -506,6 +507,7 @@ function computeImpact(ev) {
 export function createEconomicCalendar(container, opts = {}) {
   if (!container) throw new Error('createEconomicCalendar: container required');
   ensureStyles();
+  ensurePolishStyles();
 
   const eventCount = opts.eventCount || 100;
   const daysAhead  = opts.daysAhead  || 30;
@@ -706,7 +708,7 @@ export function createEconomicCalendar(container, opts = {}) {
     }
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="9" class="ec-empty">Sin eventos para los filtros seleccionados.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" class="ec-empty">${emptyStateHTML('No hay eventos disponibles', 'Ajusta filtros de país, importancia o fecha para ver más eventos.', '📅')}</td></tr>`;
       return;
     }
     tbody.innerHTML = filtered.map(ev => {

@@ -1,0 +1,2015 @@
+{
+  "type": "root",
+  "children": [
+    {
+      "tag": "section",
+      "attrs": {
+        "id": "25:140364",
+        "name": "https://es.tradingview.com/portfolios/ - es_tradingview_com_portfolios_1440w_default.h2d - 26/05/2026, 13:08:55 CEST",
+        "x": "55132.58203125",
+        "y": "1766.951416015625",
+        "width": "1640",
+        "height": "1100"
+      },
+      "children": [
+        {
+          "tag": "frame",
+          "attrs": {
+            "id": "25:140097",
+            "name": "1440w default",
+            "x": "100",
+            "y": "100",
+            "width": "1440",
+            "height": "900"
+          },
+          "children": [
+            {
+              "tag": "frame",
+              "attrs": {
+                "id": "25:140098",
+                "name": "div.wrap-LCLd8JNY",
+                "x": "533.4099731445312",
+                "y": "858",
+                "width": "329",
+                "height": "40"
+              },
+              "children": [
+                {
+                  "tag": "frame",
+                  "attrs": {
+                    "id": "25:140099",
+                    "name": "div.icon-LCLd8JNY",
+                    "x": "8",
+                    "y": "6",
+                    "width": "28",
+                    "height": "28"
+                  },
+                  "children": [
+                    {
+                      "tag": "instance",
+                      "attrs": {
+                        "id": "25:140100",
+                        "name": "Component 1",
+                        "x": "0",
+                        "y": "0",
+                        "width": "28",
+                        "height": "28"
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "tag": "frame",
+                  "attrs": {
+                    "id": "25:140102",
+                    "name": "div.label-LCLd8JNY:margin",
+                    "x": "36",
+                    "y": "3",
+                    "width": "285",
+                    "height": "34"
+                  },
+                  "children": [
+                    {
+                      "tag": "frame",
+                      "attrs": {
+                        "id": "25:140103",
+                        "name": "div.label-LCLd8JNY",
+                        "x": "4",
+                        "y": "8",
+                        "width": "277",
+                        "height": "18"
+                      },
+                      "children": [
+                        {
+                          "tag": "text",
+                          "attrs": {
+                            "id": "25:140104",
+                            "name": "Sus datos se han actualizado correctamente",
+                            "x": "0",
+                            "y": "0",
+                            "width": "277",
+                            "height": "18"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "frame",
+              "attrs": {
+                "id": "25:140105",
+                "name": "div.tv-main",
+                "x": "0",
+                "y": "0",
+                "width": "1395",
+                "height": "1277.199951171875"
+              },
+              "children": [
+                {
+                  "tag": "frame",
+                  "attrs": {
+                    "id": "25:140109",
+                    "name": "div.tv-header",
+                    "x": "0",
+                    "y": "0",
+                    "width": "1395",
+                    "height": "64"
+                  },
+                  "children": [
+                    {
+                      "tag": "frame",
+                      "attrs": {
+                        "id": "25:140110",
+                        "name": "div.tv-header__inner",
+                        "x": "0",
+                        "y": "0",
+                        "width": "1395",
+                        "height": "64"
+                      },
+                      "children": [
+                        {
+                          "tag": "frame",
+                          "attrs": {
+                            "id": "25:140111",
+                            "name": "span.tv-header__logo",
+                            "x": "40",
+                            "y": "0",
+                            "width": "189",
+                            "height": "64"
+                          },
+                          "children": [
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:140112",
+                                "name": "Página de inicio de TradingView",
+                                "x": "0",
+                                "y": "18",
+                                "width": "189",
+                                "height": "28"
+                              },
+                              "children": [
+                                {
+                                  "tag": "instance",
+                                  "attrs": {
+                                    "id": "25:140113",
+                                    "name": "Component 9",
+                                    "x": "0",
+                                    "y": "-18",
+                                    "width": "36",
+                                    "height": "64"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140117",
+                                    "name": "span.tv-header__logo-text:margin",
+                                    "x": "36",
+                                    "y": "-18",
+                                    "width": "153",
+                                    "height": "64"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "instance",
+                                      "attrs": {
+                                        "id": "25:140118",
+                                        "name": "Component 9",
+                                        "x": "6",
+                                        "y": "0",
+                                        "width": "147",
+                                        "height": "64"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "frame",
+                          "attrs": {
+                            "id": "25:140122",
+                            "name": "div.tv-header__middle-wrapper",
+                            "x": "229",
+                            "y": "0",
+                            "width": "979.4000244140625",
+                            "height": "64"
+                          },
+                          "children": [
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:140123",
+                                "name": "div.tv-header__middle-content",
+                                "x": "31.7750244140625",
+                                "y": "0",
+                                "width": "915.8499755859375",
+                                "height": "64"
+                              },
+                              "children": [
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140124",
+                                    "name": "div.tv-header__area:margin",
+                                    "x": "112.8399887084961",
+                                    "y": "12",
+                                    "width": "210.1699981689453",
+                                    "height": "40"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140125",
+                                        "name": "div.tv-header__area",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "202.1699981689453",
+                                        "height": "40"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140126",
+                                            "name": "div.tv-header-search-container",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "202.1699981689453",
+                                            "height": "40"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:140127",
+                                                "name": "Component 2",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "202.1699981689453",
+                                                "height": "40"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140135",
+                                    "name": "ul.tv-header__main-menu",
+                                    "x": "323.0099792480469",
+                                    "y": "0",
+                                    "width": "480",
+                                    "height": "64"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140136",
+                                        "name": "li.tv-header__main-menu-item",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "107",
+                                        "height": "64"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:140137",
+                                            "name": "Component 3",
+                                            "x": "0",
+                                            "y": "12",
+                                            "width": "107",
+                                            "height": "40"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140144",
+                                        "name": "li.tv-header__main-menu-item",
+                                        "x": "107",
+                                        "y": "0",
+                                        "width": "117",
+                                        "height": "64"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:140145",
+                                            "name": "Component 3",
+                                            "x": "0",
+                                            "y": "12",
+                                            "width": "117",
+                                            "height": "40"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140152",
+                                        "name": "li.tv-header__main-menu-item",
+                                        "x": "224",
+                                        "y": "0",
+                                        "width": "104",
+                                        "height": "64"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:140153",
+                                            "name": "Component 3",
+                                            "x": "0",
+                                            "y": "12",
+                                            "width": "104",
+                                            "height": "40"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140160",
+                                        "name": "li.tv-header__main-menu-item",
+                                        "x": "328",
+                                        "y": "0",
+                                        "width": "90",
+                                        "height": "64"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:140161",
+                                            "name": "Component 3",
+                                            "x": "0",
+                                            "y": "12",
+                                            "width": "90",
+                                            "height": "40"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140168",
+                                        "name": "li.tv-header__main-menu-item",
+                                        "x": "418",
+                                        "y": "0",
+                                        "width": "62",
+                                        "height": "64"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:140169",
+                                            "name": "Component 3",
+                                            "x": "0",
+                                            "y": "12",
+                                            "width": "62",
+                                            "height": "40"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "frame",
+                          "attrs": {
+                            "id": "25:140176",
+                            "name": "div.tv-header__area",
+                            "x": "1208.4000244140625",
+                            "y": "12",
+                            "width": "146.60000610351562",
+                            "height": "40"
+                          },
+                          "children": [
+                            {
+                              "tag": "instance",
+                              "attrs": {
+                                "id": "25:140177",
+                                "name": "Component 4",
+                                "x": "0",
+                                "y": "0",
+                                "width": "40",
+                                "height": "40"
+                              },
+                              "children": []
+                            },
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:140183",
+                                "name": "div.js-offer-button",
+                                "x": "40",
+                                "y": "0",
+                                "width": "106.5999984741211",
+                                "height": "40"
+                              },
+                              "children": [
+                                {
+                                  "tag": "instance",
+                                  "attrs": {
+                                    "id": "25:140184",
+                                    "name": "Component 5",
+                                    "x": "12",
+                                    "y": "0",
+                                    "width": "94.5999984741211",
+                                    "height": "40"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "frame",
+                  "attrs": {
+                    "id": "25:140191",
+                    "name": "Contenido principal",
+                    "x": "0",
+                    "y": "64",
+                    "width": "1395",
+                    "height": "1213.199951171875"
+                  },
+                  "children": [
+                    {
+                      "tag": "frame",
+                      "attrs": {
+                        "id": "25:140192",
+                        "name": "div.tv-portfolio-page-root",
+                        "x": "0",
+                        "y": "0",
+                        "width": "1395",
+                        "height": "1093.199951171875"
+                      },
+                      "children": [
+                        {
+                          "tag": "frame",
+                          "attrs": {
+                            "id": "25:140193",
+                            "name": "div.container-ILOteJAY",
+                            "x": "0",
+                            "y": "0",
+                            "width": "1395",
+                            "height": "1093.199951171875"
+                          },
+                          "children": [
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:140194",
+                                "name": "div.cards-hYpQtUqr",
+                                "x": "40",
+                                "y": "58",
+                                "width": "1315",
+                                "height": "407.20001220703125"
+                              },
+                              "children": [
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140195",
+                                    "name": "div.creationItem-QcHa5Zyb",
+                                    "x": "0",
+                                    "y": "0",
+                                    "width": "417.33001708984375",
+                                    "height": "187.60000610351562"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140195;25:139768",
+                                        "name": "div.creationIcon-QcHa5Zyb",
+                                        "x": "195",
+                                        "y": "42",
+                                        "width": "28",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "I25:140195;25:139518",
+                                            "name": "Component 1",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "28",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140195;25:139770",
+                                        "name": "span.creationTitle-QcHa5Zyb",
+                                        "x": "70",
+                                        "y": "78",
+                                        "width": "277",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "I25:140195;25:139771",
+                                            "name": "Cargar archivo CSV",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "277",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140195;25:139772",
+                                        "name": "span.description-QcHa5Zyb",
+                                        "x": "13.86",
+                                        "y": "114",
+                                        "width": "389.6",
+                                        "height": "36"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "I25:140195;25:139773",
+                                            "name": "Transfiera rápidamente todas las transacciones desde un archivo",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "389.6",
+                                            "height": "36"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140204",
+                                    "name": "div.creationItem-QcHa5Zyb",
+                                    "x": "449",
+                                    "y": "0",
+                                    "width": "417.7900085449219",
+                                    "height": "187.60000610351562"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140204;25:139521",
+                                        "name": "div.creationIcon-QcHa5Zyb",
+                                        "x": "195",
+                                        "y": "42",
+                                        "width": "28",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "I25:140204;25:139520",
+                                            "name": "Component 1",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "28",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140204;25:139788",
+                                        "name": "span.creationTitle-QcHa5Zyb",
+                                        "x": "115",
+                                        "y": "78",
+                                        "width": "187",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "I25:140204;25:139789",
+                                            "name": "Crear manualmente",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "187",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140204;25:139790",
+                                        "name": "span.description-QcHa5Zyb",
+                                        "x": "60",
+                                        "y": "114",
+                                        "width": "297",
+                                        "height": "20"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "I25:140204;25:139791",
+                                            "name": "Añada a mano solo las transacciones que desee",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "297",
+                                            "height": "20"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140213",
+                                    "name": "div.creationItem-QcHa5Zyb",
+                                    "x": "898",
+                                    "y": "0",
+                                    "width": "413.2300109863281",
+                                    "height": "187.60000610351562"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140213;25:139525",
+                                        "name": "div.creationIcon-QcHa5Zyb",
+                                        "x": "193",
+                                        "y": "42",
+                                        "width": "28",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "I25:140213;25:139523",
+                                            "name": "Component 1",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "28",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140213;25:139808",
+                                        "name": "span.creationTitle-QcHa5Zyb",
+                                        "x": "50",
+                                        "y": "78",
+                                        "width": "313",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "I25:140213;25:139809",
+                                            "name": "Añada de la lista de seguimiento",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "313",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140213;25:139810",
+                                        "name": "span.description-QcHa5Zyb",
+                                        "x": "2.31",
+                                        "y": "114",
+                                        "width": "408.6",
+                                        "height": "36"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "I25:140213;25:139811",
+                                            "name": "Elija entre las listas de seguimiento guardadas y personalice las transacciones",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "408.6",
+                                            "height": "36"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140223",
+                                    "name": "div.creationItem-QcHa5Zyb",
+                                    "x": "0",
+                                    "y": "219.6",
+                                    "width": "415.41998291015625",
+                                    "height": "187.60000610351562"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140223;25:139528",
+                                        "name": "div.creationIcon-QcHa5Zyb",
+                                        "x": "193",
+                                        "y": "42",
+                                        "width": "28",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "I25:140223;25:139527",
+                                            "name": "Component 1",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "28",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140223;25:139826",
+                                        "name": "span.creationTitle-QcHa5Zyb",
+                                        "x": "74",
+                                        "y": "78",
+                                        "width": "267",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "I25:140223;25:139827",
+                                            "name": "Importar desde Paper Trading",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "267",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "I25:140223;25:139828",
+                                        "name": "span.description-QcHa5Zyb",
+                                        "x": "34.71",
+                                        "y": "114",
+                                        "width": "346",
+                                        "height": "20"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "I25:140223;25:139829",
+                                            "name": "Seleccione una cuenta desde la que añadir operaciones",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "346",
+                                            "height": "20"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:140232",
+                                "name": "div.cardsHeader-hYpQtUqr",
+                                "x": "40",
+                                "y": "0",
+                                "width": "1315",
+                                "height": "58"
+                              },
+                              "children": [
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140233",
+                                    "name": "h1.headerTitle-hYpQtUqr",
+                                    "x": "0",
+                                    "y": "15",
+                                    "width": "93",
+                                    "height": "28"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "text",
+                                      "attrs": {
+                                        "id": "25:140234",
+                                        "name": "Carteras",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "93",
+                                        "height": "28"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:140235",
+                                "name": "div.card-l3x84Fov",
+                                "x": "40",
+                                "y": "513.2000122070312",
+                                "width": "1315.199951171875",
+                                "height": "580.2000122070312"
+                              },
+                              "children": [
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140236",
+                                    "name": "div.textContainerWrapper-l3x84Fov:mask-group",
+                                    "x": "51.79999923706055",
+                                    "y": "56.79999923706055",
+                                    "width": "631.2000122070312",
+                                    "height": "524"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "rounded",
+                                      "attrs": {
+                                        "id": "25:140237",
+                                        "name": "div.textContainerWrapper-l3x84Fov:mask",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "631.2000122070312",
+                                        "height": "524"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140238",
+                                        "name": "div.textContainerWrapper-l3x84Fov",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "631.2000122070312",
+                                        "height": "524"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140239",
+                                            "name": "div.textContainer-l3x84Fov",
+                                            "x": "5",
+                                            "y": "0",
+                                            "width": "626.2000122070312",
+                                            "height": "464"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140240",
+                                                "name": "div#Start",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "626.2000122070312",
+                                                "height": "116"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:140241",
+                                                    "name": "p.titleWrapper-l3x84Fov",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "626.2000122070312",
+                                                    "height": "44"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:140242",
+                                                        "name": "p.slideTitle-l3x84Fov",
+                                                        "x": "0",
+                                                        "y": "0",
+                                                        "width": "598.2000122070312",
+                                                        "height": "44"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "text",
+                                                          "attrs": {
+                                                            "id": "I25:140242;25:139584",
+                                                            "name": "Empiece en segundos",
+                                                            "x": "0",
+                                                            "y": "0",
+                                                            "width": "598.2000122070312",
+                                                            "height": "44"
+                                                          },
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:140244",
+                                                    "name": "div.subtext-l3x84Fov:margin",
+                                                    "x": "0",
+                                                    "y": "44",
+                                                    "width": "626.2000122070312",
+                                                    "height": "72"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:140245",
+                                                        "name": "div.subtext-l3x84Fov",
+                                                        "x": "-5",
+                                                        "y": "0",
+                                                        "width": "631.2000122070312",
+                                                        "height": "77"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "frame",
+                                                          "attrs": {
+                                                            "id": "25:140246",
+                                                            "name": "p",
+                                                            "x": "5",
+                                                            "y": "16",
+                                                            "width": "626.2000122070312",
+                                                            "height": "56"
+                                                          },
+                                                          "children": [
+                                                            {
+                                                              "tag": "text",
+                                                              "attrs": {
+                                                                "id": "25:140247",
+                                                                "name": "Cree su cartera y cargue su histórico de operaciones: rápido, sencillo y sin complicaciones.",
+                                                                "x": "0",
+                                                                "y": "0",
+                                                                "width": "626.2000122070312",
+                                                                "height": "56"
+                                                              },
+                                                              "children": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140248",
+                                                "name": "div#ControlInvestmentPerformance",
+                                                "x": "0",
+                                                "y": "148",
+                                                "width": "626.2000122070312",
+                                                "height": "88"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:140249",
+                                                    "name": "p.titleWrapper-l3x84Fov",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "626.2000122070312",
+                                                    "height": "88"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:140250",
+                                                        "name": "p.slideTitle-l3x84Fov.is-inactive",
+                                                        "x": "0",
+                                                        "y": "0",
+                                                        "width": "598.2000122070312",
+                                                        "height": "88"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "text",
+                                                          "attrs": {
+                                                            "id": "I25:140250;25:139580",
+                                                            "name": "Controlar el rendimiento de las inversiones",
+                                                            "x": "0",
+                                                            "y": "0",
+                                                            "width": "598.2000122070312",
+                                                            "height": "88"
+                                                          },
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140252",
+                                                "name": "div#MeasurePotential",
+                                                "x": "0",
+                                                "y": "268",
+                                                "width": "626.2000122070312",
+                                                "height": "44"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:140253",
+                                                    "name": "p.titleWrapper-l3x84Fov",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "626.2000122070312",
+                                                    "height": "44"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:140254",
+                                                        "name": "p.slideTitle-l3x84Fov.is-inactive",
+                                                        "x": "0",
+                                                        "y": "0",
+                                                        "width": "598.2000122070312",
+                                                        "height": "44"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "text",
+                                                          "attrs": {
+                                                            "id": "I25:140254;25:139580",
+                                                            "name": "Mida el potencial",
+                                                            "x": "0",
+                                                            "y": "0",
+                                                            "width": "598.2000122070312",
+                                                            "height": "44"
+                                                          },
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140256",
+                                                "name": "div#MenageDiversification",
+                                                "x": "0",
+                                                "y": "344",
+                                                "width": "626.2000122070312",
+                                                "height": "44"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:140257",
+                                                    "name": "p.titleWrapper-l3x84Fov",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "626.2000122070312",
+                                                    "height": "44"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:140258",
+                                                        "name": "p.slideTitle-l3x84Fov.is-inactive",
+                                                        "x": "0",
+                                                        "y": "0",
+                                                        "width": "598.2000122070312",
+                                                        "height": "44"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "text",
+                                                          "attrs": {
+                                                            "id": "I25:140258;25:139580",
+                                                            "name": "Gestione la diversificación",
+                                                            "x": "0",
+                                                            "y": "0",
+                                                            "width": "598.2000122070312",
+                                                            "height": "44"
+                                                          },
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140260",
+                                                "name": "div#AssesRisks",
+                                                "x": "0",
+                                                "y": "420",
+                                                "width": "626.2000122070312",
+                                                "height": "44"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:140261",
+                                                    "name": "p.titleWrapper-l3x84Fov",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "626.2000122070312",
+                                                    "height": "44"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:140262",
+                                                        "name": "p.slideTitle-l3x84Fov.is-inactive",
+                                                        "x": "0",
+                                                        "y": "0",
+                                                        "width": "598.2000122070312",
+                                                        "height": "44"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "text",
+                                                          "attrs": {
+                                                            "id": "I25:140262;25:139580",
+                                                            "name": "Analizar riesgos y resultados",
+                                                            "x": "0",
+                                                            "y": "0",
+                                                            "width": "598.2000122070312",
+                                                            "height": "44"
+                                                          },
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140264",
+                                    "name": "div.mediaWrapper-l3x84Fov",
+                                    "x": "709.2999267578125",
+                                    "y": "56.79999923706055",
+                                    "width": "631.2000122070312",
+                                    "height": "524"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140265",
+                                        "name": "div.imageWrapper-l3x84Fov:margin",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "631.1900024414062",
+                                        "height": "363"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140266",
+                                            "name": "div.imageWrapper-l3x84Fov",
+                                            "x": "56",
+                                            "y": "0",
+                                            "width": "519.1900024414062",
+                                            "height": "363"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140267",
+                                                "name": "my-portfolio-dark.198031bdd489a6ee83e3.webm",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "519.1900024414062",
+                                                "height": "359.79998779296875"
+                                              },
+                                              "children": []
+                                            },
+                                            {
+                                              "tag": "rounded",
+                                              "attrs": {
+                                                "id": "25:140268",
+                                                "name": "::before",
+                                                "x": "0",
+                                                "y": "293",
+                                                "width": "519.1900024414062",
+                                                "height": "70"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140269",
+                                        "name": "div.imageWrapper-l3x84Fov:margin",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "631.1900024414062",
+                                        "height": "363"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140270",
+                                            "name": "div.imageWrapper-l3x84Fov",
+                                            "x": "56",
+                                            "y": "0",
+                                            "width": "519.1900024414062",
+                                            "height": "363"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140271",
+                                                "name": "portfolio-change-dark.7a9d0d58915a510b5b40.webm",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "519.1900024414062",
+                                                "height": "359.79998779296875"
+                                              },
+                                              "children": []
+                                            },
+                                            {
+                                              "tag": "rounded",
+                                              "attrs": {
+                                                "id": "25:140272",
+                                                "name": "::before",
+                                                "x": "0",
+                                                "y": "293",
+                                                "width": "519.1900024414062",
+                                                "height": "70"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140273",
+                                        "name": "div.imageWrapper-l3x84Fov:margin",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "631.1900024414062",
+                                        "height": "363"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140274",
+                                            "name": "div.imageWrapper-l3x84Fov",
+                                            "x": "56",
+                                            "y": "0",
+                                            "width": "519.1900024414062",
+                                            "height": "363"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140275",
+                                                "name": "performance-dark.8a1cf0153530912c9788.webm",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "519.1900024414062",
+                                                "height": "359.79998779296875"
+                                              },
+                                              "children": []
+                                            },
+                                            {
+                                              "tag": "rounded",
+                                              "attrs": {
+                                                "id": "25:140276",
+                                                "name": "::before",
+                                                "x": "0",
+                                                "y": "293",
+                                                "width": "519.1900024414062",
+                                                "height": "70"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140277",
+                                        "name": "div.imageWrapper-l3x84Fov:margin",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "631.1900024414062",
+                                        "height": "363"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140278",
+                                            "name": "div.imageWrapper-l3x84Fov",
+                                            "x": "56",
+                                            "y": "0",
+                                            "width": "519.1900024414062",
+                                            "height": "363"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140279",
+                                                "name": "distribution-dark.9e5c5ad909deb548a6a9.webm",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "519.1900024414062",
+                                                "height": "359.79998779296875"
+                                              },
+                                              "children": []
+                                            },
+                                            {
+                                              "tag": "rounded",
+                                              "attrs": {
+                                                "id": "25:140280",
+                                                "name": "::before",
+                                                "x": "0",
+                                                "y": "293",
+                                                "width": "519.1900024414062",
+                                                "height": "70"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140281",
+                                        "name": "div.imageWrapper-l3x84Fov:margin",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "631.1900024414062",
+                                        "height": "363"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140282",
+                                            "name": "div.imageWrapper-l3x84Fov",
+                                            "x": "56",
+                                            "y": "0",
+                                            "width": "519.1900024414062",
+                                            "height": "363"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:140283",
+                                                "name": "risks-dark.bd67beff191474b8e4ce.webm",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "519.1900024414062",
+                                                "height": "359.79998779296875"
+                                              },
+                                              "children": []
+                                            },
+                                            {
+                                              "tag": "rounded",
+                                              "attrs": {
+                                                "id": "25:140284",
+                                                "name": "::before",
+                                                "x": "0",
+                                                "y": "293",
+                                                "width": "519.1900024414062",
+                                                "height": "70"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140285",
+                                    "name": "div.btnWrapper-l3x84Fov",
+                                    "x": "1123.199951171875",
+                                    "y": "519.2000122070312",
+                                    "width": "28",
+                                    "height": "28"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140286",
+                                        "name": "button.sliderButton-l3x84Fov.is-prev",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "28",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "I25:140286;25:139531",
+                                            "name": "Component 1",
+                                            "x": "5",
+                                            "y": "5",
+                                            "width": "18",
+                                            "height": "18"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140290",
+                                    "name": "div.sliderControlWrapper-l3x84Fov",
+                                    "x": "1154.030029296875",
+                                    "y": "519.2000122070312",
+                                    "width": "74",
+                                    "height": "28"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140291",
+                                        "name": "div.sliderControlText-l3x84Fov",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "37",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "25:140292",
+                                            "name": "1 / 5",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "37",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140293",
+                                        "name": "div.btnWrapper-l3x84Fov",
+                                        "x": "74",
+                                        "y": "28",
+                                        "width": "28",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140294",
+                                            "name": "button.sliderButton-l3x84Fov.is-next",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "28",
+                                            "height": "28"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "I25:140294;25:139534",
+                                                "name": "Component 1",
+                                                "x": "5",
+                                                "y": "5",
+                                                "width": "18",
+                                                "height": "18"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140298",
+                                    "name": "div.pause-l3x84Fov",
+                                    "x": "1254.199951171875",
+                                    "y": "519.2000122070312",
+                                    "width": "28",
+                                    "height": "28"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140299",
+                                        "name": "button.sliderButton-l3x84Fov.is-pause",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "28",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "I25:140299;25:139537",
+                                            "name": "Component 1",
+                                            "x": "5",
+                                            "y": "5",
+                                            "width": "18",
+                                            "height": "18"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "frame",
+              "attrs": {
+                "id": "25:140303",
+                "name": "div.layout__area--right",
+                "x": "1395",
+                "y": "0",
+                "width": "45",
+                "height": "900"
+              },
+              "children": [
+                {
+                  "tag": "frame",
+                  "attrs": {
+                    "id": "25:140304",
+                    "name": "div.widgetbar-wrap",
+                    "x": "0",
+                    "y": "0",
+                    "width": "45",
+                    "height": "900"
+                  },
+                  "children": [
+                    {
+                      "tag": "frame",
+                      "attrs": {
+                        "id": "25:140305",
+                        "name": "div.widgetbar-tabs",
+                        "x": "0",
+                        "y": "0",
+                        "width": "45",
+                        "height": "900"
+                      },
+                      "children": [
+                        {
+                          "tag": "frame",
+                          "attrs": {
+                            "id": "25:140306",
+                            "name": "div.wrap-Z4M3tWHb",
+                            "x": "0",
+                            "y": "0",
+                            "width": "45",
+                            "height": "900"
+                          },
+                          "children": [
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:140307",
+                                "name": "div.scrollWrap-Z4M3tWHb",
+                                "x": "0",
+                                "y": "0",
+                                "width": "145",
+                                "height": "900"
+                              },
+                              "children": [
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:140308",
+                                    "name": "div.content-Z4M3tWHb",
+                                    "x": "0",
+                                    "y": "0",
+                                    "width": "45",
+                                    "height": "900"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:140309",
+                                        "name": "div.toolbar-S4V6IoxY",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "45",
+                                        "height": "900"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140310",
+                                            "name": "div.separator-gZVyfVJP:margin",
+                                            "x": "0",
+                                            "y": "841",
+                                            "width": "45",
+                                            "height": "13"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "rounded",
+                                              "attrs": {
+                                                "id": "25:140311",
+                                                "name": "div.separator-gZVyfVJP",
+                                                "x": "6",
+                                                "y": "6",
+                                                "width": "33",
+                                                "height": "1"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:140312",
+                                            "name": "Component 8",
+                                            "x": "0.5",
+                                            "y": "2",
+                                            "width": "44",
+                                            "height": "44"
+                                          },
+                                          "children": []
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140317",
+                                            "name": "Alertas:margin",
+                                            "x": "0.5",
+                                            "y": "46",
+                                            "width": "44",
+                                            "height": "46"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:140318",
+                                                "name": "Component 8",
+                                                "x": "0",
+                                                "y": "2",
+                                                "width": "44",
+                                                "height": "44"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140323",
+                                            "name": "Chats:margin",
+                                            "x": "0.5",
+                                            "y": "92",
+                                            "width": "44",
+                                            "height": "46"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:140324",
+                                                "name": "Component 8",
+                                                "x": "0",
+                                                "y": "2",
+                                                "width": "44",
+                                                "height": "44"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:140328",
+                                            "name": "Component 8",
+                                            "x": "0.5",
+                                            "y": "613",
+                                            "width": "44",
+                                            "height": "44"
+                                          },
+                                          "children": []
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140336",
+                                            "name": "Calendarios:margin",
+                                            "x": "0.5",
+                                            "y": "657",
+                                            "width": "44",
+                                            "height": "46"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:140337",
+                                                "name": "Component 8",
+                                                "x": "0",
+                                                "y": "2",
+                                                "width": "44",
+                                                "height": "44"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140341",
+                                            "name": "Comunidad:margin",
+                                            "x": "0.5",
+                                            "y": "703",
+                                            "width": "44",
+                                            "height": "46"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:140342",
+                                                "name": "Component 8",
+                                                "x": "0",
+                                                "y": "2",
+                                                "width": "44",
+                                                "height": "44"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140349",
+                                            "name": "Notificaciones:margin",
+                                            "x": "0.5",
+                                            "y": "749",
+                                            "width": "44",
+                                            "height": "46"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:140350",
+                                                "name": "Component 8",
+                                                "x": "0",
+                                                "y": "2",
+                                                "width": "44",
+                                                "height": "44"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:140354",
+                                            "name": "Productos:margin",
+                                            "x": "0.5",
+                                            "y": "795",
+                                            "width": "44",
+                                            "height": "46"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:140355",
+                                                "name": "Component 8",
+                                                "x": "0",
+                                                "y": "2",
+                                                "width": "44",
+                                                "height": "44"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:140359",
+                                            "name": "Component 8",
+                                            "x": "0.5",
+                                            "y": "854",
+                                            "width": "44",
+                                            "height": "44"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "frame",
+                      "attrs": {
+                        "id": "25:140363",
+                        "name": "div.widgetbar-pages",
+                        "x": "-0.800000011920929",
+                        "y": "0",
+                        "width": "0.800000011920929",
+                        "height": "900"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

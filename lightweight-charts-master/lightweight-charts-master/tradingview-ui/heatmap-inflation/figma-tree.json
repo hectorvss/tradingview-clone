@@ -1,0 +1,2109 @@
+{
+  "type": "root",
+  "children": [
+    {
+      "tag": "section",
+      "attrs": {
+        "id": "25:148799",
+        "name": "https://es.tradingview.com/macro-maps/ - es_tradingview_com_macro-maps_1440w_default.h2d - 26/05/2026, 13:13:08 CEST",
+        "x": "60352.58203125",
+        "y": "1766.951416015625",
+        "width": "1640",
+        "height": "1100"
+      },
+      "children": [
+        {
+          "tag": "frame",
+          "attrs": {
+            "id": "25:147800",
+            "name": "1440w default",
+            "x": "100",
+            "y": "100",
+            "width": "1440",
+            "height": "900"
+          },
+          "children": [
+            {
+              "tag": "frame",
+              "attrs": {
+                "id": "25:147801",
+                "name": "body",
+                "x": "0",
+                "y": "0",
+                "width": "1440",
+                "height": "900"
+              },
+              "children": [
+                {
+                  "tag": "frame",
+                  "attrs": {
+                    "id": "25:147802",
+                    "name": "div.tv-main",
+                    "x": "0",
+                    "y": "0",
+                    "width": "1395",
+                    "height": "900"
+                  },
+                  "children": [
+                    {
+                      "tag": "frame",
+                      "attrs": {
+                        "id": "25:147806",
+                        "name": "div.tv-header",
+                        "x": "0",
+                        "y": "0",
+                        "width": "1395",
+                        "height": "64"
+                      },
+                      "children": [
+                        {
+                          "tag": "frame",
+                          "attrs": {
+                            "id": "25:147807",
+                            "name": "div.tv-header__inner",
+                            "x": "0",
+                            "y": "0",
+                            "width": "1395",
+                            "height": "64"
+                          },
+                          "children": [
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:147808",
+                                "name": "span.tv-header__logo",
+                                "x": "40",
+                                "y": "0",
+                                "width": "189",
+                                "height": "64"
+                              },
+                              "children": [
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:147809",
+                                    "name": "Página de inicio de TradingView",
+                                    "x": "0",
+                                    "y": "18",
+                                    "width": "189",
+                                    "height": "28"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "instance",
+                                      "attrs": {
+                                        "id": "25:147810",
+                                        "name": "Component 11",
+                                        "x": "0",
+                                        "y": "-18",
+                                        "width": "36",
+                                        "height": "64"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:147814",
+                                        "name": "span.tv-header__logo-text:margin",
+                                        "x": "36",
+                                        "y": "-18",
+                                        "width": "153",
+                                        "height": "64"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:147815",
+                                            "name": "Component 11",
+                                            "x": "6",
+                                            "y": "0",
+                                            "width": "147",
+                                            "height": "64"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:147819",
+                                "name": "div.tv-header__middle-wrapper",
+                                "x": "229",
+                                "y": "0",
+                                "width": "979.4000244140625",
+                                "height": "64"
+                              },
+                              "children": [
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:147820",
+                                    "name": "div.tv-header__middle-content",
+                                    "x": "31.7750244140625",
+                                    "y": "0",
+                                    "width": "915.8499755859375",
+                                    "height": "64"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:147821",
+                                        "name": "div.tv-header__area:margin",
+                                        "x": "112.8399887084961",
+                                        "y": "12",
+                                        "width": "210.1699981689453",
+                                        "height": "40"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:147822",
+                                            "name": "div.tv-header__area",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "202.1699981689453",
+                                            "height": "40"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:147823",
+                                                "name": "div.tv-header-search-container",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "202.1699981689453",
+                                                "height": "40"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "instance",
+                                                  "attrs": {
+                                                    "id": "25:147824",
+                                                    "name": "Component 2",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "202.1699981689453",
+                                                    "height": "40"
+                                                  },
+                                                  "children": []
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:147832",
+                                        "name": "ul.tv-header__main-menu",
+                                        "x": "323.0099792480469",
+                                        "y": "0",
+                                        "width": "480",
+                                        "height": "64"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:147833",
+                                            "name": "li.tv-header__main-menu-item",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "107",
+                                            "height": "64"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:147834",
+                                                "name": "Component 3",
+                                                "x": "0",
+                                                "y": "12",
+                                                "width": "107",
+                                                "height": "40"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:147841",
+                                            "name": "li.tv-header__main-menu-item",
+                                            "x": "107",
+                                            "y": "0",
+                                            "width": "117",
+                                            "height": "64"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:147842",
+                                                "name": "Component 3",
+                                                "x": "0",
+                                                "y": "12",
+                                                "width": "117",
+                                                "height": "40"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:147849",
+                                            "name": "li.tv-header__main-menu-item",
+                                            "x": "224",
+                                            "y": "0",
+                                            "width": "104",
+                                            "height": "64"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:147850",
+                                                "name": "Component 3",
+                                                "x": "0",
+                                                "y": "12",
+                                                "width": "104",
+                                                "height": "40"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:147857",
+                                            "name": "li.tv-header__main-menu-item",
+                                            "x": "328",
+                                            "y": "0",
+                                            "width": "90",
+                                            "height": "64"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:147858",
+                                                "name": "Component 3",
+                                                "x": "0",
+                                                "y": "12",
+                                                "width": "90",
+                                                "height": "40"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:147865",
+                                            "name": "li.tv-header__main-menu-item",
+                                            "x": "418",
+                                            "y": "0",
+                                            "width": "62",
+                                            "height": "64"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:147866",
+                                                "name": "Component 3",
+                                                "x": "0",
+                                                "y": "12",
+                                                "width": "62",
+                                                "height": "40"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:147873",
+                                "name": "div.tv-header__area",
+                                "x": "1208.4000244140625",
+                                "y": "12",
+                                "width": "146.60000610351562",
+                                "height": "40"
+                              },
+                              "children": [
+                                {
+                                  "tag": "instance",
+                                  "attrs": {
+                                    "id": "25:147874",
+                                    "name": "Component 4",
+                                    "x": "0",
+                                    "y": "0",
+                                    "width": "40",
+                                    "height": "40"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:147880",
+                                    "name": "div.js-offer-button",
+                                    "x": "40",
+                                    "y": "0",
+                                    "width": "106.5999984741211",
+                                    "height": "40"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "instance",
+                                      "attrs": {
+                                        "id": "25:147881",
+                                        "name": "Component 5",
+                                        "x": "12",
+                                        "y": "0",
+                                        "width": "94.5999984741211",
+                                        "height": "40"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "frame",
+                      "attrs": {
+                        "id": "25:147888",
+                        "name": "Contenido principal",
+                        "x": "0",
+                        "y": "64",
+                        "width": "1395",
+                        "height": "836"
+                      },
+                      "children": [
+                        {
+                          "tag": "frame",
+                          "attrs": {
+                            "id": "25:147889",
+                            "name": "div.block-s6apKj37",
+                            "x": "40",
+                            "y": "12",
+                            "width": "1315",
+                            "height": "808"
+                          },
+                          "children": [
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:147890",
+                                "name": "div.contentWrapper-ShSaLsfC",
+                                "x": "0",
+                                "y": "0",
+                                "width": "1315",
+                                "height": "808"
+                              },
+                              "children": [
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:147891",
+                                    "name": "div.wrapper-deELOHmL",
+                                    "x": "0",
+                                    "y": "0",
+                                    "width": "1315",
+                                    "height": "34"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:147893",
+                                        "name": "h1#macro-maps",
+                                        "x": "0",
+                                        "y": "3",
+                                        "width": "147",
+                                        "height": "28"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "text",
+                                          "attrs": {
+                                            "id": "25:147894",
+                                            "name": "Mapas macro",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "147",
+                                            "height": "28"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:147895",
+                                        "name": "div.controls-ShSaLsfC",
+                                        "x": "1239",
+                                        "y": "0",
+                                        "width": "76",
+                                        "height": "34"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:147896",
+                                            "name": "div.iconBtn-Component6",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "34",
+                                            "height": "34"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:147896-icon",
+                                                "name": "span.icon",
+                                                "x": "3",
+                                                "y": "3",
+                                                "width": "28",
+                                                "height": "28"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:147901",
+                                            "name": "Component 6",
+                                            "x": "42",
+                                            "y": "0",
+                                            "width": "34",
+                                            "height": "34"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:147905",
+                                    "name": "div.tabs-ShSaLsfC:margin",
+                                    "x": "0",
+                                    "y": "34",
+                                    "width": "1315",
+                                    "height": "74"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:147907",
+                                        "name": "div.toolbar-mYkFHquo",
+                                        "x": "-40",
+                                        "y": "12",
+                                        "width": "1395",
+                                        "height": "42"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "instance",
+                                          "attrs": {
+                                            "id": "25:147909",
+                                            "name": "Component 6",
+                                            "x": "40",
+                                            "y": "4",
+                                            "width": "34",
+                                            "height": "34"
+                                          },
+                                          "children": []
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:147913",
+                                            "name": "div#world-indicator-group-radiogroup",
+                                            "x": "98.80000305175781",
+                                            "y": "4",
+                                            "width": "1256.199951171875",
+                                            "height": "34"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:147914",
+                                                "name": "div.tab-Component7",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "152.6",
+                                                "height": "34"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "text",
+                                                  "attrs": {
+                                                    "id": "25:147914-t",
+                                                    "name": "Tasa de inflación",
+                                                    "x": "15.8",
+                                                    "y": "5",
+                                                    "width": "121",
+                                                    "height": "24"
+                                                  },
+                                                  "children": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:147917",
+                                                "name": "Tipo de interés:margin",
+                                                "x": "152.60000610351562",
+                                                "y": "0",
+                                                "width": "145.60000610351562",
+                                                "height": "34"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:147919",
+                                                    "name": "div.tab-Component7",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "137.6",
+                                                    "height": "34"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "text",
+                                                      "attrs": {
+                                                        "id": "25:147919-t",
+                                                        "name": "Tipo de interés",
+                                                        "x": "15.8",
+                                                        "y": "5",
+                                                        "width": "106",
+                                                        "height": "24"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:147922",
+                                                "name": "PIB:margin",
+                                                "x": "298.20001220703125",
+                                                "y": "0",
+                                                "width": "64.5999984741211",
+                                                "height": "34"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:147923",
+                                                    "name": "div.tab-Component7",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "56.6",
+                                                    "height": "34"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "text",
+                                                      "attrs": {
+                                                        "id": "25:147923-t",
+                                                        "name": "PIB",
+                                                        "x": "15.8",
+                                                        "y": "5",
+                                                        "width": "25",
+                                                        "height": "24"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:147926",
+                                                "name": "Tasa de desempleo:margin",
+                                                "x": "362.8000183105469",
+                                                "y": "0",
+                                                "width": "178.60000610351562",
+                                                "height": "34"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:147927",
+                                                    "name": "div.tab-Component7",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "170.6",
+                                                    "height": "34"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "text",
+                                                      "attrs": {
+                                                        "id": "25:147927-t",
+                                                        "name": "Tasa de desempleo",
+                                                        "x": "15.8",
+                                                        "y": "5",
+                                                        "width": "139",
+                                                        "height": "24"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:147930",
+                                                "name": "Deuda pública/PIB:margin",
+                                                "x": "541.4000244140625",
+                                                "y": "0",
+                                                "width": "172.60000610351562",
+                                                "height": "34"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:147931",
+                                                    "name": "div.tab-Component7",
+                                                    "x": "0",
+                                                    "y": "0",
+                                                    "width": "164.6",
+                                                    "height": "34"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "text",
+                                                      "attrs": {
+                                                        "id": "25:147931-t",
+                                                        "name": "Deuda pública/PIB",
+                                                        "x": "15.8",
+                                                        "y": "5",
+                                                        "width": "133",
+                                                        "height": "24"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:147934",
+                                    "name": "div.map-ShSaLsfC",
+                                    "x": "0",
+                                    "y": "108",
+                                    "width": "1315",
+                                    "height": "700"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:147935",
+                                        "name": "div.container-PucT6CA9:margin:align-center",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "987",
+                                        "height": "700"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:147936",
+                                            "name": "div.container-PucT6CA9:margin",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "987",
+                                            "height": "700"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:147937",
+                                                "name": "div.container-PucT6CA9",
+                                                "x": "-12",
+                                                "y": "-12",
+                                                "width": "1011",
+                                                "height": "724"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:147938",
+                                                    "name": "div.mapContainer-PucT6CA9",
+                                                    "x": "12",
+                                                    "y": "12",
+                                                    "width": "987",
+                                                    "height": "700"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:147939",
+                                                        "name": "div.container-IyWyk2Ci:margin",
+                                                        "x": "0",
+                                                        "y": "584",
+                                                        "width": "987",
+                                                        "height": "50"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "frame",
+                                                          "attrs": {
+                                                            "id": "25:147940",
+                                                            "name": "div.block-IyWyk2Ci",
+                                                            "x": "0",
+                                                            "y": "16",
+                                                            "width": "987",
+                                                            "height": "34"
+                                                          },
+                                                          "children": [
+                                                            {
+                                                              "tag": "frame",
+                                                              "attrs": {
+                                                                "id": "25:147941",
+                                                                "name": "div.legend-Component1",
+                                                                "x": "0",
+                                                                "y": "0",
+                                                                "width": "600",
+                                                                "height": "34"
+                                                              },
+                                                              "children": [
+                                                                {
+                                                                  "tag": "text",
+                                                                  "attrs": {
+                                                                    "id": "25:147941-t1",
+                                                                    "name": "3%",
+                                                                    "x": "80",
+                                                                    "y": "0",
+                                                                    "width": "20",
+                                                                    "height": "14"
+                                                                  },
+                                                                  "children": []
+                                                                },
+                                                                {
+                                                                  "tag": "text",
+                                                                  "attrs": {
+                                                                    "id": "25:147941-t2",
+                                                                    "name": "4%",
+                                                                    "x": "180",
+                                                                    "y": "0",
+                                                                    "width": "20",
+                                                                    "height": "14"
+                                                                  },
+                                                                  "children": []
+                                                                },
+                                                                {
+                                                                  "tag": "text",
+                                                                  "attrs": {
+                                                                    "id": "25:147941-t3",
+                                                                    "name": "6%",
+                                                                    "x": "280",
+                                                                    "y": "0",
+                                                                    "width": "20",
+                                                                    "height": "14"
+                                                                  },
+                                                                  "children": []
+                                                                },
+                                                                {
+                                                                  "tag": "text",
+                                                                  "attrs": {
+                                                                    "id": "25:147941-t4",
+                                                                    "name": "10%",
+                                                                    "x": "380",
+                                                                    "y": "0",
+                                                                    "width": "24",
+                                                                    "height": "14"
+                                                                  },
+                                                                  "children": []
+                                                                },
+                                                                {
+                                                                  "tag": "text",
+                                                                  "attrs": {
+                                                                    "id": "25:147941-t5",
+                                                                    "name": "30%",
+                                                                    "x": "480",
+                                                                    "y": "0",
+                                                                    "width": "24",
+                                                                    "height": "14"
+                                                                  },
+                                                                  "children": []
+                                                                },
+                                                                {
+                                                                  "tag": "frame",
+                                                                  "attrs": {
+                                                                    "id": "25:147941-bar",
+                                                                    "name": "div.legendBar",
+                                                                    "x": "0",
+                                                                    "y": "18",
+                                                                    "width": "600",
+                                                                    "height": "10"
+                                                                  },
+                                                                  "children": []
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:147983",
+                                                        "name": "div.controlsSlot-PucT6CA9:margin",
+                                                        "x": "0",
+                                                        "y": "634",
+                                                        "width": "987",
+                                                        "height": "66"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "frame",
+                                                          "attrs": {
+                                                            "id": "25:147984",
+                                                            "name": "div.controlsSlot-PucT6CA9",
+                                                            "x": "0",
+                                                            "y": "24",
+                                                            "width": "987",
+                                                            "height": "34"
+                                                          },
+                                                          "children": [
+                                                            {
+                                                              "tag": "frame",
+                                                              "attrs": {
+                                                                "id": "25:147985",
+                                                                "name": "ul.sliderMarks-dIREWMGR",
+                                                                "x": "0",
+                                                                "y": "0",
+                                                                "width": "987",
+                                                                "height": "24"
+                                                              },
+                                                              "children": [
+                                                                {
+                                                                  "tag": "frame",
+                                                                  "attrs": {
+                                                                    "id": "25:147986",
+                                                                    "name": "li.item-dIREWMGR",
+                                                                    "x": "0",
+                                                                    "y": "0",
+                                                                    "width": "49.16999816894531",
+                                                                    "height": "16"
+                                                                  },
+                                                                  "children": [
+                                                                    {
+                                                                      "tag": "text",
+                                                                      "attrs": {
+                                                                        "id": "25:147987",
+                                                                        "name": "Dic 1914",
+                                                                        "x": "0",
+                                                                        "y": "0",
+                                                                        "width": "48",
+                                                                        "height": "16"
+                                                                      },
+                                                                      "children": []
+                                                                    }
+                                                                  ]
+                                                                },
+                                                                {
+                                                                  "tag": "frame",
+                                                                  "attrs": {
+                                                                    "id": "25:147988",
+                                                                    "name": "li.item-dIREWMGR",
+                                                                    "x": "221.02000427246094",
+                                                                    "y": "0",
+                                                                    "width": "51.09000015258789",
+                                                                    "height": "16"
+                                                                  },
+                                                                  "children": [
+                                                                    {
+                                                                      "tag": "text",
+                                                                      "attrs": {
+                                                                        "id": "25:147989",
+                                                                        "name": "Oct 1942",
+                                                                        "x": "0",
+                                                                        "y": "0",
+                                                                        "width": "50",
+                                                                        "height": "16"
+                                                                      },
+                                                                      "children": []
+                                                                    }
+                                                                  ]
+                                                                },
+                                                                {
+                                                                  "tag": "frame",
+                                                                  "attrs": {
+                                                                    "id": "25:147990",
+                                                                    "name": "li.item-dIREWMGR",
+                                                                    "x": "467.9800109863281",
+                                                                    "y": "0",
+                                                                    "width": "51.7599983215332",
+                                                                    "height": "16"
+                                                                  },
+                                                                  "children": [
+                                                                    {
+                                                                      "tag": "text",
+                                                                      "attrs": {
+                                                                        "id": "25:147991",
+                                                                        "name": "Sep 1970",
+                                                                        "x": "0",
+                                                                        "y": "0",
+                                                                        "width": "52",
+                                                                        "height": "16"
+                                                                      },
+                                                                      "children": []
+                                                                    }
+                                                                  ]
+                                                                },
+                                                                {
+                                                                  "tag": "frame",
+                                                                  "attrs": {
+                                                                    "id": "25:147992",
+                                                                    "name": "li.item-dIREWMGR",
+                                                                    "x": "716.0399780273438",
+                                                                    "y": "0",
+                                                                    "width": "48.7599983215332",
+                                                                    "height": "16"
+                                                                  },
+                                                                  "children": [
+                                                                    {
+                                                                      "tag": "text",
+                                                                      "attrs": {
+                                                                        "id": "25:147993",
+                                                                        "name": "Jul 1998",
+                                                                        "x": "0",
+                                                                        "y": "0",
+                                                                        "width": "48",
+                                                                        "height": "16"
+                                                                      },
+                                                                      "children": []
+                                                                    }
+                                                                  ]
+                                                                },
+                                                                {
+                                                                  "tag": "frame",
+                                                                  "attrs": {
+                                                                    "id": "25:147994",
+                                                                    "name": "li.item-dIREWMGR",
+                                                                    "x": "926.72998046875",
+                                                                    "y": "0",
+                                                                    "width": "60.279998779296875",
+                                                                    "height": "16"
+                                                                  },
+                                                                  "children": [
+                                                                    {
+                                                                      "tag": "text",
+                                                                      "attrs": {
+                                                                        "id": "25:147995",
+                                                                        "name": "Mayo 2026",
+                                                                        "x": "0",
+                                                                        "y": "0",
+                                                                        "width": "61",
+                                                                        "height": "16"
+                                                                      },
+                                                                      "children": []
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "tag": "frame",
+                                                              "attrs": {
+                                                                "id": "25:147996",
+                                                                "name": "div.slider-Component8",
+                                                                "x": "0",
+                                                                "y": "0",
+                                                                "width": "987",
+                                                                "height": "10"
+                                                              },
+                                                              "children": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:147997",
+                                                        "name": "div.mapWrapper-PucT6CA9",
+                                                        "x": "0",
+                                                        "y": "0",
+                                                        "width": "987",
+                                                        "height": "584"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "frame",
+                                                          "attrs": {
+                                                            "id": "25:147998",
+                                                            "name": "span.map-PucT6CA9",
+                                                            "x": "0",
+                                                            "y": "0",
+                                                            "width": "987",
+                                                            "height": "584"
+                                                          },
+                                                          "children": [
+                                                            {
+                                                              "tag": "frame",
+                                                              "attrs": {
+                                                                "id": "25:147999",
+                                                                "name": "div.worldMap-Component1",
+                                                                "x": "0",
+                                                                "y": "0",
+                                                                "width": "987",
+                                                                "height": "584"
+                                                              },
+                                                              "children": []
+                                                            },
+                                                            {
+                                                              "tag": "instance",
+                                                              "attrs": {
+                                                                "id": "25:148205",
+                                                                "name": "Component 1",
+                                                                "x": "0",
+                                                                "y": "0",
+                                                                "width": "987",
+                                                                "height": "584"
+                                                              },
+                                                              "children": []
+                                                            }
+                                                          ]
+                                                        },
+                                                        {
+                                                          "tag": "frame",
+                                                          "attrs": {
+                                                            "id": "25:148206",
+                                                            "name": "div.container-u2sJ9azF",
+                                                            "x": "953",
+                                                            "y": "0",
+                                                            "width": "34",
+                                                            "height": "584"
+                                                          },
+                                                          "children": [
+                                                            {
+                                                              "tag": "frame",
+                                                              "attrs": {
+                                                                "id": "25:148207",
+                                                                "name": "span.group-eypd_CIk",
+                                                                "x": "0",
+                                                                "y": "238.1999969482422",
+                                                                "width": "34",
+                                                                "height": "65.5999984741211"
+                                                              },
+                                                              "children": [
+                                                                {
+                                                                  "tag": "instance",
+                                                                  "attrs": {
+                                                                    "id": "25:148208",
+                                                                    "name": "Component 6",
+                                                                    "x": "2.799999952316284",
+                                                                    "y": "2.799999952316284",
+                                                                    "width": "28",
+                                                                    "height": "28"
+                                                                  },
+                                                                  "children": []
+                                                                },
+                                                                {
+                                                                  "tag": "instance",
+                                                                  "attrs": {
+                                                                    "id": "25:148212",
+                                                                    "name": "Component 6",
+                                                                    "x": "2.799999952316284",
+                                                                    "y": "34.79999923706055",
+                                                                    "width": "28",
+                                                                    "height": "28"
+                                                                  },
+                                                                  "children": []
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "tag": "instance",
+                                                              "attrs": {
+                                                                "id": "25:148216",
+                                                                "name": "Component 6",
+                                                                "x": "0",
+                                                                "y": "311.79998779296875",
+                                                                "width": "34",
+                                                                "height": "34"
+                                                              },
+                                                              "children": []
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148220",
+                                                        "name": "Component 8",
+                                                        "x": "978",
+                                                        "y": "678",
+                                                        "width": "18",
+                                                        "height": "18"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:148221",
+                                        "name": "div.wrapper-p0w3H0WN",
+                                        "x": "1035",
+                                        "y": "0",
+                                        "width": "280",
+                                        "height": "700"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:148222",
+                                            "name": "div.toggle-Component9",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "57",
+                                            "height": "24"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "text",
+                                              "attrs": {
+                                                "id": "25:148222-t",
+                                                "name": "G20",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "33",
+                                                "height": "24"
+                                              },
+                                              "children": []
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:148222-icon",
+                                                "name": "span.toggleIcon",
+                                                "x": "39",
+                                                "y": "3",
+                                                "width": "18",
+                                                "height": "18"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:148228",
+                                            "name": "div.header-WMQb_1Ui",
+                                            "x": "0",
+                                            "y": "36",
+                                            "width": "280",
+                                            "height": "16"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:148229",
+                                                "name": "span",
+                                                "x": "0",
+                                                "y": "0",
+                                                "width": "140",
+                                                "height": "16"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "text",
+                                                  "attrs": {
+                                                    "id": "25:148230",
+                                                    "name": "País",
+                                                    "x": "0",
+                                                    "y": "-5.329070518200751e-15",
+                                                    "width": "24",
+                                                    "height": "16"
+                                                  },
+                                                  "children": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:148231",
+                                                "name": "span",
+                                                "x": "140",
+                                                "y": "0",
+                                                "width": "140",
+                                                "height": "16"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "text",
+                                                  "attrs": {
+                                                    "id": "25:148232",
+                                                    "name": "Valor / Observación",
+                                                    "x": "21",
+                                                    "y": "0",
+                                                    "width": "119",
+                                                    "height": "16"
+                                                  },
+                                                  "children": []
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:148233",
+                                            "name": "div.list-TgaYZV1c:margin",
+                                            "x": "0",
+                                            "y": "64",
+                                            "width": "280",
+                                            "height": "636"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:148234",
+                                                "name": "div.list-TgaYZV1c",
+                                                "x": "-12",
+                                                "y": "0",
+                                                "width": "304",
+                                                "height": "1450.4000244140625"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148235",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "0",
+                                                    "width": "280",
+                                                    "height": "72.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "frame",
+                                                      "attrs": {
+                                                        "id": "25:148236",
+                                                        "name": "a.countryCard-Component10",
+                                                        "x": "0",
+                                                        "y": "0",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "tag": "frame",
+                                                          "attrs": {
+                                                            "id": "25:148236-flag",
+                                                            "name": "div.flag",
+                                                            "x": "12",
+                                                            "y": "16",
+                                                            "width": "36",
+                                                            "height": "36"
+                                                          },
+                                                          "children": []
+                                                        },
+                                                        {
+                                                          "tag": "frame",
+                                                          "attrs": {
+                                                            "id": "25:148236-info",
+                                                            "name": "div.info-IYTCisxX",
+                                                            "x": "56",
+                                                            "y": "8",
+                                                            "width": "236",
+                                                            "height": "52"
+                                                          },
+                                                          "children": [
+                                                            {
+                                                              "tag": "frame",
+                                                              "attrs": {
+                                                                "id": "25:148236-title",
+                                                                "name": "div.titleContainer",
+                                                                "x": "0",
+                                                                "y": "0",
+                                                                "width": "120",
+                                                                "height": "24"
+                                                              },
+                                                              "children": [
+                                                                {
+                                                                  "tag": "text",
+                                                                  "attrs": {
+                                                                    "id": "25:148236-name",
+                                                                    "name": "Argentina",
+                                                                    "x": "0",
+                                                                    "y": "0",
+                                                                    "width": "80",
+                                                                    "height": "24"
+                                                                  },
+                                                                  "children": []
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "tag": "frame",
+                                                              "attrs": {
+                                                                "id": "25:148236-tk",
+                                                                "name": "span.tickerCardShortName",
+                                                                "x": "0",
+                                                                "y": "28",
+                                                                "width": "60",
+                                                                "height": "24"
+                                                              },
+                                                              "children": [
+                                                                {
+                                                                  "tag": "text",
+                                                                  "attrs": {
+                                                                    "id": "25:148236-ticker",
+                                                                    "name": "ARIRYY",
+                                                                    "x": "8",
+                                                                    "y": "4",
+                                                                    "width": "44",
+                                                                    "height": "16"
+                                                                  },
+                                                                  "children": []
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "tag": "frame",
+                                                              "attrs": {
+                                                                "id": "25:148236-val",
+                                                                "name": "span.value-ItI7saAL",
+                                                                "x": "180",
+                                                                "y": "0",
+                                                                "width": "56",
+                                                                "height": "24"
+                                                              },
+                                                              "children": [
+                                                                {
+                                                                  "tag": "text",
+                                                                  "attrs": {
+                                                                    "id": "25:148236-pct",
+                                                                    "name": "32.4%",
+                                                                    "x": "0",
+                                                                    "y": "0",
+                                                                    "width": "48",
+                                                                    "height": "24"
+                                                                  },
+                                                                  "children": []
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "tag": "frame",
+                                                              "attrs": {
+                                                                "id": "25:148236-dt",
+                                                                "name": "span.value-ItI7saAL",
+                                                                "x": "180",
+                                                                "y": "28",
+                                                                "width": "56",
+                                                                "height": "24"
+                                                              },
+                                                              "children": [
+                                                                {
+                                                                  "tag": "text",
+                                                                  "attrs": {
+                                                                    "id": "25:148236-date",
+                                                                    "name": "Abr 2026",
+                                                                    "x": "0",
+                                                                    "y": "0",
+                                                                    "width": "56",
+                                                                    "height": "24"
+                                                                  },
+                                                                  "children": []
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148260",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "72.80000305175781",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148261",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148285",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "149.60000610351562",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148286",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148310",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "226.40000915527344",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148311",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148338",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "303.20001220703125",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148339",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148364",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "380",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148365",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148390",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "456.79998779296875",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148391",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148418",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "533.5999755859375",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148419",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148444",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "610.3999633789062",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148445",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148471",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "687.199951171875",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148472",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148496",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "763.9999389648438",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148497",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148521",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "840.7999267578125",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148522",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148546",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "917.5999145507812",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148547",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148571",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "994.39990234375",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148572",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148597",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "1071.199951171875",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148598",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148621",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "1148",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148622",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148646",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "1224.800048828125",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148647",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "frame",
+                                                  "attrs": {
+                                                    "id": "25:148677",
+                                                    "name": "div.card-TgaYZV1c",
+                                                    "x": "12",
+                                                    "y": "1301.60009765625",
+                                                    "width": "280",
+                                                    "height": "76.80000305175781"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "tag": "instance",
+                                                      "attrs": {
+                                                        "id": "25:148678",
+                                                        "name": "Component 10",
+                                                        "x": "-12",
+                                                        "y": "4",
+                                                        "width": "304",
+                                                        "height": "68"
+                                                      },
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "tag": "instance",
+                                                  "attrs": {
+                                                    "id": "25:148702",
+                                                    "name": "Component 10",
+                                                    "x": "0",
+                                                    "y": "1378.400146484375",
+                                                    "width": "304",
+                                                    "height": "72"
+                                                  },
+                                                  "children": []
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "frame",
+                  "attrs": {
+                    "id": "25:148725",
+                    "name": "div.layout__area--right",
+                    "x": "1395",
+                    "y": "0",
+                    "width": "45",
+                    "height": "900"
+                  },
+                  "children": [
+                    {
+                      "tag": "frame",
+                      "attrs": {
+                        "id": "25:148726",
+                        "name": "div.widgetbar-wrap",
+                        "x": "0",
+                        "y": "0",
+                        "width": "45",
+                        "height": "900"
+                      },
+                      "children": [
+                        {
+                          "tag": "frame",
+                          "attrs": {
+                            "id": "25:148727",
+                            "name": "div.widgetbar-tabs",
+                            "x": "0",
+                            "y": "0",
+                            "width": "45",
+                            "height": "900"
+                          },
+                          "children": [
+                            {
+                              "tag": "frame",
+                              "attrs": {
+                                "id": "25:148728",
+                                "name": "div.wrap-Z4M3tWHb",
+                                "x": "0",
+                                "y": "0",
+                                "width": "45",
+                                "height": "900"
+                              },
+                              "children": [
+                                {
+                                  "tag": "frame",
+                                  "attrs": {
+                                    "id": "25:148729",
+                                    "name": "div.scrollWrap-Z4M3tWHb",
+                                    "x": "0",
+                                    "y": "0",
+                                    "width": "145",
+                                    "height": "900"
+                                  },
+                                  "children": [
+                                    {
+                                      "tag": "frame",
+                                      "attrs": {
+                                        "id": "25:148730",
+                                        "name": "div.content-Z4M3tWHb",
+                                        "x": "0",
+                                        "y": "0",
+                                        "width": "45",
+                                        "height": "900"
+                                      },
+                                      "children": [
+                                        {
+                                          "tag": "frame",
+                                          "attrs": {
+                                            "id": "25:148731",
+                                            "name": "div.toolbar-S4V6IoxY",
+                                            "x": "0",
+                                            "y": "0",
+                                            "width": "45",
+                                            "height": "900"
+                                          },
+                                          "children": [
+                                            {
+                                              "tag": "frame",
+                                              "attrs": {
+                                                "id": "25:148732",
+                                                "name": "div.separator-gZVyfVJP:margin",
+                                                "x": "0",
+                                                "y": "841",
+                                                "width": "45",
+                                                "height": "13"
+                                              },
+                                              "children": [
+                                                {
+                                                  "tag": "rounded",
+                                                  "attrs": {
+                                                    "id": "25:148733",
+                                                    "name": "div.separator-gZVyfVJP",
+                                                    "x": "6",
+                                                    "y": "6",
+                                                    "width": "33",
+                                                    "height": "1"
+                                                  },
+                                                  "children": []
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "tag": "instance",
+                                              "attrs": {
+                                                "id": "25:148734",
+                                                "name": "Component 6",
+                                                "x": "0.5",
+                                                "y": "2",
+                                                "width": "44",
+                                                "height": "44"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "instance",
+                          "attrs": {
+                            "id": "25:148785",
+                            "name": "Component 8",
+                            "x": "-0.800000011920929",
+                            "y": "0",
+                            "width": "0.800000011920929",
+                            "height": "900"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -678,48 +678,65 @@ function makeFactory(kind, pointsRequired, svgOverlay, chart, series, opts = {})
 
   let active = false;
   let anchors = [];
-  let previewLine = null;
+  let hintEl = null;
+  let clickHandler = null;
   const localCleanup = [];
 
-  function chartCoordsFromEvent(ev) {
-    const { x, y } = clientToOverlay(svgOverlay, ev.clientX, ev.clientY);
+  // Resolve the chart's container element so we can place cursor + hint banner.
+  function getChartContainer() {
+    try {
+      // svgOverlay typically lives inside the chart container; walk up to find it.
+      let el = svgOverlay && svgOverlay.parentElement;
+      while (el && !(el.classList && (el.classList.contains('tv-chart') || el.classList.contains('chart-container') || el.dataset.chartContainer))) {
+        el = el.parentElement;
+      }
+      return el || (svgOverlay && svgOverlay.parentElement) || document.body;
+    } catch { return document.body; }
+  }
+
+  function showHint(idx, total) {
+    const container = getChartContainer();
+    if (!hintEl) {
+      hintEl = document.createElement('div');
+      hintEl.setAttribute('data-pr-tool-hint', '1');
+      hintEl.style.cssText = [
+        'position:absolute', 'top:8px', 'left:50%', 'transform:translateX(-50%)',
+        'z-index:9999', 'pointer-events:none',
+        'background:rgba(28,28,28,0.92)', 'color:#dbdbdb',
+        'border:1px solid #2e2e2e', 'border-radius:4px',
+        'padding:6px 12px', 'font-family:system-ui,-apple-system,"Segoe UI",sans-serif',
+        'font-size:12px', 'box-shadow:0 2px 8px rgba(0,0,0,0.4)',
+      ].join(';');
+      // Ensure container is positioned so absolute child anchors correctly.
+      try {
+        const cs = window.getComputedStyle(container);
+        if (cs.position === 'static') container.style.position = 'relative';
+      } catch {}
+      container.appendChild(hintEl);
+    }
+    hintEl.textContent = `Click para colocar punto ${idx} de ${total} · Esc cancela`;
+  }
+
+  function hideHint() {
+    if (hintEl && hintEl.parentNode) hintEl.parentNode.removeChild(hintEl);
+    hintEl = null;
+  }
+
+  function onChartClick(param) {
+    if (!active) return;
+    if (!param || !param.point) return;
+    const { x, y } = param.point;
+    if (x == null || y == null) return;
     const time  = chart.timeScale().coordinateToTime(x);
     const price = series.coordinateToPrice(y);
-    return { x, y, time, price };
-  }
-
-  function showPreview(x1, y1, x2, y2) {
-    if (!previewLine) {
-      previewLine = svgEl('line', {
-        stroke: '#2962ff', 'stroke-width': 1, 'stroke-dasharray': '4 3',
-      });
-      svgOverlay.appendChild(previewLine);
-    }
-    previewLine.setAttribute('x1', x1);
-    previewLine.setAttribute('y1', y1);
-    previewLine.setAttribute('x2', x2);
-    previewLine.setAttribute('y2', y2);
-  }
-  function hidePreview() {
-    if (previewLine && previewLine.parentNode) previewLine.parentNode.removeChild(previewLine);
-    previewLine = null;
-  }
-
-  function onClick(ev) {
-    if (!active) return;
-    const { x, y, time, price } = chartCoordsFromEvent(ev);
+    // Ignore clicks on the price/time axis (returns null).
     if (time == null || price == null) return;
     anchors.push({ x, y, time, price });
     if (anchors.length >= pointsRequired) {
       finishDrawing();
+    } else {
+      showHint(anchors.length + 1, pointsRequired);
     }
-  }
-
-  function onMove(ev) {
-    if (!active || anchors.length === 0) return;
-    const { x, y } = clientToOverlay(svgOverlay, ev.clientX, ev.clientY);
-    const a = anchors[0];
-    showPreview(a.x, a.y, x, y);
   }
 
   function finishDrawing() {
@@ -750,6 +767,9 @@ function makeFactory(kind, pointsRequired, svgOverlay, chart, series, opts = {})
     });
     shared.drawings.push(d);
     shared.save();
+    // Force an immediate visual sync (the chart event subscriptions will also fire,
+    // but we don't want to depend on user mouse movement for the first paint).
+    try { d.sync(); } catch {}
     cancel();
   }
 
@@ -757,28 +777,38 @@ function makeFactory(kind, pointsRequired, svgOverlay, chart, series, opts = {})
     if (active) return;
     active = true;
     anchors = [];
-    // Make overlay interactive while drawing.
-    const prevPE = svgOverlay.style.pointerEvents;
-    svgOverlay.style.pointerEvents = 'auto';
-    svgOverlay.style.cursor = 'crosshair';
-    svgOverlay.addEventListener('click', onClick);
-    svgOverlay.addEventListener('mousemove', onMove);
+
+    const container = getChartContainer();
+    const prevCursor = container.style.cursor;
+    container.style.cursor = 'crosshair';
+
+    showHint(1, pointsRequired);
+
+    // Subscribe to chart clicks — this is the canonical way to capture
+    // (time, price) input from lightweight-charts.
+    clickHandler = onChartClick;
+    try { chart.subscribeClick(clickHandler); } catch (e) {
+      console.warn('[position-range] subscribeClick failed', e);
+    }
+
     const onKey = (ev) => { if (ev.key === 'Escape') cancel(); };
     document.addEventListener('keydown', onKey);
+
     localCleanup.length = 0;
     localCleanup.push(() => {
-      svgOverlay.removeEventListener('click', onClick);
-      svgOverlay.removeEventListener('mousemove', onMove);
+      if (clickHandler) {
+        try { chart.unsubscribeClick(clickHandler); } catch {}
+        clickHandler = null;
+      }
       document.removeEventListener('keydown', onKey);
-      svgOverlay.style.pointerEvents = prevPE;
-      svgOverlay.style.cursor = '';
+      container.style.cursor = prevCursor;
+      hideHint();
     });
   }
 
   function cancel() {
     active = false;
     anchors = [];
-    hidePreview();
     while (localCleanup.length) { try { localCleanup.pop()(); } catch {} }
   }
 

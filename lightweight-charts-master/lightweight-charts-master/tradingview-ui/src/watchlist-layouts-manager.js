@@ -19,6 +19,8 @@
 // Both modals are dark-theme, ESC/backdrop close, CSS injected once.
 // ---------------------------------------------------------------------------
 
+import { ensurePolishStyles, showToast, emptyStateHTML } from './ui-polish.js';
+
 const WL_KEY = 'tv.watchlists_v2';
 const LO_KEY = 'tv.layouts_v2';
 
@@ -461,6 +463,7 @@ function builtinTemplates() {
 export function createWatchlistManager(opts) {
   opts = opts || {};
   ensureStyles();
+  ensurePolishStyles();
 
   // -- state --
   let store = safeRead(WL_KEY, null);
@@ -503,6 +506,7 @@ export function createWatchlistManager(opts) {
     store.lists[name] = { name, tags: ['custom'], modifiedAt: nowMs(), symbols: [] };
     persist();
     if (openFlag) renderBody();
+    showToast(`Lista "${name}" creada`, { type: 'success', duration: 1500 });
   }
   function deleteList(name) {
     if (!store.lists[name]) return;
@@ -714,7 +718,11 @@ export function createWatchlistManager(opts) {
     if (!list.symbols.length) {
       const e = document.createElement('div');
       e.className = 'wlm-empty';
-      e.textContent = 'Sin símbolos. Añade uno con la barra superior.';
+      e.innerHTML = emptyStateHTML(
+        'No hay símbolos disponibles',
+        'Añade un ticker con la barra superior para empezar esta lista.',
+        '★'
+      );
       wrap.appendChild(e);
       return;
     }
@@ -815,6 +823,7 @@ export function createWatchlistManager(opts) {
 export function createLayoutManager(opts) {
   opts = opts || {};
   ensureStyles();
+  ensurePolishStyles();
 
   let store = safeRead(LO_KEY, null);
   if (!store || !store.layouts || typeof store.layouts !== 'object') {
@@ -851,6 +860,7 @@ export function createLayoutManager(opts) {
     store.layouts[name] = entry;
     persist();
     if (openFlag) renderGrid();
+    showToast(`Layout "${name}" guardado`, { type: 'success', duration: 1800 });
   }
 
   function loadLayout(name) {
@@ -867,6 +877,7 @@ export function createLayoutManager(opts) {
     delete store.layouts[name];
     persist();
     if (openFlag) renderGrid();
+    showToast(`Layout "${name}" eliminado`, { duration: 1500 });
   }
 
   function renameLayout(oldName, newName) {
@@ -996,7 +1007,11 @@ export function createLayoutManager(opts) {
     if (userNames.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'lom-empty';
-      empty.textContent = 'Aún no has guardado ningún layout. Usa la barra superior o aplica una plantilla.';
+      empty.innerHTML = emptyStateHTML(
+        'No hay layouts disponibles',
+        'Aún no has guardado ningún layout. Usa la barra superior o aplica una plantilla.',
+        '▦'
+      );
       grid.appendChild(empty);
     } else {
       const t1 = document.createElement('div');

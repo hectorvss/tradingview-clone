@@ -32,6 +32,8 @@
 //   }
 // ---------------------------------------------------------------------------
 
+import { ensurePolishStyles, showToast, emptyStateHTML } from './ui-polish.js';
+
 const STORAGE_KEY = 'tv.alerts_v2';
 
 // ---------------------------------------------------------------------------
@@ -652,6 +654,7 @@ function defaultAlert() {
 export function createAlertManager(container, opts = {}) {
   if (!container) throw new Error('createAlertManager: container required');
   ensureStyles();
+  ensurePolishStyles();
 
   // ---- state -------------------------------------------------------------
   const state = {
@@ -800,11 +803,11 @@ export function createAlertManager(container, opts = {}) {
 
     const items = getFiltered();
     if (!items.length) {
-      listEl.innerHTML = `
-        <div class="am-empty">
-          <div class="am-empty-title">Sin alertas</div>
-          <div>No hay alertas que coincidan con el filtro actual.</div>
-        </div>`;
+      listEl.innerHTML = emptyStateHTML(
+        'No hay alertas disponibles',
+        'No hay alertas que coincidan con el filtro actual. Crea una nueva alerta para empezar.',
+        '🔔'
+      );
       return;
     }
 
@@ -1088,13 +1091,18 @@ export function createAlertManager(container, opts = {}) {
     state.alerts.unshift(a);
     persist();
     refresh();
+    showToast('Alerta creada', { type: 'success', duration: 1800 });
     return a;
   }
 
   function removeAlert(id) {
     const before = state.alerts.length;
     state.alerts = state.alerts.filter((a) => a.id !== id);
-    if (state.alerts.length !== before) { persist(); refresh(); }
+    if (state.alerts.length !== before) {
+      persist();
+      refresh();
+      showToast('Alerta eliminada', { duration: 1500 });
+    }
   }
 
   function updateAlert(id, patch) {
@@ -1103,6 +1111,7 @@ export function createAlertManager(container, opts = {}) {
     state.alerts[idx] = Object.assign({}, state.alerts[idx], patch || {}, { id });
     persist();
     refresh();
+    showToast('Alerta actualizada', { type: 'success', duration: 1500 });
     return state.alerts[idx];
   }
 
