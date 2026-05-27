@@ -308,55 +308,73 @@ const WORLD_IPO = [
   { logo: 'FTC',  color: '#003087', symbol: 'FinTech Capital Inc' },
 ];
 
+// Figma 25:215100 — Cripto featured carousel (11 cards + Ver todas CTA), verbatim
 const CRYPTO_FEATURED = [
-  { logo: 'B', color: '#f7931a', symbol: 'Bitcoin', badge: '', value: '92.518,40', unit: 'USD', change: -0.59, selected: true, sparkUp: false },
-  { logo: 'E', color: '#627eea', symbol: 'Ethereum', badge: '', value: '3.045,18', unit: 'USD', change: 1.78 },
-  { logo: 'X', color: '#1e1e1e', symbol: 'XRP', badge: '', value: '2,42', unit: 'USD', change: -0.55 },
-  { logo: 'S', color: '#9945ff', symbol: 'Solana', badge: '', value: '195,32', unit: 'USD', change: 1.45 },
+  { logo: 'B',   color: '#f7931a', symbol: 'Bitcoin',                badge: 'D', value: '76.725,69', unit: 'USD', change: -0.64, selected: true, sparkUp: false },
+  { logo: 'E',   color: '#627eea', symbol: 'Ethereum',               badge: 'D', value: '2.096,17',  unit: 'USD', change: -0.67 },
+  { logo: 'T',   color: '#26a17b', symbol: 'Tether',                 badge: 'D', value: '0,99887',   unit: 'USD', change: -0.01 },
+  { logo: 'BNB', color: '#f0b90b', symbol: 'Binance Coin',           badge: 'D', value: '656,56',    unit: 'USD', change: -0.86 },
+  { logo: 'USDC',color: '#2775ca', symbol: 'USD Coin',               badge: 'D', value: '0,99980',   unit: 'USD', change:  0.05 },
+  { logo: 'X',   color: '#1e1e1e', symbol: 'XRP',                    badge: 'D', value: '1,3406',    unit: 'USD', change: -0.59 },
+  { logo: 'A',   color: '#0033ad', symbol: 'Cardano',                badge: 'D', value: '0,2418',    unit: 'USD', change: -0.62 },
+  { logo: 'D',   color: '#c2a633', symbol: 'Dogecoin',               badge: 'D', value: '0,10110',   unit: 'USD', change: -0.91 },
+  { logo: 'P',   color: '#8247e5', symbol: 'Polygon (prev. MATIC)',  badge: 'D', value: '0,092621',  unit: 'USD', change: -0.07 },
+  { logo: 'S',   color: '#9945ff', symbol: 'Solana',                 badge: 'D', value: '84,407',    unit: 'USD', change: -0.63 },
+  { logo: 'TRX', color: '#e50914', symbol: 'Tron',                   badge: 'D', value: '0,37416',   unit: 'USD', change:  0.79 },
 ];
 
+// Figma 25:215444 — Tendencias de la comunidad (10 trending pairs), verbatim
 const CRYPTO_TREND = [
-  { logo: 'B', color: '#f7931a', symbol: 'Bitcoin', change: -0.59 },
-  { logo: 'E', color: '#627eea', symbol: 'Ethereum', change: 1.78 },
-  { logo: 'D', color: '#c2a633', symbol: 'Dogecoin', change: -2.15 },
-  { logo: 'S', color: '#9945ff', symbol: 'Solana', change: 1.45 },
-  { logo: 'X', color: '#1e1e1e', symbol: 'XRP', change: -0.55 },
+  { logo: 'W',   color: '#000000', symbol: 'WLD / TetherUS',                            change: 10.89 },
+  { logo: 'R',   color: '#ff5722', symbol: 'RENDER / TetherUS',                         change:  8.38 },
+  { logo: 'E',   color: '#1e1e1e', symbol: 'ESPORTS / TetherUS PERPETUAL CONTRACT',     change: -7.37 },
+  { logo: 'N',   color: '#00e599', symbol: 'NEAR / TetherUS',                           change: -1.59 },
+  { logo: 'F',   color: '#1e1e1e', symbol: 'Fetch.AI / TetherUS',                       change:  5.57 },
+  { logo: 'T',   color: '#0098ea', symbol: 'TON / TetherUS',                            change: -2.48 },
+  { logo: 'T',   color: '#1e1e1e', symbol: 'TAO / TetherUS',                            change:  2.22 },
+  { logo: 'I',   color: '#0082fa', symbol: 'INJ / TetherUS',                            change: -3.12 },
+  { logo: 'U',   color: '#26a17b', symbol: 'Market Cap USDT Dominance, %',              change:  0.57 },
+  { logo: 'TRX', color: '#e50914', symbol: 'TRON / TetherUS',                           change:  0.75 },
 ];
 
+// Figma 25:215690 — Ranking de criptomonedas por cap. de mercado (6), verbatim
 const CRYPTO_CAP = [
-  { logo: 'B', color: '#f7931a', symbol: 'BTC', change: -0.59 },
-  { logo: 'E', color: '#627eea', symbol: 'ETH', change: 1.78 },
-  { logo: 'U', color: '#26a17b', symbol: 'USDT', change: 0.01 },
-  { logo: 'B', color: '#f0b90b', symbol: 'BNB', change: -1.27 },
-  { logo: 'S', color: '#9945ff', symbol: 'SOL', change: 1.45 },
-  { logo: 'X', color: '#1e1e1e', symbol: 'XRP', change: -0.55 },
+  { logo: 'B',   color: '#f7931a', symbol: 'BTCUSD', name: 'Bitcoin',     change: -0.65, value: '76.723,48 USD', cap: '1,54 T USD' },
+  { logo: 'E',   color: '#627eea', symbol: 'ETHUSD', name: 'Ethereum',    change: -0.67, value: '2.096,17 USD',  cap: '253,01 B USD' },
+  { logo: 'T',   color: '#26a17b', symbol: 'USDTUSD',name: 'Tether USDt', change: -0.01, value: '0,99887 USD',   cap: '189,42 B USD' },
+  { logo: 'BNB', color: '#f0b90b', symbol: 'BNBUSD', name: 'BNB',         change: -0.86, value: '656,56 USD',    cap: '88,48 B USD' },
+  { logo: 'X',   color: '#1e1e1e', symbol: 'XRPUSD', name: 'XRP',         change: -0.59, value: '1,3406 USD',    cap: '82,94 B USD' },
+  { logo: 'USDC',color: '#2775ca', symbol: 'USDCUSD',name: 'USDC',        change:  0.05, value: '0,99980 USD',   cap: '76,32 B USD' },
 ];
 
+// Figma 25:215897 — Clasificación TVL (6), verbatim (note: TVL en Figma, no Y2L)
 const CRYPTO_Y2L = [
-  { logo: 'B', color: '#f7931a', symbol: 'BTC', change: 4.27 },
-  { logo: 'E', color: '#627eea', symbol: 'ETH', change: 12.65 },
-  { logo: 'A', color: '#e84142', symbol: 'AVAX', change: 8.91 },
-  { logo: 'D', color: '#c2a633', symbol: 'DOT', change: -3.55 },
-  { logo: 'M', color: '#ff007a', symbol: 'MATIC', change: 5.66 },
-  { logo: 'A', color: '#0033ad', symbol: 'ADA', change: -1.12 },
+  { logo: 'M',   color: '#1e1e1e', symbol: 'COOKMUSD',  name: 'mETHProtocol', change:  0.64, value: '0,0028438 USD', cap: '478,47 M USD' },
+  { logo: 'Q',   color: '#ff007a', symbol: 'QIUSD',     name: 'BENQI',        change: -3.45, value: '0,0014964 USD', cap: '325,8 M USD' },
+  { logo: 'O',   color: '#708090', symbol: 'OHMUSD',    name: 'Olympus v2',   change: -0.09, value: '18,706 USD',    cap: '278,23 M USD' },
+  { logo: 'B',   color: '#1e1e1e', symbol: 'BIFIBUSD',  name: 'Beefy',        change:-10.85, value: '38,979 USD',    cap: '127,75 M USD' },
+  { logo: 'B',   color: '#1e1e1e', symbol: 'BALUSD',    name: 'Balancer',     change: -0.50, value: '0,14015 USD',   cap: '121,54 M USD' },
+  { logo: 'XPR', color: '#9c27b0', symbol: 'XPRUSD',    name: 'XPR Network',  change: -1.99, value: '0,0027051 USD', cap: '96,34 M USD' },
 ];
 
+// Figma 25:216104 — Criptomonedas ganadoras (6), verbatim
 const CRYPTO_GAIN = [
-  { logo: 'A', color: '#e84142', symbol: 'AVAX', change: 8.91, value: '45,12$' },
-  { logo: 'B', color: '#0033ad', symbol: 'BNB', change: 4.27, value: '671,80$' },
-  { logo: 'S', color: '#9945ff', symbol: 'SOL', change: 1.45, value: '195,32$' },
-  { logo: 'M', color: '#ff007a', symbol: 'MATIC', change: 5.66, value: '0,52$' },
-  { logo: 'A', color: '#0033ad', symbol: 'ADA', change: 3.12, value: '0,89$' },
-  { logo: 'D', color: '#345d9d', symbol: 'DOGE', change: 2.20, value: '0,21$' },
+  { logo: 'K',   color: '#1e1e1e', symbol: 'KTAUSD',    name: 'Keeta',                              change: 28.01, value: '0,21732 USD' },
+  { logo: 'W',   color: '#000000', symbol: 'WLDWUSD',   name: 'Worldcoin',                          change: 20.67, value: '0,36618 USD' },
+  { logo: 'R',   color: '#ff5722', symbol: 'RENDERUSD', name: 'Render',                             change: 18.64, value: '2,3651 USD' },
+  { logo: 'F',   color: '#1e1e1e', symbol: 'FETUSD',    name: 'Artificial Superintelligence Alliance', change: 14.64, value: '0,24435 USD' },
+  { logo: 'N',   color: '#00e599', symbol: 'NEARUSD',   name: 'NEAR Protocol',                      change: 13.71, value: '2,7251 USD' },
+  { logo: 'OKB', color: '#1e1e1e', symbol: 'OKBUSD',    name: 'OKB',                                change: 12.89, value: '94,145 USD' },
 ];
 
+// Figma 25:216275 — Criptomonedas perdedoras (6), verbatim
 const CRYPTO_LOSE = [
-  { logo: 'X', color: '#1e1e1e', symbol: 'XRP', change: -0.55, value: '2,42$' },
-  { logo: 'L', color: '#345d9d', symbol: 'LTC', change: -1.28, value: '92,33$' },
-  { logo: 'B', color: '#f0b90b', symbol: 'BNB', change: -1.27, value: '671,80$' },
-  { logo: 'D', color: '#c2a633', symbol: 'DOGE', change: -2.85, value: '0,21$' },
-  { logo: 'T', color: '#000000', symbol: 'TRX', change: -2.16, value: '0,30$' },
-  { logo: 'A', color: '#0033ad', symbol: 'ADA', change: -1.12, value: '0,89$' },
+  { logo: 'S',   color: '#1e1e1e', symbol: 'SKYAI2USD', name: 'SKYAI',     change: -16.11, value: '0,25660 USD' },
+  { logo: 'N',   color: '#1e88e5', symbol: 'NEXUS5USD', name: 'Nexus',     change: -14.26, value: '0,38713e-5 USD' },
+  { logo: 'V',   color: '#1e1e1e', symbol: 'VSNUSD',    name: 'Vision',    change: -10.81, value: '0,039349 USD' },
+  { logo: 'R',   color: '#9c27b0', symbol: 'RAVEDUSD',  name: 'RaveDAO',   change:  -8.95, value: '0,53013 USD' },
+  { logo: 'B',   color: '#cc0000', symbol: 'BEATAUSD',  name: 'Audiera',   change:  -8.03, value: '0,9672 USD' },
+  { logo: 'B',   color: '#f0b90b', symbol: 'BUSD',      name: 'BUILDon',   change:  -7.87, value: '0,24053 USD' },
 ];
 
 const FUT_FEATURED = [

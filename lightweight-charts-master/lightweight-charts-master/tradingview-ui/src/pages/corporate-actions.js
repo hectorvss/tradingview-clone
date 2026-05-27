@@ -31,10 +31,10 @@ const TABS = [
 
 // Each tag: { slug, label } — slug looked up in LOGO_URLS; label is the 1-3 letter fallback.
 // Headlines marked /*F*/ were extracted verbatim from the Figma frame via get_design_context.
-// Pase 3 (Agent D3, 2026-05-26): 11/30 of `all` verified verbatim against Figma 25:242044
-// before session context/rate-limit budget was exhausted. Remaining `all` rows and the
-// full `fin` (30) and `esg` (20) tabs still carry the Pase 2 plausible fillers in the
-// same style; a follow-up agent must continue from row 25:240843 onward.
+// Pase 3 (Agent D3, 2026-05-26): 11/30 of `all` verified verbatim against Figma 25:242044.
+// Pase 4 (Agent D4-all, 2026-05-27): remaining 19/30 of `all` (rows 11-29, Figma nodes
+// 25:240843 → 25:241454) extracted verbatim. The full `fin` (30) and `esg` (20) tabs
+// still carry the Pase 2 plausible fillers in the same style.
 const DATA = {
   all: [
     { time: 'hace 6 minutos', tags: [{s:'allied-motion',l:'A'},{s:'apollo',l:'AP'},{s:'phillips-66',l:'P'},{s:'servicetitan',l:'V'}], headline: 'Apollo, Phillips 66, Valero Energy', provider: 'Reuters' }, /*F 25:240571*/
@@ -47,18 +47,26 @@ const DATA = {
     { time: 'ayer',           tags: [{s:'delivery-hero',l:'DH'},{s:'uber',l:'U'},{s:'doordash',l:'DD'}], headline: 'Uber baraja presentar una oferta más alta por Delivery Hero, informa el FT', provider: 'Reuters' }, /*F 25:240747*/
     { time: 'anteayer',       tags: [{s:'uber',l:'U'},{s:'delivery-hero',l:'DH'}], headline: 'Según informa el Financial Times, Uber baraja presentar una oferta más alta por Delivery Hero', provider: 'Reuters' }, /*F 25:240785*/
     { time: 'anteayer',       tags: [{s:'delivery-hero',l:'DH'},{s:'uber',l:'U'}], headline: 'Delivery Hero confirma la oferta de adquisición de Uber', provider: 'Reuters' }, /*F 25:240814*/
-    { time: 'hace 4 días',    tags: [{s:'vidrala',l:'V'}], headline: 'Vidrala obtiene un beneficio neto de 45,3 millones de euros en el primer trimestre', provider: 'Reuters' },
-    { time: 'hace 4 días',    tags: [{s:'repsol',l:'R'}], headline: 'Repsol estudia desinversiones por hasta 2.000 millones en activos no estratégicos', provider: 'Reuters' },
-    { time: 'hace 5 días',    tags: [{s:'banco-bilbao-vizcaya-argentaria',l:'B'}], headline: 'BBVA prepara una nueva ronda de recompra de acciones por 1.500 millones', provider: 'Reuters' },
-    { time: 'hace 5 días',    tags: [{s:'iberdrola',l:'I'}], headline: 'Iberdrola eleva sus inversiones en redes y renovables hasta 2027', provider: 'Reuters' },
-    { time: 'hace 6 días',    tags: [{s:'telefonica',l:'T'}], headline: 'Telefónica avanza en la venta de su división de torres en Latinoamérica', provider: 'Reuters' },
-    { time: 'hace 6 días',    tags: [{s:'santander',l:'S'}], headline: 'Santander aprueba el pago del dividendo complementario con cargo a 2025', provider: 'Reuters' },
-    { time: 'hace 7 días',    tags: [{s:'ferrovial',l:'F'}], headline: 'Ferrovial cierra la venta de su participación en Heathrow Airport Holdings', provider: 'Reuters' },
-    { time: 'hace 7 días',    tags: [{s:'acs',l:'A'}], headline: 'ACS gana un contrato de infraestructuras en Australia por 1.200 millones', provider: 'Reuters' },
-    { time: 'hace 8 días',    tags: [{s:'mapfre',l:'M'}], headline: 'Mapfre presenta resultados sólidos en el primer trimestre del ejercicio', provider: 'Reuters' },
-    { time: 'hace 9 días',    tags: [{s:'enagas',l:'E'}], headline: 'Enagás revisa al alza su previsión de dividendo para los próximos ejercicios', provider: 'Reuters' },
-    { time: 'hace 10 días',   tags: [{s:'caixabank',l:'C'}], headline: 'CaixaBank completa la integración tecnológica de Bankia en sus sistemas', provider: 'Reuters' },
-    { time: 'hace 11 días',   tags: [{s:'acciona',l:'A'}], headline: 'Acciona Energía firma un PPA a 15 años con un grupo industrial alemán', provider: 'Reuters' },
+    { time: 'anteayer',       tags: [{s:'uber',l:'U'},{s:'doordash',l:'DD'},{s:'delivery-hero',l:'DH'}], headline: 'Según informa el FT, Uber y DoorDash están sondeando a los inversionistas para una posible oferta por Delivery Hero', provider: 'Reuters' }, /*F 25:240843*/
+    { time: 'hace 3 días',    tags: [{s:'jd-com',l:'JD'},{s:'sainsbury-s',l:'S'},{s:'the-carlyle-group',l:'C'}], headline: 'Según informa Sky News, la empresa china JD.com está barajando una oferta de 2.000 millones de libras por la cadena minorista británica The Very Group', provider: 'Reuters' }, /*F 25:240881*/
+    { time: 'hace 3 días',    tags: [{s:'lantheus',l:'L'}], headline: 'Según informa Bloomberg News, Lantheus está valorando una posible venta por valor de 7.000 millones de dólares tras la oferta de Curium', provider: 'Reuters' }, /*F 25:240925*/
+    { time: 'hace 3 días',    tags: [{s:'estee-lauder',l:'EL'},{s:'puig-brands',l:'P'}], headline: 'Filtraciones, exigencias y una llamada telefónica: cómo se vino abajo el acuerdo entre Estée Lauder y Puig', provider: 'Reuters' }, /*F 25:240948*/
+    { time: 'hace 3 días',    tags: [{s:'uber',l:'U'},{s:'delivery-hero',l:'DH'}], headline: 'Según informa Bloomberg News, Uber está estudiando la posibilidad de adquirir la totalidad de la empresa alemana Delivery Hero', provider: 'Reuters' }, /*F 25:240976*/
+    { time: 'hace 3 días',    tags: [{s:'jd-com',l:'JD'},{s:'sainsbury-s',l:'S'},{s:'the-carlyle-group',l:'C'}], headline: 'Según informa Sky News, la empresa china JD.com está barajando una oferta de 2000 millones de libras por la cadena minorista británica The Very Group', provider: 'Reuters' }, /*F 25:241005*/
+    { time: 'hace 3 días',    tags: [], headline: 'Shein comprará la cadena de ropa Everlane', provider: 'Reuters' }, /*F 25:241049*/
+    { time: 'hace 3 días',    tags: [{s:'microsoft',l:'M'}], headline: 'Los accionistas de Activision llegan a un acuerdo de 250 millones de dólares por la adquisición de Microsoft', provider: 'Reuters' }, /*F 25:241062*/
+    { time: 'hace 3 días',    tags: [{s:'dell',l:'D'},{s:'jazz-pharmaceuticals',l:'JZ'},{s:'target',l:'T'},{s:'workday',l:'W'}], headline: 'Jazz Pharmaceuticals, Target, Workday', provider: 'Reuters' }, /*F 25:241084*/
+    { time: 'hace 3 días',    tags: [{s:'tuas-limited',l:'T'},{s:'cvc-capital-partners-plc',l:'C'},{s:'gbl',l:'G'},{s:'inpost-s-a',l:'I'}], headline: 'Fusiones y adquisiciones', provider: 'Reuters' }, /*F 25:241134*/
+    { time: 'hace 3 días',    tags: [{s:'bodycote-plc',l:'B'},{s:'apollo',l:'AP'},{s:'intertek',l:'I'},{s:'tate-and-lyle-plc-ord-25p',l:'T'}], headline: 'La empresa británica Bodycote recibe una oferta de compra por parte de Apollo por valor de 2000 millones de dólares', provider: 'Reuters' }, /*F 25:241181*/
+    { time: 'hace 3 días',    tags: [{s:'bodycote-plc',l:'B'},{s:'apollo',l:'AP'}], headline: 'La empresa británica Bodycote confirma la propuesta de adquisición por parte de Apollo por valor de 2.040 millones de dólares', provider: 'Reuters' }, /*F 25:241231*/
+    { time: 'hace 3 días',    tags: [{s:'colgate-palmolive',l:'CL'}], headline: 'Los beneficios trimestrales ajustados de Colgate Palmoilve India aumentan gracias a la demanda de productos de gama alta', provider: 'Reuters' }, /*F 25:241260*/
+    { time: 'hace 3 días',    tags: [{s:'chart-industries',l:'C'},{s:'baker-hughes',l:'BH'}], headline: 'Las autoridades reguladoras de la UE tomarán una decisión sobre la operación de Baker Hughes con Chart, por valor de 13 600 millones de dólares, antes del 26 de junio', provider: 'Reuters' }, /*F 25:241279*/
+    { time: 'hace 4 días',    tags: [{s:'puig-brands',l:'P'},{s:'estee-lauder',l:'EL'},{s:'stoxx-600',l:'SX'},{s:'',l:'S'}], headline: 'Las acciones de Puig se hunden tras el fracaso del acuerdo con Estée Lauder', provider: 'Reuters' }, /*F 25:241311*/
+    { time: 'hace 4 días',    tags: [], headline: 'El fondo canadiense OMERS vende su participación del 25% en Exolum', provider: 'Reuters' }, /*F 25:241355*/
+    { time: 'hace 4 días',    tags: [{s:'estee-lauder',l:'EL'},{s:'puig-brands',l:'P'},{s:'stoxx-600',l:'SX'}], headline: 'Estée Lauder se dispara, mientras que Puig cae tras el fracaso de las negociaciones de fusión', provider: 'Reuters' }, /*F 25:241368*/
+    { time: 'hace 4 días',    tags: [{s:'puig-brands',l:'P'},{s:'estee-lauder',l:'EL'}], headline: 'Las acciones de Puig apuntan a una caída tras el fracaso del acuerdo con Estée Lauder', provider: 'Reuters' }, /*F 25:241405*/
+    { time: 'hace 4 días',    tags: [{s:'grupo-emprerial-jose',l:'GS'}], headline: 'Grupo San José registra un beneficio de 12,5 mln eur en el primer trimestre', provider: 'Reuters' }, /*F 25:241433*/
+    { time: 'hace 4 días',    tags: [{s:'estee-lauder',l:'EL'},{s:'puig-brands',l:'P'},{s:'l-oreal',l:'L'}], headline: 'Estée Lauder y Puig abandonan las conversaciones de fusión', provider: 'Reuters' }, /*F 25:241454*/
   ],
   fin: [
     { time: 'hace 6 minutos', tags: [{s:'allied-motion',l:'A'},{s:'apollo',l:'AP'},{s:'phillips-66',l:'P'},{s:'servicetitan',l:'V'}], headline: 'Apollo, Phillips 66, Valero Energy', provider: 'Reuters' },
@@ -83,21 +91,26 @@ const DATA = {
     { time: 'hace 6 días',    tags: [{s:'naturgy',l:'N'}], headline: 'Naturgy mejora su beneficio operativo trimestral hasta los 1.140 millones', provider: 'Reuters' },
   ],
   esg: [
-    { time: '13 Apr',       tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia la aprobación del Acuerdo SO1 por la FONB', provider: 'Acceso Newswire' },
-    { time: '7 may',        tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia resultados del primer trimestre de 2025', provider: 'Acceso Newswire' },
-    { time: '6 may',        tags: [{s:'bactech-environmental',l:'D'}], headline: 'Dr. Paul Miller to Present Zero Reporting Technology at PDAC', provider: 'PR Newswire' },
-    { time: '27 feb',       tags: [{s:'bactech-environmental',l:'B'}], headline: 'BacTech Environmental to Attend PDAC 2026 in Toronto', provider: 'The newswire.ca' },
-    { time: '4 feb',        tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia los resultados del cuarto trimestre y del ejercicio anual 2025', provider: 'Acceso Newswire' },
-    { time: '23 ene',       tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy declara dividendo trimestral', provider: 'Acceso Newswire' },
-    { time: '30 oct 2025',  tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia los resultados del tercer trimestre de 2025', provider: 'Acceso Newswire' },
-    { time: '15 oct 2025',  tags: [{s:'endesa',l:'E'}], headline: 'Endesa actualiza su Plan Estratégico de Sostenibilidad 2026-2028', provider: 'Reuters' },
-    { time: '2 oct 2025',   tags: [{s:'iberdrola',l:'I'}], headline: 'Iberdrola refuerza su compromiso con la transición energética en Europa', provider: 'Reuters' },
-    { time: '20 sep 2025',  tags: [{s:'acciona',l:'A'}], headline: 'Acciona publica su informe anual de sostenibilidad y huella de carbono', provider: 'Reuters' },
-    { time: '5 sep 2025',   tags: [{s:'repsol',l:'R'}], headline: 'Repsol firma un acuerdo de descarbonización con la Agencia Europea de Medio Ambiente', provider: 'Reuters' },
-    { time: '22 ago 2025',  tags: [{s:'naturgy',l:'N'}], headline: 'Naturgy anuncia su nueva estrategia ESG con horizonte 2030', provider: 'Reuters' },
-    { time: '1 ago 2025',   tags: [{s:'ferrovial',l:'F'}], headline: 'Ferrovial recibe la certificación ISO para gestión ambiental en sus filiales', provider: 'Reuters' },
-    { time: '15 jul 2025',  tags: [{s:'caixabank',l:'C'}], headline: 'CaixaBank financia 12.000 millones en proyectos sostenibles durante 2025', provider: 'Reuters' },
-    { time: '2 jul 2025',   tags: [{s:'telefonica',l:'T'}], headline: 'Telefónica reduce un 22% sus emisiones directas frente al ejercicio anterior', provider: 'Reuters' },
+    { time: '12 may',       tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia la aprobación del Acuerdo SO1 por la FOMB', provider: 'Access Newswire' }, /*F 25:248842*/
+    { time: '7 may',        tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia resultados del primer trimestre de 2026', provider: 'Access Newswire' }, /*F 25:248871*/
+    { time: '27 feb',       tags: [{s:'bactech-environmental',l:'B'}], headline: 'Dr. Paul Miller to Present Zero Tailings Technology at PDAC', provider: 'The newswire.ca' }, /*F 25:248900*/
+    { time: '24 feb',       tags: [{s:'bactech-environmental',l:'B'}], headline: 'BacTech Environmental to Attend PDAC 2026 in Toronto', provider: 'The newswire.ca' }, /*F 25:248920*/
+    { time: '19 feb',       tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia los resultados del cuarto trimestre y del ejercicio anual 2025', provider: 'Acceswire' }, /*F 25:248940*/
+    { time: '20 ene',       tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy declara dividendo trimestral', provider: 'Acceswire' }, /*F 25:248969*/
+    { time: '30 oct 2025',  tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia los resultados del tercer trimestre de 2025', provider: 'Acceswire' }, /*F 25:248998*/
+    { time: '30 oct 2025',  tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy declara un dividendo trimestral', provider: 'Acceswire' }, /*F 25:249027*/
+    { time: '14 oct 2025',  tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy firma nuevo crédito, refuerza su equipo ejecutivo y anuncia resultados del Q3-2025', provider: 'Acceswire' }, /*F 25:249056*/
+    { time: '2 oct 2025',   tags: [], headline: 'Posibles, más reclamos de EU a México tras negativa a inmunidad antitrust de Delta-Aeroméxico', provider: 'Reuters' }, /*F 25:249085*/
+    { time: '4 sept 2025',  tags: [], headline: '¿Cómo avanza Chile en la meta al Net Zero?', provider: 'Reuters' }, /*F 25:249098*/
+    { time: '15 ago 2025',  tags: [], headline: 'Yutong planta 1.000 árboles, como parte de su iniciativa Bosque Net Zero de Chile para impulsar la sostenibilidad ecológica', provider: 'Reuters' }, /*F 25:249111*/
+    { time: '11 ago 2025',  tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia la presentación del acuerdo SO1 al Negociado de Energía de Puerto Rico', provider: 'Acceswire' }, /*F 25:249124*/
+    { time: '6 ago 2025',   tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia los resultados del segundo trimestre de 2025', provider: 'Acceswire' }, /*F 25:249153*/
+    { time: '17 jul 2025',  tags: [{s:'enagas',l:'E'}], headline: 'Scale Green Energy podrá construir seis estaciones de repostaje de hidrógeno en España', provider: 'Reuters' }, /*F 25:249182*/
+    { time: '17 jul 2025',  tags: [], headline: 'Delatores recompensados: nueva vertiente del antitrust', provider: 'Reuters' }, /*F 25:249203*/
+    { time: '8 may 2025',   tags: [], headline: 'Dow Argentina obtuvo sus primeros Certificados IREC por parte de MSU Green Energy', provider: 'Reuters' }, /*F 25:249216*/
+    { time: '2 may 2025',   tags: [{s:'polaris-renewable-energy',l:'P'}], headline: 'Polaris Renewable Energy anuncia sus resultados del primer trimestre de 2025', provider: 'Acceswire' }, /*F 25:249229*/
+    { time: '21 abr 2025',  tags: [], headline: 'Atlas Renewable Energy cierra financiamiento por US$ 510 millones para proyecto híbrido', provider: 'Reuters' }, /*F 25:249258*/
+    { time: '9 abr 2025',   tags: [], headline: 'Atlas Renewable Energy y Colbún acuerdan contrato de compraventa de energía para proyecto de almacenamiento con baterías', provider: 'Reuters' }, /*F 25:249271*/
   ],
   analysts: [],
 };

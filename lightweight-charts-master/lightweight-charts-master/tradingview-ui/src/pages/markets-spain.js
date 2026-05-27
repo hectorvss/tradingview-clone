@@ -17,32 +17,41 @@ const INDICES = [
   { id: 'IGBM Petróleo y Energía',       short: 'X',  price: '2.855,10',  unit: 'POINT', delta: '+1,33%', neg: false, bg: '#2962ff' },
 ];
 
+// 10 cards verbatim from Figma 25:233398 (Acciones tendencia).
 const TRENDING = [
-  { tk: 'SAN', name: 'Banco Santander, S.A.', price: '10,792', unit: 'EUR', delta: '-0,55%', neg: true, bg: '#ec0000' },
+  { tk: 'SAN', name: 'Banco Santander, S.A.', price: '10,792', unit: 'EUR', delta: '−0,55%', neg: true, bg: '#ec0000' },
   { tk: 'SAB', name: 'Banco de Sabadell SA', price: '3,497', unit: 'EUR', delta: '+0,34%', neg: false, bg: '#eaf0f7', fg: '#0067ac' },
   { tk: 'IBE', name: 'Iberdrola SA', price: '20,070', unit: 'EUR', delta: '+1,72%', neg: false, bg: '#08361a' },
-  { tk: 'BBVA', name: 'Banco Bilbao Vizcaya Argentaria, S.A.', price: '20,08', unit: 'EUR', delta: '-0,05%', neg: true, bg: '#072f5f' },
-  { tk: 'IDR', name: 'Indra Sistemas, S.A. Cla', price: '53,90', unit: 'EUR', delta: '-0,52%', neg: true, bg: '#ffffff', fg: '#0a4a8f' },
+  { tk: 'BBVA', name: 'Banco Bilbao Vizcaya Argentaria, S.A.', price: '20,08', unit: 'EUR', delta: '−0,05%', neg: true, bg: '#072f5f' },
+  { tk: 'IDR', name: 'Indra Sistemas, S.A. Class A', price: '53,90', unit: 'EUR', delta: '−0,52%', neg: true, bg: '#ffffff', fg: '#0a4a8f' },
+  { tk: 'LOG', name: 'Logista Integral, S.A.', price: '33,68', unit: 'EUR', delta: '+0,48%', neg: false, bg: '#0a5340' },
+  { tk: 'OHLA', name: 'Obrascon Huarte Lain SA', price: '0,4920', unit: 'EUR', delta: '+1,53%', neg: false, bg: '#0a3a72' },
+  { tk: 'AMP', name: 'Amper, S.A.', price: '0,1988', unit: 'EUR', delta: '+0,20%', neg: false, bg: '#1c3a5b' },
+  { tk: 'GRF', name: 'Grifols, S.A. Class A', price: '9,618', unit: 'EUR', delta: '−0,80%', neg: true, bg: '#1e6cc7' },
+  { tk: 'ENC', name: 'ENCE Energia y Celulosa SA', price: '2,440', unit: 'EUR', delta: '−1,77%', neg: true, bg: '#0e8a3a' },
 ];
 
+// Verbatim from Figma 25:233652 (Acciones con el mayor volumen). 6 rows.
 const VOLUMEN = [
-  { tk: 'SAN', name: 'Banco Santander, S.A.', price: '10,792', delta: '-0,55%', neg: true, bg: '#ec0000' },
-  { tk: 'IBE', name: 'Iberdrola SA', price: '20,070', delta: '+1,72%', neg: false, bg: '#08361a' },
-  { tk: 'IDR', name: 'Indra Sistemas, S.A. Cla', price: '53,90', delta: '-0,52%', neg: true, bg: '#ffffff', fg: '#0a4a8f' },
+  { tk: 'SAN', name: 'Banco Santander, S.A.', price: '10,792', delta: '−0,55%', neg: true, bg: '#ec0000' },
   { tk: 'SAB', name: 'Banco de Sabadell SA', price: '3,497', delta: '+0,34%', neg: false, bg: '#eaf0f7', fg: '#0067ac' },
-  { tk: 'BBVA', name: 'Banco Bilbao Vizcaya Argentaria, S.A.', price: '20,08', delta: '-0,05%', neg: true, bg: '#072f5f' },
+  { tk: 'IBE', name: 'Iberdrola SA', price: '20,070', delta: '+1,72%', neg: false, bg: '#08361a' },
+  { tk: 'BBVA', name: 'Banco Bilbao Vizcaya Argentaria, S.A.', price: '20,08', delta: '−0,05%', neg: true, bg: '#072f5f' },
+  { tk: 'IDR', name: 'Indra Sistemas, S.A. Class A', price: '53,90', delta: '−0,52%', neg: true, bg: '#ffffff', fg: '#0a4a8f' },
   { tk: 'REP', name: 'Repsol SA', price: '21,91', delta: '+0,74%', neg: false, bg: '#ff7a00' },
 ];
 
+// Verbatim from Figma 25:233835 (Acciones con mayores variaciones de precio). 6 rows.
 const VOLATILES = [
-  { tk: 'CLR', name: 'Clerhp Estructuras SA', price: '10,70', delta: '-1,38%', neg: true, bg: '#cfcfcf', fg: '#222' },
+  { tk: 'CLR', name: 'Clerhp Estructuras SA', price: '10,70', delta: '−1,38%', neg: true, bg: '#cfcfcf', fg: '#222' },
   { tk: 'AGIL', name: 'Agile Content SA', price: '2,20', delta: '+7,84%', neg: false, bg: '#00a16d' },
-  { tk: 'GGR', name: 'Greening Group Global', price: '3,26', delta: '+0,31%', neg: false, bg: '#e7f0e4', fg: '#5fb14b' },
+  { tk: 'GGR', name: 'Greening Group Global S.A.', price: '3,26', delta: '+0,31%', neg: false, bg: '#e7f0e4', fg: '#5fb14b' },
   { tk: 'ADZ', name: 'Adolfo Dominguez, S.A.', price: '5,75', delta: '+5,50%', neg: false, bg: '#ffffff', fg: '#222' },
-  { tk: 'OHLA', name: 'Obrascon Huarte Lai', price: '0,4920', delta: '+1,53%', neg: false, bg: '#0a3a72' },
-  { tk: 'CITY', name: 'Club De Futbol Inter', price: '0,0324', delta: '-2,99%', neg: true, bg: '#1c1c1c', fg: '#e0c46c' },
+  { tk: 'OHLA', name: 'Obrascon Huarte Lain SA', price: '0,4920', delta: '+1,53%', neg: false, bg: '#0a3a72' },
+  { tk: 'CITY', name: 'Club De Futbol Intercity SAD', price: '0,0324', delta: '−2,99%', neg: true, bg: '#1c1c1c', fg: '#e0c46c' },
 ];
 
+// Verbatim from Figma 25:234021 (Acciones con mayor crecimiento diario). 6 rows.
 const GANADORAS = [
   { tk: 'AGIL', name: 'Agile Content SA', price: '2,20', delta: '+7,84%', bg: '#00a16d' },
   { tk: 'ADZ', name: 'Adolfo Dominguez, S.A.', price: '5,75', delta: '+5,50%', bg: '#ffffff', fg: '#222' },
@@ -51,15 +60,17 @@ const GANADORAS = [
   { tk: 'LLN', name: 'LleidaNetworks Serveis Telematics SA', price: '1,060', delta: '+2,91%', bg: '#e8d8c4' },
   { tk: 'GIGA', name: 'Gigas Hosting SA', price: '3,20', delta: '+2,56%', bg: '#0a0a0a' },
 ];
+// Verbatim from Figma 25:234209 (Acciones con mayor caída diaria). 6 rows.
 const PERDEDORAS = [
-  { tk: 'RIO', name: 'Bodegas Riojanas, S.A.', price: '1,34', delta: '-2,90%', bg: '#dddddd', fg: '#222' },
-  { tk: 'MAP', name: 'Mapfre SA', price: '4,088', delta: '-2,85%', bg: '#dc2626' },
-  { tk: 'TUB', name: 'Tubacex, S.A.', price: '2,900', delta: '-2,85%', bg: '#e0d8c8', fg: '#7a3d00' },
-  { tk: 'END', name: 'Endurance Motive SA', price: '3,17', delta: '-2,16%', bg: '#dddddd', fg: '#222' },
-  { tk: 'MEL', name: 'Melia Hotels International, S.A.', price: '11,28', delta: '-2,08%', bg: '#ffffff', fg: '#444' },
-  { tk: 'COM', name: 'Catenon SA', price: '1,010', delta: '-1,94%', bg: '#22a0c8' },
+  { tk: 'RIO', name: 'Bodegas Riojanas, S.A.', price: '1,34', delta: '−2,90%', bg: '#dddddd', fg: '#222' },
+  { tk: 'MAP', name: 'Mapfre SA', price: '4,088', delta: '−2,85%', bg: '#dc2626' },
+  { tk: 'TUB', name: 'Tubacex, S.A.', price: '2,900', delta: '−2,85%', bg: '#e0d8c8', fg: '#7a3d00' },
+  { tk: 'END', name: 'Endurance Motive SA', price: '3,17', delta: '−2,16%', bg: '#dddddd', fg: '#222' },
+  { tk: 'MEL', name: 'Melia Hotels International, S.A.', price: '11,28', delta: '−2,08%', bg: '#ffffff', fg: '#444' },
+  { tk: 'COM', name: 'Catenon SA', price: '1,010', delta: '−1,94%', bg: '#22a0c8' },
 ];
 
+// Verbatim from Figma 25:234401 (Resultados financieros próximos). 4 rows.
 const CAL_RESULTS = [
   { date: 'Hoy', tk: 'GRE', name: 'Grenergy Renovables S.A', real: '—', est: '−0,58 EUR', bg: '#066b3b' },
   { date: '28 may', tk: 'EDR', name: 'eDreams ODIGEO', real: '—', est: '0,17 EUR', bg: '#2962ff', tag: 'sun' },
