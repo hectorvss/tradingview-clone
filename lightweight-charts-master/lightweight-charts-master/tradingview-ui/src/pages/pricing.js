@@ -44,9 +44,12 @@ const T = {
 // Asset paths (downloaded under public/figma/pricing/)
 // ---------------------------------------------------------------------------
 const A = {
-  check:  '/figma/pricing/checkmark.svg',
-  check2: '/figma/pricing/checkmark-alt.svg',
+  // Note: /figma/pricing/checkmark.svg is actually an info icon (circle with "i");
+  // the real V-shape checkmark lives in checkmark-alt.svg. Always use the alt.
+  check:  '/figma/pricing/checkmark-alt.svg',
   info:   '/figma/pricing/info.svg',
+  globe:  '/figma/pricing/feature-globe.png',
+  devices:'/figma/pricing/feature-devices.png',
 };
 
 // ---------------------------------------------------------------------------
@@ -605,6 +608,17 @@ body.has-global-rightbar .tv-pri-root { padding-right: 0; }
   max-width: 720px;
   margin: 0;
 }
+.tv-pri-feature-img {
+  display: block;
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  margin: 48px auto 0;
+  pointer-events: none;
+  user-select: none;
+}
+.tv-pri-feature.is-devices { padding-bottom: 60px; }
+.tv-pri-feature.is-devices .tv-pri-feature-img { margin-top: 32px; }
 
 /* ===== Comparison table ===== */
 .tv-pri-compare {
@@ -642,8 +656,32 @@ body.has-global-rightbar .tv-pri-root { padding-right: 0; }
   color: ${T.txt0};
   font-weight: 700;
   font-size: 16px;
-  padding: 14px 12px;
+  padding: 0;
   border-top: 1px solid ${T.bd2};
+}
+.tv-pri-section-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  font-size: 16px;
+  text-align: left;
+  border: 0;
+  padding: 14px 12px;
+  cursor: pointer;
+}
+.tv-pri-section-toggle:hover { color: ${T.txt0}; background: ${T.bg3}; }
+.tv-pri-section-toggle .tv-pri-caret {
+  width: 14px; height: 14px;
+  transition: transform 0.18s ease;
+  color: ${T.txt2};
+  flex-shrink: 0;
+}
+.tv-pri-table-section-body.is-collapsed .tv-pri-table-row { display: none; }
+.tv-pri-table-section-body:not(.is-collapsed) .tv-pri-section-toggle .tv-pri-caret {
+  transform: rotate(180deg);
 }
 .tv-pri-table tbody td {
   padding: 12px;
@@ -862,7 +900,7 @@ function renderCard(plan) {
 
 function renderTableRow(row) {
   const [label, ...cells] = row;
-  return `<tr>
+  return `<tr class="tv-pri-table-row">
     <td>${label}</td>
     ${cells.map(c => {
       if (c === 'v') return `<td><img class="tv-pri-check" src="${A.check}" alt="incluido"></td>`;
@@ -872,6 +910,8 @@ function renderTableRow(row) {
     }).join('')}
   </tr>`;
 }
+
+const CARET_SVG = '<svg class="tv-pri-caret" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function renderWall() {
   return WALL_CARDS.map(c =>
@@ -887,11 +927,13 @@ function renderTable() {
     <th>Comparar planes</th>
     ${TABLE_COLS.map(c => `<th>${c}</th>`).join('')}
   </tr></thead>`;
-  const body = TABLE_SECTIONS.map(([title, rows]) => {
-    return `<tr class="tv-pri-table-section"><td colspan="6">${title}</td></tr>` +
-      rows.map(renderTableRow).join('');
+  // First section expanded by default, rest collapsed (matches tradingview.com/pricing).
+  const bodies = TABLE_SECTIONS.map(([title, rows], idx) => {
+    const collapsed = idx === 0 ? '' : ' is-collapsed';
+    const header = `<tr class="tv-pri-table-section"><td colspan="6"><button type="button" class="tv-pri-section-toggle" aria-expanded="${idx === 0}">${title}${CARET_SVG}</button></td></tr>`;
+    return `<tbody class="tv-pri-table-section-body${collapsed}" data-section="${title}">${header}${rows.map(renderTableRow).join('')}</tbody>`;
   }).join('');
-  return `<table class="tv-pri-table">${head}<tbody>${body}</tbody></table>`;
+  return `<table class="tv-pri-table">${head}${bodies}</table>`;
 }
 
 function renderFAQ() {
@@ -976,6 +1018,7 @@ export function createPricingPage(mount, opts = {}) {
         <div class="tv-pri-container">
           <h2>Los mercados globales al alcance de su mano</h2>
           <p>Le conectamos de forma fiable a cientos de feeds de datos, con acceso directo a 3.539.722 instrumentos de todo el mundo. La información obtenida es de máxima calidad y se actualiza en tiempo real.</p>
+          <img class="tv-pri-feature-img" src="${A.globe}" alt="Mercados globales" loading="lazy">
         </div>
       </section>
 
@@ -995,10 +1038,11 @@ export function createPricingPage(mount, opts = {}) {
         </div>
       </section>
 
-      <section class="tv-pri-feature">
+      <section class="tv-pri-feature is-devices">
         <div class="tv-pri-container">
           <h2>Para cualquier dispositivo</h2>
           <p>Lo último para operar con facilidad. Gráficos en su máxima expresión — por sus diseños sincronizados, listas de seguimiento, configuración y mucho más — porque nuestra app sigue siendo la mejor.</p>
+          <img class="tv-pri-feature-img" src="${A.devices}" alt="Aplicaciones para cualquier dispositivo" loading="lazy">
         </div>
       </section>
 
@@ -1023,6 +1067,15 @@ export function createPricingPage(mount, opts = {}) {
       paint();
       return;
     }
+    const toggle = e.target.closest('.tv-pri-section-toggle');
+    if (toggle) {
+      const body = toggle.closest('.tv-pri-table-section-body');
+      if (body) {
+        const collapsed = body.classList.toggle('is-collapsed');
+        toggle.setAttribute('aria-expanded', String(!collapsed));
+      }
+      return;
+    }
   }
   root.addEventListener('click', onClick);
 
@@ -1032,6 +1085,8 @@ export function createPricingPage(mount, opts = {}) {
   }
 
   paint();
+  // Clear any prior content (e.g. global loading state) before mounting.
+  mount.innerHTML = '';
   mount.appendChild(root);
 
   return { render, destroy };
