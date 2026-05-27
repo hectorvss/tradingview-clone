@@ -685,7 +685,7 @@ function buildMarkup() {
             <span class="mo-header__avatar-dot" aria-hidden="true"></span>
           </div>
           <div class="mo-header__offer-margin">
-            <a class="mo-header__offer" href="#/">
+            <a class="mo-header__offer" href="#/pricing" aria-label="Planes y precios">
               <span class="mo-header__offer-label">Ampliar</span>
             </a>
           </div>

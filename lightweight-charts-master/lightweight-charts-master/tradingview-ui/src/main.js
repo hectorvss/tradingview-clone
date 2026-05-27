@@ -137,7 +137,7 @@ function _mountSiteHeader(host) {
     onNavigate: (target) => {
       if (target == null)            goHome();
       else if (target === 'SEARCH')  window.location.hash = '#/screener';
-      else if (target === 'UPGRADE') goHome();
+      else if (target === 'UPGRADE') window.location.hash = '#/pricing';
       else                            goHome();
     },
   });
