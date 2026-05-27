@@ -9,6 +9,7 @@
    ========================================================================= */
 
 import { createChart, AreaSeries } from 'lightweight-charts';
+import { ensurePolishStyles, showToast, emptyStateHTML } from './ui-polish.js';
 
 const STORAGE_KEY = 'tv.paper_trading';
 const FEE_RATE = 0.0005; // 0.05% per side
@@ -447,27 +448,28 @@ export function createPaperTradingPanel(container, opts = {}) {
         const style = document.createElement('style');
         style.id = 'pt-styles';
         style.textContent = `
-.pt-root{display:flex;flex-direction:column;height:100%;width:100%;background:#0e1014;color:#d1d4dc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;}
+.pt-root{display:flex;flex-direction:column;height:100%;width:100%;background:#0f0f0f;color:#d1d4dc;font-family:'Trebuchet MS',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;}
 .pt-tabs{display:flex;border-bottom:1px solid #2a2e39;background:#131722;flex-shrink:0;}
-.pt-tab{padding:10px 16px;cursor:pointer;color:#787b86;border-bottom:2px solid transparent;font-weight:500;user-select:none;transition:color .15s;}
+.pt-tab{padding:10px 16px;cursor:pointer;color:#787b86;border-bottom:2px solid transparent;font-weight:500;user-select:none;transition:color 100ms ease;}
 .pt-tab:hover{color:#d1d4dc;}
 .pt-tab.active{color:#2962ff;border-bottom-color:#2962ff;}
 .pt-body{flex:1;overflow:auto;padding:12px;}
 .pt-table{width:100%;border-collapse:collapse;font-size:12px;}
-.pt-table th{text-align:left;padding:8px 10px;font-weight:500;color:#787b86;border-bottom:1px solid #2a2e39;background:#131722;position:sticky;top:0;}
-.pt-table td{padding:8px 10px;border-bottom:1px solid #1c2030;}
-.pt-table tr:hover td{background:#161a25;}
+.pt-table th{text-align:left;padding:8px 12px;font-weight:500;color:#787b86;border-bottom:1px solid #2a2e39;background:#131722;position:sticky;top:0;}
+.pt-table td{padding:8px 12px;border-bottom:1px solid #1e222d;}
+.pt-table tr:hover td{background:#1e222d;}
 .pt-pill{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;text-transform:uppercase;}
-.pt-pill.long,.pt-pill.buy{background:rgba(38,166,154,.15);color:#26a69a;}
-.pt-pill.short,.pt-pill.sell{background:rgba(239,83,80,.15);color:#ef5350;}
-.pt-up{color:#26a69a;}
-.pt-down{color:#ef5350;}
-.pt-btn{background:#2a2e39;color:#d1d4dc;border:1px solid #363a45;padding:5px 10px;border-radius:3px;cursor:pointer;font-size:11px;transition:background .15s;}
+.pt-pill.long,.pt-pill.buy{background:rgba(8,153,129,.15);color:#089981;}
+.pt-pill.short,.pt-pill.sell{background:rgba(242,54,69,.15);color:#f23645;}
+.pt-up{color:#089981;}
+.pt-down{color:#f23645;}
+.pt-btn{background:#2a2e39;color:#d1d4dc;border:1px solid #363a45;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;transition:background 100ms ease;}
 .pt-btn:hover{background:#363a45;}
-.pt-btn.danger{background:rgba(239,83,80,.15);color:#ef5350;border-color:rgba(239,83,80,.3);}
-.pt-btn.danger:hover{background:rgba(239,83,80,.25);}
+.pt-btn:disabled{background:#2a2e39;color:#787b86;cursor:not-allowed;opacity:.6;}
+.pt-btn.danger{background:rgba(242,54,69,.15);color:#f23645;border-color:rgba(242,54,69,.3);}
+.pt-btn.danger:hover{background:rgba(242,54,69,.25);}
 .pt-btn.primary{background:#2962ff;color:#fff;border-color:#2962ff;}
-.pt-btn.primary:hover{background:#1e53e5;}
+.pt-btn.primary:hover{background:#1976d2;border-color:#1976d2;}
 .pt-empty{padding:40px;text-align:center;color:#787b86;font-style:italic;}
 .pt-account-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px;}
 .pt-stat{background:#131722;border:1px solid #2a2e39;border-radius:4px;padding:12px;}
@@ -484,6 +486,7 @@ export function createPaperTradingPanel(container, opts = {}) {
 
     function build() {
         injectStyles();
+        ensurePolishStyles();
         root = document.createElement('div');
         root.className = 'pt-root';
         tabsEl = document.createElement('div');
@@ -535,7 +538,7 @@ export function createPaperTradingPanel(container, opts = {}) {
     function renderPositions() {
         const positions = account.getPositions();
         if (!positions.length) {
-            bodyEl.innerHTML = '<div class="pt-empty">No hay posiciones abiertas</div>';
+            bodyEl.innerHTML = emptyStateHTML('No hay posiciones abiertas', 'Abre una operación desde el gráfico o el formulario para verla aquí.', '☐');
             return;
         }
         const table = document.createElement('table');
@@ -579,7 +582,7 @@ export function createPaperTradingPanel(container, opts = {}) {
     function renderOrders() {
         const orders = account.getOrders();
         if (!orders.length) {
-            bodyEl.innerHTML = '<div class="pt-empty">No hay órdenes pendientes</div>';
+            bodyEl.innerHTML = emptyStateHTML('No hay órdenes pendientes', 'Las órdenes limit/stop sin ejecutar aparecerán en esta lista.', '◷');
             return;
         }
         const table = document.createElement('table');
@@ -608,6 +611,7 @@ export function createPaperTradingPanel(container, opts = {}) {
             const btn = e.target.closest('button[data-cancel]');
             if (!btn) return;
             account.cancelOrder(btn.dataset.cancel);
+            showToast('Orden cancelada', { type: 'success', duration: 1500 });
             render();
         });
         bodyEl.appendChild(table);
@@ -616,7 +620,7 @@ export function createPaperTradingPanel(container, opts = {}) {
     function renderHistory() {
         const history = account.getTradeHistory();
         if (!history.length) {
-            bodyEl.innerHTML = '<div class="pt-empty">Sin operaciones cerradas</div>';
+            bodyEl.innerHTML = emptyStateHTML('Sin operaciones cerradas', 'Aquí verás el histórico de trades una vez cierres tus primeras posiciones.', '✓');
             return;
         }
         const table = document.createElement('table');
@@ -706,6 +710,7 @@ export function createPaperTradingPanel(container, opts = {}) {
         resetBtn.addEventListener('click', () => {
             if (confirm('¿Resetear la cuenta? Se perderá todo el historial.')) {
                 account.reset();
+                showToast('Cuenta reseteada', { type: 'success' });
                 render();
             }
         });

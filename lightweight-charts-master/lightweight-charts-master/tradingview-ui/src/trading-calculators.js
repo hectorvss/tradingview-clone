@@ -16,6 +16,7 @@
 // Dark theme matching TradingView. CSS is injected exactly once per page.
 
 import { createChart, AreaSeries } from 'lightweight-charts';
+import { ensurePolishStyles, emptyStateHTML } from './ui-polish.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -60,7 +61,7 @@ function ensureStyles() {
   min-height: 480px;
   background: var(--grey-6, #0f0f0f);
   color: #d1d4dc;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 13px;
   box-sizing: border-box;
   overflow: hidden;
@@ -462,6 +463,7 @@ function saveHistoryEntry(entry) {
 export function createCalculatorsPanel(container, opts = {}) {
   if (!container) throw new Error('createCalculatorsPanel: container required');
   ensureStyles();
+  ensurePolishStyles();
 
   const state = {
     active: opts.activeCalc || 'position',

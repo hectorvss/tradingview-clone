@@ -566,22 +566,137 @@ class GannSquare extends BaseDrawing {
      - commit() saves to storage
      - cancel() destroys
 */
+function _labelForType(type) {
+  switch (type) {
+    case 'andrews_pitchfork': return 'Pitchfork';
+    case 'gann_box':          return 'Gann Box';
+    case 'gann_fan':          return 'Gann Fan';
+    case 'gann_square':       return 'Gann Square';
+    default:                  return 'Drawing';
+  }
+}
+
+function _ensureHintEl(container) {
+  let el = container.querySelector('.pg-create-hint');
+  if (!el) {
+    el = document.createElement('div');
+    el.className = 'pg-create-hint';
+    el.style.cssText = [
+      'position:absolute',
+      'top:10px',
+      'left:50%',
+      'transform:translateX(-50%)',
+      'z-index:9999',
+      'padding:6px 12px',
+      'background:rgba(20,22,28,0.92)',
+      'color:#fff',
+      'font:12px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif',
+      'border-radius:6px',
+      'box-shadow:0 2px 8px rgba(0,0,0,0.3)',
+      'pointer-events:none',
+      'user-select:none',
+    ].join(';');
+    container.appendChild(el);
+  }
+  return el;
+}
+
 function makeTool(Cls, requiredAnchors, svgOverlay, chart, series, opts = {}) {
   const inst = new Cls({ svgOverlay, chart, series, points: [], ...opts });
   inst._required = requiredAnchors;
   inst._creating = false;
+  inst._createCtx = null;
+
+  const _updateHint = () => {
+    const ctx = inst._createCtx;
+    if (!ctx || !ctx.hintEl) return;
+    const next = inst.points.length + 1;
+    const total = inst._required;
+    const label = _labelForType(inst.type);
+    ctx.hintEl.textContent = `${label}: click para colocar punto ${next} de ${total} · Esc cancela`;
+  };
+
+  const _teardownCreate = () => {
+    const ctx = inst._createCtx;
+    if (!ctx) return;
+    try { if (ctx.unsubClick) ctx.unsubClick(); } catch {}
+    try { window.removeEventListener('keydown', ctx.onKey, true); } catch {}
+    if (ctx.container && ctx.prevCursor !== undefined) {
+      ctx.container.style.cursor = ctx.prevCursor || '';
+    }
+    if (ctx.hintEl && ctx.hintEl.parentNode) {
+      ctx.hintEl.parentNode.removeChild(ctx.hintEl);
+    }
+    inst._createCtx = null;
+    inst._creating = false;
+  };
 
   inst.beginCreate = function () {
     this._creating = true;
     this.points = [];
+
+    // Locate chart container (parent of the SVG overlay is the natural choice).
+    const container =
+      (this.svg && this.svg.parentElement) ||
+      (this.chart && typeof this.chart.chartElement === 'function' ? this.chart.chartElement() : null) ||
+      document.body;
+
+    const prevCursor = container.style.cursor;
+    container.style.cursor = 'crosshair';
+
+    const hintEl = _ensureHintEl(container);
+
+    const handler = (param) => {
+      if (!this._creating) return;
+      if (!param || !param.point) return;
+      const { x, y } = param.point;
+      let time = null;
+      try { time = this.chart.timeScale().coordinateToTime(x); } catch {}
+      // Fallback: param.time is sometimes provided directly.
+      if (time == null && param.time != null) time = param.time;
+      let price = null;
+      try { price = this.series.coordinateToPrice(y); } catch {}
+      if (time == null || price == null) return;
+      this.addAnchor({ time, price });
+      if (this._creating) {
+        _updateHint();
+      } else {
+        _teardownCreate();
+      }
+    };
+
+    let unsubClick = null;
+    try {
+      this.chart.subscribeClick(handler);
+      unsubClick = () => { try { this.chart.unsubscribeClick(handler); } catch {} };
+    } catch (e) {
+      console.warn('[pitchfork-gann] subscribeClick failed', e);
+    }
+
+    const onKey = (ev) => {
+      if (ev.key === 'Escape') {
+        ev.stopPropagation();
+        this.cancel();
+      }
+    };
+    window.addEventListener('keydown', onKey, true);
+
+    this._createCtx = { container, prevCursor, hintEl, unsubClick, onKey };
+    _updateHint();
   };
   inst.addAnchor = function (pt) {
+    // Allow programmatic use even if beginCreate wasn't called.
+    if (!this._creating && this.points.length === 0) {
+      this._creating = true;
+    }
     if (!this._creating) return false;
     this.points.push({ time: pt.time, price: pt.price });
     if (this.points.length >= this._required) {
       this._creating = false;
       this.render();
       this.commit();
+      // Teardown click flow if active.
+      if (this._createCtx) _teardownCreate();
       return true; // done
     }
     return false;
@@ -592,6 +707,7 @@ function makeTool(Cls, requiredAnchors, svgOverlay, chart, series, opts = {}) {
   };
   inst.cancel = function () {
     this._creating = false;
+    if (this._createCtx) _teardownCreate();
     this.destroy();
     removeFromStorage(this.id);
   };

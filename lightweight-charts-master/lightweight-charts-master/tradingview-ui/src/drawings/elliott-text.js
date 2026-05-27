@@ -78,6 +78,61 @@ function loadType(type) {
 }
 
 /* ------------------------------------------------------------------ */
+/* UI feedback helpers — floating hint + cursor                         */
+/* ------------------------------------------------------------------ */
+const HINT_LABELS = {
+  elliott_impulse: 'Elliott Impulse',
+  elliott_correction: 'Elliott Corrección',
+  text: 'Texto',
+  arrow: 'Flecha',
+  callout: 'Callout',
+  polyline: 'Pincel libre',
+};
+
+function showHint(svgOverlay, toolType, stepText) {
+  let hint = svgOverlay._drawingHint;
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.className = 'tv-drawing-hint';
+    hint.style.cssText = `
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      background: rgba(28, 28, 28, 0.92);
+      color: #dbdbdb;
+      border: 1px solid #2962ff;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font: 12px/1.4 system-ui, sans-serif;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    `;
+    const parent = svgOverlay.parentElement || document.body;
+    if (getComputedStyle(parent).position === 'static') {
+      parent.style.position = 'relative';
+    }
+    parent.appendChild(hint);
+    svgOverlay._drawingHint = hint;
+  }
+  const label = HINT_LABELS[toolType] || toolType;
+  hint.textContent = `${label} — ${stepText} — Esc para cancelar`;
+}
+
+function hideHint(svgOverlay) {
+  if (svgOverlay._drawingHint) {
+    svgOverlay._drawingHint.remove();
+    svgOverlay._drawingHint = null;
+  }
+}
+
+function setCursor(svgOverlay, on) {
+  svgOverlay.style.cursor = on ? 'crosshair' : '';
+}
+
+/* ------------------------------------------------------------------ */
 /* SVG helpers                                                         */
 /* ------------------------------------------------------------------ */
 function svgEl(tag, attrs = {}) {
@@ -872,19 +927,32 @@ export function createPolylineBrush(svgOverlay, chart, series) {
     deactivate();
   }
 
+  function onKeyDown(ev) {
+    if (ev.key === 'Escape') {
+      if (current) { current.destroy(); current = null; lastPx = null; }
+      deactivate();
+    }
+  }
+
   function activate() {
     active = true;
     svgOverlay.style.pointerEvents = 'auto';
+    setCursor(svgOverlay, true);
+    showHint(svgOverlay, 'polyline', 'mantén pulsado y arrastra para dibujar');
     svgOverlay.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('keydown', onKeyDown);
   }
   function deactivate() {
     active = false;
     svgOverlay.style.pointerEvents = '';
+    setCursor(svgOverlay, false);
+    hideHint(svgOverlay);
     svgOverlay.removeEventListener('mousedown', onMouseDown);
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mouseup', onMouseUp);
+    document.removeEventListener('keydown', onKeyDown);
   }
   function destroy() {
     deactivate();
@@ -923,6 +991,11 @@ function makeTool({ svgOverlay, chart, series, type, expectedPoints, builder }) 
   let pending = null; // in-progress drawing
   let previewMoveHandler = null;
 
+  function stepText() {
+    const n = pending ? pending.points.length : 0;
+    return `clic ${n + 1} de ${expectedPoints}`;
+  }
+
   function onMouseDown(ev) {
     if (!active) return;
     if (ev.button !== 0) return;
@@ -942,6 +1015,8 @@ function makeTool({ svgOverlay, chart, series, type, expectedPoints, builder }) 
       pending._persist();
       pending = null;
       deactivate();
+    } else {
+      showHint(svgOverlay, type, stepText());
     }
   }
 
@@ -965,6 +1040,8 @@ function makeTool({ svgOverlay, chart, series, type, expectedPoints, builder }) 
   function activate() {
     active = true;
     svgOverlay.style.pointerEvents = 'auto';
+    setCursor(svgOverlay, true);
+    showHint(svgOverlay, type, stepText());
     svgOverlay.addEventListener('mousedown', onMouseDown);
     previewMoveHandler = onMouseMove;
     svgOverlay.addEventListener('mousemove', previewMoveHandler);
@@ -974,6 +1051,8 @@ function makeTool({ svgOverlay, chart, series, type, expectedPoints, builder }) 
   function deactivate() {
     active = false;
     svgOverlay.style.pointerEvents = '';
+    setCursor(svgOverlay, false);
+    hideHint(svgOverlay);
     svgOverlay.removeEventListener('mousedown', onMouseDown);
     if (previewMoveHandler) {
       svgOverlay.removeEventListener('mousemove', previewMoveHandler);

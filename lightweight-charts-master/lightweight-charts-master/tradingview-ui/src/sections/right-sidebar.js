@@ -11,22 +11,29 @@ const CSS = `
   flex: 0 0 45px;
   width: 45px;
   height: 100vh;
-  min-height: 900px;
   background: var(--grey-6, #0f0f0f);
   border-left: 1px solid var(--grey-18, #2e2e2e);
   box-sizing: border-box;
   z-index: 50;
+  /* Flex layout — same scheme as chart-view's .rightbar so the 11 icons fit
+   * ANY viewport. The 5th icon gets margin-top:auto, separating the top 4
+   * (watchlist/alerts/objects/chat) from the bottom 7. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2px 0;
   overflow: hidden;
 }
 .mo-rb-inner {
-  position: relative;
-  width: 45px;
-  height: 900px;
+  display: contents;
 }
 .mo-rb .rb-icon {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Override the absolute style="top:XXpx" from the inline markup with
+   * !important so flex layout takes over. */
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
   width: 44px;
   height: 44px;
   display: flex;
@@ -39,7 +46,9 @@ const CSS = `
   color: var(--alto, #dbdbdb);
   border-radius: 4px;
   transition: background-color .12s ease;
+  flex: 0 0 auto;
 }
+.mo-rb .rb-icon:nth-of-type(5) { margin-top: auto; }
 .mo-rb .rb-icon:hover {
   background: var(--grey-18, #2e2e2e);
 }
@@ -51,12 +60,26 @@ const CSS = `
   pointer-events: none;
 }
 .mo-rb .rb-sep {
-  position: absolute;
-  left: 6px;
-  right: 6px;
-  top: 847px;
+  /* Now a flex separator (1px tall) — auto-positioned between the two icon
+   * groups by the nth-of-type rule above. */
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
   height: 1px;
+  width: 33px;
   background: var(--grey-29, #4a4a4a);
+  margin: 4px 0;
+  flex: 0 0 1px;
+}
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.mo-rb .rb-icon { transition: background-color 100ms ease, color 100ms ease, transform 100ms ease, opacity 100ms ease; }
+.mo-rb .rb-icon:hover { color: #2962ff; }
+.mo-rb .rb-icon:active { opacity: .6; transform: translateX(-50%) scale(.92); }
+.mo-rb .rb-icon:focus-visible { outline: 2px solid #2962ff; outline-offset: -2px; }
+
+@media (max-width: 1200px) {
+  .mo-rb { display: none; }
 }
 `;
 

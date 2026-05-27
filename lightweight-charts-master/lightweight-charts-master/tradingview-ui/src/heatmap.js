@@ -72,17 +72,20 @@ function ensureStyles() {
 .hm-cell {
   padding: 8px 4px;
   cursor: default;
-  transition: outline 60ms ease;
-  outline: 1px solid transparent;
+  transition: outline 80ms ease, transform 80ms ease, box-shadow 80ms ease;
+  outline: 1px solid #0f0f0f;
   color: #fff;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.35);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.55), 0 0 1px rgba(0,0,0,0.4);
   font-variant-numeric: tabular-nums;
   min-width: 38px;
   height: 28px;
+  position: relative;
 }
 .hm-cell:hover {
   outline: 1px solid #d1d4dc;
-  z-index: 2;
+  transform: scale(1.02);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.55);
+  z-index: 3;
 }
 .hm-cell.hm-empty {
   background: rgba(255,255,255,0.02) !important;
@@ -112,14 +115,17 @@ function ensureStyles() {
   color: #d1d4dc;
   border: 1px solid #2a2e39;
   border-radius: 4px;
-  padding: 6px 9px;
-  font-size: 11px;
+  padding: 8px 12px;
+  font-size: 12px;
   pointer-events: none;
   z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.55);
   white-space: nowrap;
-  line-height: 1.4;
+  line-height: 1.45;
+  transition: opacity 80ms ease;
+  opacity: 0;
 }
+.hm-tooltip.hm-tt-visible { opacity: 1; }
 .hm-tooltip .hm-tt-row { color: #787b86; }
 .hm-tooltip .hm-tt-row b { color: #d1d4dc; font-weight: 600; }
 .hm-tooltip .hm-tt-val  { color: #fff; font-weight: 700; font-size: 12px; }
@@ -214,50 +220,72 @@ function percentileRank(value, sortedArr) {
 // ---------------------------------------------------------------------------
 function attachTooltip(root) {
   let tip = null;
+  let raf = 0;
+  let pendingEvt = null;
 
-  function show(e, html) {
+  function ensureTip() {
     if (!tip) {
       tip = document.createElement('div');
       tip.className = 'hm-tooltip';
       document.body.appendChild(tip);
     }
-    tip.innerHTML = html;
-    move(e);
+    return tip;
   }
-  function move(e) {
+  function show(html) {
+    ensureTip();
+    tip.innerHTML = html;
+    tip.classList.add('hm-tt-visible');
+  }
+  function position(e) {
     if (!tip) return;
-    const pad = 12;
+    const pad = 14;
     let x = e.clientX + pad;
     let y = e.clientY + pad;
     const r = tip.getBoundingClientRect();
     if (x + r.width  > window.innerWidth)  x = e.clientX - r.width  - pad;
     if (y + r.height > window.innerHeight) y = e.clientY - r.height - pad;
-    tip.style.left = x + 'px';
-    tip.style.top  = y + 'px';
+    tip.style.transform = `translate(${Math.max(0, x)}px, ${Math.max(0, y)}px)`;
   }
   function hide() {
+    if (tip) tip.classList.remove('hm-tt-visible');
+  }
+  function destroy() {
+    if (raf) cancelAnimationFrame(raf);
     if (tip) { tip.remove(); tip = null; }
   }
 
-  root.addEventListener('mousemove', (e) => {
-    const cell = e.target.closest('.hm-cell');
-    if (!cell || cell.classList.contains('hm-empty')) { hide(); return; }
-    const rowLabel = cell.dataset.row || '';
-    const colLabel = cell.dataset.col || '';
-    const value    = cell.dataset.value;
-    const fmt      = cell.dataset.fmt || 'number';
-    const rank     = cell.dataset.rank;
-    const v = value === '' || value == null ? null : Number(value);
-    const html =
-      `<div class="hm-tt-row"><b>${escapeHtml(rowLabel)}</b>` +
-        (colLabel ? ` <span style="color:#555">/</span> <b>${escapeHtml(colLabel)}</b>` : '') +
-      `</div>` +
-      `<div class="hm-tt-val">${formatValue(v, fmt)}</div>` +
-      (rank != null && rank !== '' ? `<div class="hm-tt-rank">Percentil ${rank}</div>` : '');
-    show(e, html);
-  });
+  function onMove(e) {
+    pendingEvt = e;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      const ev = pendingEvt;
+      if (!ev) return;
+      const cell = ev.target.closest && ev.target.closest('.hm-cell');
+      if (!cell || cell.classList.contains('hm-empty')) { hide(); return; }
+      const rowLabel = cell.dataset.row || '';
+      const colLabel = cell.dataset.col || '';
+      const value    = cell.dataset.value;
+      const fmt      = cell.dataset.fmt || 'number';
+      const rank     = cell.dataset.rank;
+      const v = value === '' || value == null ? null : Number(value);
+      const html =
+        `<div class="hm-tt-row"><b>${escapeHtml(rowLabel)}</b>` +
+          (colLabel ? ` <span style="color:#555">/</span> <b>${escapeHtml(colLabel)}</b>` : '') +
+        `</div>` +
+        `<div class="hm-tt-val">${formatValue(v, fmt)}</div>` +
+        (rank != null && rank !== '' ? `<div class="hm-tt-rank">Percentil ${rank}</div>` : '');
+      show(html);
+      position(ev);
+    });
+  }
+
+  // Use the same handler for mouseover so the tooltip appears as soon as a
+  // cell is entered, instead of waiting for the next mousemove.
+  root.addEventListener('mouseover', onMove);
+  root.addEventListener('mousemove', onMove);
   root.addEventListener('mouseleave', hide);
-  return { destroy: hide };
+  return { destroy };
 }
 
 function escapeHtml(s) {

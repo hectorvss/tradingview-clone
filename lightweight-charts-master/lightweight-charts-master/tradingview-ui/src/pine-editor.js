@@ -49,15 +49,19 @@ function injectStyles() {
     color: #d1d4dc;
     border: 1px solid #363a45;
     border-radius: 4px;
-    padding: 6px 12px;
-    font-size: 12px;
+    height: 32px;
+    padding: 0 14px;
+    font-size: 13px;
     cursor: pointer;
     font-weight: 500;
     transition: background .15s, border-color .15s;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: inherit;
 }
 .tv-pine-btn:hover { background: #363a45; border-color: #4a4e5a; }
+.tv-pine-btn:focus-visible { outline: 2px solid #2962ff; outline-offset: 1px; }
 .tv-pine-btn.primary { background: #2962ff; border-color: #2962ff; color: #fff; }
-.tv-pine-btn.primary:hover { background: #1e53e5; border-color: #1e53e5; }
+.tv-pine-btn.primary:hover { background: #1976d2; border-color: #1976d2; }
 .tv-pine-btn.ghost { background: transparent; }
 .tv-pine-select {
     background: #2a2e39;
@@ -152,14 +156,14 @@ function injectStyles() {
 }
 .tv-pine-textarea::selection { background: rgba(41, 98, 255, 0.35); }
 
-/* Syntax colors */
-.tv-pk { color: #c678dd; font-weight: 500; }   /* keyword */
-.tv-pb { color: #61afef; }                      /* builtin */
-.tv-ps { color: #98c379; }                      /* string */
-.tv-pc { color: #5c6370; font-style: italic; }  /* comment */
-.tv-pn { color: #d19a66; }                      /* number */
-.tv-po { color: #56b6c2; }                      /* operator/punct */
-.tv-pa { color: #e5c07b; }                      /* annotation //@ */
+/* Syntax colors (TradingView Pine palette) */
+.tv-pk { color: #569cd6; font-weight: 500; }   /* keyword — azul */
+.tv-pb { color: #4ec9b0; }                      /* builtin — teal */
+.tv-ps { color: #ce9178; }                      /* string — naranja */
+.tv-pc { color: #6a737d; font-style: italic; }  /* comment — gris */
+.tv-pn { color: #d16d9e; }                      /* number — rosa */
+.tv-po { color: #d4d4d4; }                      /* operator/punct */
+.tv-pa { color: #c586c0; }                      /* annotation //@ */
 
 /* Console */
 .tv-pine-console {
@@ -199,7 +203,12 @@ function injectStyles() {
     font-size: 11.5px;
     line-height: 16px;
     color: #b2b5be;
+    scrollbar-width: thin;
+    scrollbar-color: #2a2e39 transparent;
 }
+.tv-pine-console-body::-webkit-scrollbar { width: 8px; }
+.tv-pine-console-body::-webkit-scrollbar-thumb { background: #2a2e39; border-radius: 4px; }
+.tv-pine-console-body::-webkit-scrollbar-thumb:hover { background: #363a45; }
 .tv-pine-log { margin: 0; padding: 1px 0; }
 .tv-pine-log.err { color: #ef5350; }
 .tv-pine-log.ok { color: #26a69a; }

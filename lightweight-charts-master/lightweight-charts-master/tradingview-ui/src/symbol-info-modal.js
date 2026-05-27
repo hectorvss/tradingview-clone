@@ -15,31 +15,34 @@ import { createChart, AreaSeries } from 'lightweight-charts';
 const CSS = `
 .sim-backdrop {
   position: fixed; inset: 0;
-  background: rgba(8, 10, 14, 0.78);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex; align-items: center; justify-content: center;
-  z-index: 99990;
+  z-index: 9999;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: #d1d4dc;
   animation: sim-fade-in .15s ease-out;
 }
 @keyframes sim-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes sim-pop-in {
-  from { opacity: 0; transform: translateY(8px) scale(.985); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: scale(.96); }
+  to   { opacity: 1; transform: scale(1); }
 }
 .sim-modal {
   width: min(1080px, 94vw);
-  height: min(760px, 92vh);
+  max-width: 1080px;
+  height: min(760px, 90vh);
+  max-height: 90vh;
   background: #131722;
   border: 1px solid #2a2e39;
-  border-radius: 12px;
-  box-shadow: 0 24px 60px rgba(0,0,0,.55);
+  border-radius: 8px;
+  box-shadow: 0 12px 48px rgba(0,0,0,.6);
   display: flex; flex-direction: column;
   overflow: hidden;
-  animation: sim-pop-in .18s cubic-bezier(.2,.8,.3,1);
+  animation: sim-pop-in .15s ease-out;
 }
+.sim-modal:focus { outline: none; }
 .sim-header {
   display: flex; align-items: center; gap: 14px;
   padding: 16px 20px;
@@ -1075,6 +1078,7 @@ export function openSymbolInfoModal(symbol, opts = {}) {
   let isOpen = true;
   const prevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
+  const prevFocus = document.activeElement;
 
   function close() {
     if (!isOpen) return;
@@ -1083,11 +1087,26 @@ export function openSymbolInfoModal(symbol, opts = {}) {
     document.removeEventListener('keydown', onKey);
     backdrop.remove();
     document.body.style.overflow = prevOverflow;
+    try { if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus(); } catch (_) {}
     if (typeof opts.onClose === 'function') {
       try { opts.onClose(); } catch (_) {}
     }
   }
-  function onKey(e) { if (e.key === 'Escape') close(); }
+  function focusableEls() {
+    return Array.from(modal.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter(n => n.offsetParent !== null);
+  }
+  function onKey(e) {
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key === 'Tab') {
+      const f = focusableEls();
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }
   document.addEventListener('keydown', onKey);
 
   backdrop.addEventListener('mousedown', (e) => {
@@ -1101,6 +1120,14 @@ export function openSymbolInfoModal(symbol, opts = {}) {
   // Mount + initial render
   (opts.container || document.body).appendChild(backdrop);
   renderTab(activeId);
+
+  // Initial focus -> close button (first interactive element)
+  setTimeout(() => {
+    try {
+      const closeBtn = header.querySelector('.sim-close-btn');
+      if (closeBtn) closeBtn.focus();
+    } catch (_) {}
+  }, 0);
 
   return { close };
 }

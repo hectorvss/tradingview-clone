@@ -78,6 +78,20 @@ const CSS = `
   background: #f2f2f2;
   color: var(--grey-6, #0f0f0f);
 }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.mo-sticky-tab { transition: background-color 100ms ease, color 100ms ease, border-color 100ms ease, opacity 100ms ease, transform 100ms ease; }
+.mo-sticky-tab:active { opacity: .7; transform: scale(.97); }
+.mo-sticky-tab:focus-visible { outline: 2px solid #2962ff; outline-offset: 2px; }
+
+@media (max-width: 1200px) {
+  .mo-sticky { padding: 0 24px; }
+}
+@media (max-width: 768px) {
+  .mo-sticky { padding: 0 12px; }
+  .mo-sticky-pill { height: 48px; }
+  .mo-sticky-tab { height: 36px; min-height: 36px; padding: 0 14px; font-size: 13px; }
+}
 `;
 
 const TABS = [

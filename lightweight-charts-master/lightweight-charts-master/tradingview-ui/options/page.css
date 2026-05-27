@@ -1,0 +1,345 @@
+/* Options page — visual refinement */
+
+.options-root,
+.root-bFP7RdOf {
+  background: var(--tv-color-bg, #000);
+  color: var(--tv-color-text-primary, #d1d4dc);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ------- Header ------- */
+.header-DdIo_gUp {
+  background: var(--tv-color-bg, #000);
+  border-bottom: 1px solid var(--tv-color-grey-12, #1a1a1a);
+}
+
+.title-QjAnCdK1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 28px;
+  color: var(--tv-color-text-primary, #d1d4dc);
+  letter-spacing: -0.01em;
+}
+
+.title-QjAnCdK1 .figma-text {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+
+/* TradeStation top-right pill badge */
+.link-qzjhRGXg {
+  background: var(--tv-color-grey-12, #1a1a1a);
+  border: 1px solid var(--tv-color-grey-18, #262626);
+  border-radius: 6px;
+  padding: 4px 12px;
+  color: var(--tv-color-text-secondary, #b2b5be);
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.link-qzjhRGXg:hover { background: var(--tv-color-grey-18, #262626); }
+
+.tradestation-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tradestation-logo {
+  background: linear-gradient(90deg, #0078d4 0%, #5ab9ff 100%);
+  -webkit-mask: radial-gradient(circle, #000 50%, transparent 51%) 0 0 / 6px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  opacity: 0.9;
+}
+
+/* ------- Symbol/Tabs row ------- */
+.wrapper-gUcVcsER {
+  background: var(--tv-color-bg, #000);
+}
+
+.pill-c7mhnUnO {
+  background: var(--tv-color-grey-12, #1a1a1a);
+  border-radius: 16px;
+  padding: 0 14px;
+  height: 34px;
+  font-size: 13px;
+  color: var(--tv-color-text-secondary, #b2b5be);
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.pill-c7mhnUnO:hover { background: var(--tv-color-grey-18, #262626); }
+
+.pill-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.symbol-logo {
+  background: var(--tv-color-accent, #2962ff);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.separator-gUcVcsER {
+  background: var(--tv-color-grey-24, #2a2e39);
+  width: 1px;
+  height: 28px;
+  margin: 0 12px;
+}
+
+/* Product tabs (Chain / Creador / Buscador / Volatilidad / Volumen) */
+.tabs-gUcVcsER button,
+.tab-product,
+.tab-product-active,
+[id^="options-product-common-tabs"] button {
+  background: transparent;
+  color: var(--tv-color-text-muted, #787b86);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0 16px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.tab-product:hover {
+  background: var(--tv-color-grey-12, #1a1a1a);
+  color: var(--tv-color-text-secondary, #b2b5be);
+}
+
+.tab-product-active,
+[id^="options-product-common-tabs"] button.is-active,
+[id^="options-product-common-tabs"] button[aria-selected="true"] {
+  background: var(--tv-color-grey-18, #262626);
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+
+/* ------- Volume sub-tabs ------- */
+.scrollWrap-h5ZKzylb {
+  background: var(--tv-color-bg, #000);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.scrollWrap-h5ZKzylb::-webkit-scrollbar { display: none; }
+
+.tab-volume,
+.tab-volume-active {
+  background: transparent;
+  color: var(--tv-color-text-muted, #787b86);
+  font-size: 14px;
+  font-weight: 500;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.tab-volume:hover {
+  background: var(--tv-color-grey-12, #1a1a1a);
+  color: var(--tv-color-text-secondary, #b2b5be);
+}
+
+.tab-volume-active {
+  background: var(--tv-color-grey-18, #262626);
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+
+/* ------- Right toolbar (1 mes / Calls y puts / icons) ------- */
+.toolbar-T29F9jmX {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wrapper-c7mhnUnO {
+  display: inline-flex;
+  align-items: center;
+}
+
+.chart-icon {
+  background: transparent;
+  border: 1px solid var(--tv-color-grey-18, #262626);
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--tv-color-text-secondary, #b2b5be);
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.chart-icon:hover {
+  background: var(--tv-color-grey-12, #1a1a1a);
+  border-color: var(--tv-color-grey-24, #2a2e39);
+}
+.icon-glyph {
+  background: currentColor;
+  -webkit-mask: radial-gradient(circle, #000 40%, transparent 41%) center / 14px 14px no-repeat;
+  display: inline-block;
+  opacity: 0.85;
+}
+
+/* ------- Main container & content ------- */
+.content-bFP7RdOf,
+.container-T29F9jmX,
+.content-ln92qheU,
+.container-Tv7LSjUz {
+  background: var(--tv-color-bg, #000);
+}
+
+.header-T29F9jmX {
+  background: var(--tv-color-bg, #000);
+  border-bottom: 1px solid var(--tv-color-grey-12, #1a1a1a);
+}
+
+/* ------- Volume heatmap table ------- */
+.table-YswU7NbI {
+  background: var(--tv-color-bg, #000);
+  border-collapse: collapse;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Thead row container */
+.table-YswU7NbI [data-label="thead"] {
+  background: var(--tv-color-grey-7, #0f0f0f);
+  border-bottom: 1px solid var(--tv-color-grey-18, #262626);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.table-YswU7NbI [data-label="thead"] [data-label="tr"] {
+  border-bottom: 1px solid var(--tv-color-grey-12, #1a1a1a);
+}
+
+.table-YswU7NbI [data-label="th"] {
+  background: var(--tv-color-grey-7, #0f0f0f);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tv-color-text-muted, #787b86);
+  text-align: center;
+  border-bottom: 1px solid var(--tv-color-grey-18, #262626);
+  border-right: 1px solid var(--tv-color-grey-12, #1a1a1a);
+}
+
+.table-YswU7NbI [data-label="th"] .figma-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tv-color-text-muted, #787b86);
+  text-align: center;
+}
+
+.table-YswU7NbI th {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tv-color-text-muted, #787b86);
+  background: var(--tv-color-grey-7, #0f0f0f);
+  border-bottom: 1px solid var(--tv-color-grey-18, #262626);
+}
+
+.table-YswU7NbI td,
+.table-YswU7NbI .cell-call,
+.table-YswU7NbI .cell-put,
+.table-YswU7NbI .cell-strike {
+  font-size: 12px;
+  color: var(--tv-color-text-secondary, #b2b5be);
+  border-bottom: 1px solid var(--tv-color-grey-12, #1a1a1a);
+  border-right: 1px solid var(--tv-color-grey-12, #1a1a1a);
+  background: var(--tv-color-bg, #000);
+  text-align: center;
+  transition: background 0.1s ease;
+}
+
+.table-YswU7NbI .cell-call .figma-text,
+.table-YswU7NbI .cell-put .figma-text {
+  font-size: 12px;
+  color: var(--tv-color-text-secondary, #b2b5be);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sticky strike column */
+.cell-strike {
+  background: var(--tv-color-grey-7, #0f0f0f) !important;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  text-align: left;
+  color: var(--tv-color-text-primary, #d1d4dc) !important;
+  font-weight: 500;
+  border-right: 1px solid var(--tv-color-grey-18, #262626);
+}
+
+.cell-strike .figma-text {
+  color: var(--tv-color-text-primary, #d1d4dc);
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cell hover */
+.cell-call:hover,
+.cell-put:hover {
+  background: var(--tv-color-grey-12, #1a1a1a);
+}
+
+/* Heatmap red-tinted volume cells (apply via .is-hot modifier or aria-selected) */
+.cell-call.is-hot,
+.cell-put.is-hot,
+.cell-call[data-heat="hot"],
+.cell-put[data-heat="hot"],
+.blinkForeground-c7mhnUnO {
+  background: rgba(247, 82, 95, 0.2);
+  color: var(--tv-color-text-primary, #d1d4dc);
+}
+
+.cell-call.is-hot-strong,
+.cell-put.is-hot-strong,
+.cell-call[data-heat="strong"],
+.cell-put[data-heat="strong"] {
+  background: rgba(247, 82, 95, 0.4);
+  color: #fff;
+}
+
+/* Distinguish calls vs puts visually (subtle column tint) */
+.cell-call { color: var(--tv-color-text-secondary, #b2b5be); }
+.cell-put  { color: var(--tv-color-text-secondary, #b2b5be); }
+
+/* Empty cell dash dimmed */
+.table-YswU7NbI td .figma-text {
+  opacity: 0.85;
+}
+
+/* ------- Scrollbar polish ------- */
+.content-ln92qheU {
+  overflow: auto;
+}
+.content-ln92qheU::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.content-ln92qheU::-webkit-scrollbar-track {
+  background: var(--tv-color-bg, #000);
+}
+.content-ln92qheU::-webkit-scrollbar-thumb {
+  background: var(--tv-color-grey-18, #262626);
+  border-radius: 5px;
+}
+.content-ln92qheU::-webkit-scrollbar-thumb:hover {
+  background: var(--tv-color-grey-24, #2a2e39);
+}

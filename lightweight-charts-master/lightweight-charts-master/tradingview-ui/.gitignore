@@ -1,0 +1,28 @@
+# Build output
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Vite cache
+.vite/
+
+# Figma scratch
+.figma-cache/
+.figma_id/
+.figma-dumps/
+
+# Local data dumps
+cwd_*.xml
+screenshot_*.png
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

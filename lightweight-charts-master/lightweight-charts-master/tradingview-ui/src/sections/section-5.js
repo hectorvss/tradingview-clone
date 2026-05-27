@@ -46,6 +46,58 @@ const STYLE_CSS = `
 .mo-fx-tab  { font-size:11px; padding:4px 10px; border-radius:4px; color:#8c8c8c; cursor:pointer; user-select:none; border:0; background:transparent; }
 .mo-fx-tab.is-active { background:#2962ff; color:#fff; }
 .mo-fx-tab:hover:not(.is-active) { color:#d1d4dc; }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.mo-fx-tab { transition: background-color 100ms ease, color 100ms ease, opacity 100ms ease; min-height: 28px; }
+.mo-fx-tab:active { opacity: .7; }
+
+.mo-fx-row { transition: background-color 120ms ease, transform 120ms ease; cursor: pointer; }
+.mo-fx-row:hover { background: #1e222d; transform: translateX(2px); }
+.mo-fx-row:active { opacity: .7; }
+
+/* Idea / news cards used by section-5 (share .mo-card pattern from global) */
+.mo-fx-card,
+.mo-fx-idea,
+.mo-fx-news { transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease; cursor: pointer; }
+.mo-fx-card:hover,
+.mo-fx-idea:hover,
+.mo-fx-news:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  border-color: #2962ff;
+}
+.mo-fx-card:active,
+.mo-fx-idea:active,
+.mo-fx-news:active { opacity: .7; transform: translateY(-1px); }
+
+/* Loading shimmer for sparklines */
+.mo-fx-spark:empty,
+[id^="mo-fx-spark-"]:empty {
+  background: linear-gradient(90deg, #131722 0%, #1e222d 50%, #131722 100%);
+  background-size: 200% 100%;
+  animation: mo-fx-shimmer 1.4s ease-in-out infinite;
+  border-radius: 4px;
+}
+@keyframes mo-fx-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty state */
+.mo-fx-empty {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 120px; color: #787b86; font-size: 13px; text-align: center;
+}
+
+/* Responsive — Forex table 4-col -> 2-col -> 1-col */
+@media (max-width: 1200px) {
+  .mo-fx-table { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 768px) {
+  .mo-fx-table { grid-template-columns: 1fr !important; }
+  .mo-fx-row { min-height: 44px; }
+  .mo-fx-tab { min-height: 36px; padding: 8px 14px; font-size: 12px; }
+}
 `;
 
 function ensureStyles() {

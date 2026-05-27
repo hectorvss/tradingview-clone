@@ -1,0 +1,186 @@
+/* Shared UI partials: top navbar + right icon sidebar.
+   Assumes tokens from styles/tv-tokens.css are already loaded. */
+
+.tv-header {
+  position: relative;
+  height: 64px;
+  background: var(--tv-color-bg-base);
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  color: var(--tv-color-text-secondary);
+  font-family: var(--tv-font-inter);
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.tv-header__inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.tv-header__logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 189px;
+  height: 64px;
+  color: var(--tv-color-text-primary);
+  flex-shrink: 0;
+}
+.tv-header__logo .tv-header__icon,
+.tv-header__logo .tv-header__logo-text {
+  display: inline-flex;
+  align-items: center;
+}
+.tv-header__middle-wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  flex: 1;
+}
+.tv-header-search-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 202px;
+  height: 40px;
+  padding: 0 12px 0 6px;
+  margin-left: 112px;
+  background: var(--tv-color-grey-12);
+  border: 1px solid var(--tv-color-grey-24);
+  border-radius: 6px;
+  color: var(--tv-color-text-muted);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.tv-header-search-container .icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+.tv-header-search-container__hint {
+  color: var(--tv-color-grey-48, #6a6a6a);
+  margin-left: 4px;
+}
+.tv-header__main-menu {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0 16px;
+  gap: 0;
+  height: 100%;
+}
+.tv-header__main-menu-item {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.tv-header__main-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding: 0 16px;
+  color: var(--tv-color-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+}
+.tv-header__main-menu-link:hover {
+  color: var(--tv-color-text-primary);
+}
+.tv-header__main-menu-link.is-active {
+  color: var(--tv-color-accent-blue);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+.tv-header__main-menu-link .chevron {
+  width: 14px;
+  height: 14px;
+}
+.tv-header__area--right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.tv-user-menu-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #96609f, #d500f9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-family: var(--tv-font-inter);
+  cursor: pointer;
+  user-select: none;
+}
+.js-offer-button {
+  padding: 0 18px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--tv-color-accent-blue), #d500f9);
+  color: white;
+  font-weight: 700;
+  font-family: var(--tv-font-inter);
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Right icon sidebar */
+.layout__area--right {
+  position: absolute;
+  right: 0;
+  top: 64px;
+  width: 45px;
+  height: calc(100vh - 64px);
+  background: var(--tv-color-bg-base);
+  border-left: 1px solid var(--tv-color-grey-18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 2px;
+  gap: 2px;
+  box-sizing: border-box;
+  z-index: 5;
+}
+.layout__area--right .widgetbar-wrap,
+.layout__area--right .widgetbar-tabs,
+.layout__area--right .wrap-Z4M3tWHb,
+.layout__area--right .scrollWrap-Z4M3tWHb,
+.layout__area--right .content-Z4M3tWHb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 2px;
+}
+.toolbar-button {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--tv-color-grey-72);
+  cursor: pointer;
+}
+.toolbar-button:hover {
+  background: var(--tv-color-grey-18);
+  color: var(--tv-color-text-primary);
+}
+.toolbar-button svg {
+  width: 22px;
+  height: 22px;
+}
+.separator-gZVyfVJP {
+  width: 33px;
+  height: 1px;
+  background: var(--tv-color-grey-24);
+  margin: 8px 0;
+}

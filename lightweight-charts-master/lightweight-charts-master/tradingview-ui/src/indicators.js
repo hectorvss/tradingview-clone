@@ -865,6 +865,227 @@ export function PivotPoints(candles) {
 }
 
 /* =========================================================================
+   KLineChart-style additions (BRAR, CR, PSY, EMV, PVT, VR, WR, BBI, DMA, AO)
+   ========================================================================= */
+
+/**
+ * BRAR — AR (Activity Ratio) & BR (Buying/selling sentiment Ratio).
+ * AR(n) = SUM(High - Open, n) / SUM(Open - Low, n) * 100
+ * BR(n) = SUM(max(0, High - PrevClose), n) / SUM(max(0, PrevClose - Low), n) * 100
+ * Returns: { ar: [{time,value}], br: [{time,value}] }
+ */
+export function BRAR(candles, period = 26) {
+  const ar = [], br = [];
+  if (!candles || candles.length < period + 1) return { ar, br };
+  for (let i = period - 1; i < candles.length; i++) {
+    let hoSum = 0, olSum = 0;
+    for (let j = i - period + 1; j <= i; j++) {
+      hoSum += Math.max(0, candles[j].high - candles[j].open);
+      olSum += Math.max(0, candles[j].open - candles[j].low);
+    }
+    const arVal = olSum === 0 ? 100 : (hoSum / olSum) * 100;
+    ar.push({ time: candles[i].time, value: r(arVal, 2) });
+    if (i >= period) {
+      let upSum = 0, dnSum = 0;
+      for (let j = i - period + 1; j <= i; j++) {
+        const pc = candles[j - 1].close;
+        upSum += Math.max(0, candles[j].high - pc);
+        dnSum += Math.max(0, pc - candles[j].low);
+      }
+      const brVal = dnSum === 0 ? 100 : (upSum / dnSum) * 100;
+      br.push({ time: candles[i].time, value: r(brVal, 2) });
+    }
+  }
+  return { ar, br };
+}
+
+/**
+ * CR — Cumulative Return / "Price ratio of change" (KLineChart variant).
+ * mid = (high + low + close) / 3
+ * up   = SUM(max(0, high - prevMid), n)
+ * down = SUM(max(0, prevMid - low), n)
+ * CR = up / down * 100
+ */
+export function CR(candles, period = 26) {
+  const out = [];
+  if (!candles || candles.length < period + 1) return out;
+  const mid = candles.map(c => (c.high + c.low + c.close) / 3);
+  for (let i = period; i < candles.length; i++) {
+    let up = 0, dn = 0;
+    for (let j = i - period + 1; j <= i; j++) {
+      up += Math.max(0, candles[j].high - mid[j - 1]);
+      dn += Math.max(0, mid[j - 1] - candles[j].low);
+    }
+    const v = dn === 0 ? 100 : (up / dn) * 100;
+    out.push({ time: candles[i].time, value: r(v, 2) });
+  }
+  return out;
+}
+
+/**
+ * PSY — Psychological Line. Percentage of up days within the period.
+ */
+export function PSY(candles, period = 12) {
+  const out = [];
+  if (!candles || candles.length < period + 1) return out;
+  for (let i = period; i < candles.length; i++) {
+    let ups = 0;
+    for (let j = i - period + 1; j <= i; j++) {
+      if (candles[j].close > candles[j - 1].close) ups++;
+    }
+    out.push({ time: candles[i].time, value: r((ups / period) * 100, 2) });
+  }
+  return out;
+}
+
+/**
+ * EMV — Ease of Movement. Average of an N-period SMA of the 1-bar EMV value.
+ * box = volume / (high - low)
+ * raw = ((high + low) / 2 - (prevHigh + prevLow) / 2) / box
+ */
+export function EMV(candles, period = 14) {
+  const out = [];
+  if (!candles || candles.length < period + 1) return out;
+  const raw = new Array(candles.length).fill(null);
+  for (let i = 1; i < candles.length; i++) {
+    const range = candles[i].high - candles[i].low || 1e-9;
+    const v = candles[i].volume || 1;
+    const box = v / range;
+    const midNow = (candles[i].high + candles[i].low) / 2;
+    const midPrev = (candles[i - 1].high + candles[i - 1].low) / 2;
+    raw[i] = box === 0 ? 0 : (midNow - midPrev) / box;
+  }
+  // SMA(period) of raw (skipping the leading null at index 0)
+  for (let i = period; i < candles.length; i++) {
+    let sum = 0;
+    for (let j = i - period + 1; j <= i; j++) sum += raw[j] || 0;
+    out.push({ time: candles[i].time, value: r(sum / period, 4) });
+  }
+  return out;
+}
+
+/**
+ * PVT — Price Volume Trend (cumulative).
+ * PVT_t = PVT_{t-1} + volume * (close - prevClose) / prevClose
+ */
+export function PVT(candles) {
+  const out = [];
+  if (!candles || candles.length < 2) return out;
+  let acc = 0;
+  out.push({ time: candles[0].time, value: 0 });
+  for (let i = 1; i < candles.length; i++) {
+    const pc = candles[i - 1].close;
+    if (pc !== 0) acc += (candles[i].volume || 0) * (candles[i].close - pc) / pc;
+    out.push({ time: candles[i].time, value: r(acc, 4) });
+  }
+  return out;
+}
+
+/**
+ * VR — Volume Ratio. Within an N-period window:
+ *  AV = sum of volumes on up bars; BV on down; CV on flat.
+ *  VR = (AV + 0.5 * CV) / (BV + 0.5 * CV) * 100
+ */
+export function VR(candles, period = 26) {
+  const out = [];
+  if (!candles || candles.length < period + 1) return out;
+  for (let i = period; i < candles.length; i++) {
+    let av = 0, bv = 0, cv = 0;
+    for (let j = i - period + 1; j <= i; j++) {
+      const v = candles[j].volume || 0;
+      const ch = candles[j].close - candles[j - 1].close;
+      if (ch > 0) av += v;
+      else if (ch < 0) bv += v;
+      else cv += v;
+    }
+    const denom = bv + 0.5 * cv;
+    const v = denom === 0 ? 100 : ((av + 0.5 * cv) / denom) * 100;
+    out.push({ time: candles[i].time, value: r(v, 2) });
+  }
+  return out;
+}
+
+/**
+ * WR — Williams %R alias (KLineChart nomenclature). Identical to WilliamsR.
+ */
+export const WR = WilliamsR;
+
+/**
+ * BBI — Bull and Bear Index. Average of 4 SMAs (3, 6, 12, 24 by default).
+ */
+export function BBI(candles, p1 = 3, p2 = 6, p3 = 12, p4 = 24, field = 'close') {
+  const out = [];
+  if (!candles || candles.length < Math.max(p1, p2, p3, p4)) return out;
+  const vals = candles.map(c => c[field]);
+  const s1 = smaNumbers(vals, p1);
+  const s2 = smaNumbers(vals, p2);
+  const s3 = smaNumbers(vals, p3);
+  const s4 = smaNumbers(vals, p4);
+  for (let i = 0; i < candles.length; i++) {
+    if (s1[i] == null || s2[i] == null || s3[i] == null || s4[i] == null) continue;
+    out.push({ time: candles[i].time, value: r((s1[i] + s2[i] + s3[i] + s4[i]) / 4) });
+  }
+  return out;
+}
+
+/**
+ * DMA — Difference of Moving Averages.
+ * dif  = SMA(short) - SMA(long)
+ * dma  = SMA(dif, mDma)
+ * Returns: { dif: [{time,value}], dma: [{time,value}] }
+ */
+export function DMA(candles, short = 10, long = 50, mDma = 10, field = 'close') {
+  const dif = [], dma = [];
+  if (!candles || candles.length < long + mDma) return { dif, dma };
+  const vals = candles.map(c => c[field]);
+  const sShort = smaNumbers(vals, short);
+  const sLong  = smaNumbers(vals, long);
+  const difArr = new Array(vals.length).fill(null);
+  for (let i = 0; i < vals.length; i++) {
+    if (sShort[i] != null && sLong[i] != null) difArr[i] = sShort[i] - sLong[i];
+  }
+  for (let i = 0; i < vals.length; i++) {
+    if (difArr[i] != null) dif.push({ time: candles[i].time, value: r(difArr[i]) });
+  }
+  // SMA of difArr (only valid values, aligned)
+  const startIdx = difArr.findIndex(v => v != null);
+  if (startIdx >= 0) {
+    const tail = difArr.slice(startIdx);
+    const dmaArr = smaNumbers(tail, mDma);
+    for (let i = 0; i < dmaArr.length; i++) {
+      if (dmaArr[i] == null) continue;
+      const candleIdx = startIdx + i;
+      if (candleIdx >= candles.length) break;
+      dma.push({ time: candles[candleIdx].time, value: r(dmaArr[i]) });
+    }
+  }
+  return { dif, dma };
+}
+
+/**
+ * AO — Awesome Oscillator. SMA(HL2, 5) - SMA(HL2, 34).
+ * Returns histogram-style data with green/red color hints (vs previous bar).
+ */
+export function AwesomeOscillator(candles, fast = 5, slow = 34) {
+  const out = [];
+  if (!candles || candles.length < slow) return out;
+  const hl2 = candles.map(c => (c.high + c.low) / 2);
+  const sFast = smaNumbers(hl2, fast);
+  const sSlow = smaNumbers(hl2, slow);
+  let prev = null;
+  for (let i = 0; i < candles.length; i++) {
+    if (sFast[i] == null || sSlow[i] == null) continue;
+    const v = sFast[i] - sSlow[i];
+    const color = prev == null
+      ? '#089981aa'
+      : (v >= prev ? '#089981aa' : '#f23645aa');
+    out.push({ time: candles[i].time, value: r(v, 4), color });
+    prev = v;
+  }
+  return out;
+}
+
+/* =========================================================================
    Indicator catalog (used by indicators modal + state)
    ========================================================================= */
 
@@ -909,6 +1130,19 @@ export const INDICATOR_CATALOG = [
   { id: 'cmo',     name: 'Oscilador de Momento de Chande', category: 'Oscilador',         pane: 'new',  defaults: { period: 14 } },
   { id: 'roc',     name: 'Tasa de Cambio (ROC)',           category: 'Momentum',          pane: 'new',  defaults: { period: 12 } },
   { id: 'volosc',  name: 'Oscilador de Volumen',           category: 'Volumen',           pane: 'new',  defaults: { fast: 5, slow: 10 } },
+  // ---- KLineChart-compatible additions ----
+  // BRAR emits two series (AR + BR) in the same pane.
+  { id: 'brar',    name: 'Índice ARBR',                    category: 'Momentum',          pane: 'new',  defaults: { period: 26 } },
+  { id: 'cr',      name: 'Tasa de momentum (CR)',          category: 'Momentum',          pane: 'new',  defaults: { period: 26 } },
+  { id: 'psy',     name: 'Línea psicológica (PSY)',        category: 'Momentum',          pane: 'new',  defaults: { period: 12 } },
+  { id: 'emv',     name: 'Facilidad de movimiento (EMV)',  category: 'Volumen',           pane: 'new',  defaults: { period: 14 } },
+  { id: 'pvt',     name: 'Tendencia precio-volumen (PVT)', category: 'Volumen',           pane: 'new',  defaults: {} },
+  { id: 'vr',      name: 'Ratio de volumen (VR)',          category: 'Volumen',           pane: 'new',  defaults: { period: 26 } },
+  { id: 'wr',      name: 'Williams %R (WR)',               category: 'Momentum',          pane: 'new',  defaults: { period: 14 } },
+  { id: 'bbi',     name: 'Índice toro/oso (BBI)',          category: 'Tendencia',         pane: 'main', defaults: { p1: 3, p2: 6, p3: 12, p4: 24 } },
+  // DMA emits two series (dif + dma) in the same pane.
+  { id: 'dma',     name: 'Diferencia de medias móviles (DMA)', category: 'Tendencia',     pane: 'new',  defaults: { short: 10, long: 50, mDma: 10 } },
+  { id: 'ao',      name: 'Oscilador increíble (AO)',       category: 'Momentum',          pane: 'new',  defaults: { fast: 5, slow: 34 } },
   // ---- Smart Money Concepts (SMC) ----
   { id: 'smc-fvg',      name: 'Fair Value Gap',           category: 'SMC', pane: 'main', defaults: { minSize: 0.001 } },
   { id: 'smc-ob',       name: 'Order Blocks',             category: 'SMC', pane: 'main', defaults: { lookback: 5, minMove: 0.02 } },

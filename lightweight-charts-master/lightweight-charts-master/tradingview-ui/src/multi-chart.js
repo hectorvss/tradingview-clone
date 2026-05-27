@@ -12,46 +12,49 @@ function injectStyles() {
     const css = `
 .multi-grid {
     display: grid;
-    gap: 4px;
+    gap: 8px;
     width: 100%;
     height: 100%;
     background: var(--grey-18, #18191d);
     box-sizing: border-box;
+    padding: 4px;
 }
 .multi-cell {
     background: var(--azure-10, #0d1117);
     position: relative;
     overflow: hidden;
     border: 1px solid var(--grey-25, #25272d);
-    border-radius: 2px;
+    border-radius: 3px;
     min-width: 0;
     min-height: 0;
+    transition: border-color 100ms ease;
 }
+.multi-cell:hover { border-color: #34384a; }
 .multi-cell.active {
     border-color: var(--blue-50, #2962ff);
 }
 .multi-cell-head {
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 28px;
+    height: 24px;
     display: flex;
     align-items: center;
     padding: 0 8px;
-    font: 12px/1 -apple-system, system-ui, sans-serif;
+    font: 11px/1 -apple-system, system-ui, sans-serif;
     color: var(--text-primary, #d1d4dc);
-    background: rgba(20, 22, 26, 0.85);
+    background: rgba(20, 22, 26, 0.9);
     border-bottom: 1px solid var(--grey-25, #25272d);
     z-index: 2;
     user-select: none;
-    gap: 8px;
+    gap: 6px;
 }
-.multi-cell-symbol { font-weight: 600; }
+.multi-cell-symbol { font-weight: 600; font-size: 11px; letter-spacing: 0.2px; }
 .multi-cell-tf {
     color: var(--text-secondary, #787b86);
-    font-size: 11px;
-    padding: 2px 6px;
+    font-size: 10px;
+    padding: 1px 5px;
     background: rgba(255,255,255,0.05);
-    border-radius: 3px;
+    border-radius: 2px;
 }
 .multi-cell-spacer { flex: 1; }
 .multi-cell-close {
@@ -70,7 +73,7 @@ function injectStyles() {
 }
 .multi-cell-chart {
     position: absolute;
-    inset: 28px 0 0 0;
+    inset: 24px 0 0 0;
 }
 `;
     const s = document.createElement('style');
@@ -212,14 +215,23 @@ export function createMultiChartLayout(container, options = {}) {
             index,
         };
 
-        // ResizeObserver for this cell
+        // ResizeObserver for this cell (rAF-debounced to avoid flicker)
+        let _resizeRaf = 0;
+        let _pendingSize = null;
         const ro = new ResizeObserver((entries) => {
             for (const entry of entries) {
                 const cr = entry.contentRect;
                 if (cr.width > 0 && cr.height > 0) {
-                    try { chart.resize(cr.width, cr.height); } catch (_) {}
+                    _pendingSize = { w: cr.width, h: cr.height };
                 }
             }
+            if (_resizeRaf || !_pendingSize) return;
+            _resizeRaf = requestAnimationFrame(() => {
+                _resizeRaf = 0;
+                const s = _pendingSize;
+                _pendingSize = null;
+                if (s) { try { chart.resize(s.w, s.h); } catch (_) {} }
+            });
         });
         ro.observe(chartDiv);
         cell.ro = ro;

@@ -28,7 +28,6 @@ import { createMultiChartLayout } from './multi-chart.js';
 import { createLiveFeed } from './live-feed.js';
 import { renderMonthlyReturnsHeatmap, renderGridHeatmap, computeMonthlyReturns, computeCorrelationMatrix } from './heatmap.js';
 import { wireExtras } from './extras-integration.js';
-import { createNativeTrendLine, createNativeRectangle } from './plugins/native-drawing-tools.js';
 import { openSymbolInfoModal } from './symbol-info-modal.js';
 import { createAlertManager } from './alert-manager.js';
 import { createNewsIdeasPane } from './news-ideas-pane.js';
@@ -38,6 +37,27 @@ import { createObjectTree, createDataWindow } from './object-tree-data-window.js
 import { createTradingPanel, createDOMPanel, createTimeSalesPanel } from './trading-panel.js';
 import { createStrategyTesterPanel } from './strategy-tester-ui.js';
 import { createWatchlistManager, createLayoutManager } from './watchlist-layouts-manager.js';
+import { DrawingManager } from './drawing-system.js';
+import { DrawingManagerV2 } from './drawings-v2/core/drawing-manager.js';
+import { registerSpec } from './drawings-v2/core/drawing-loader.js';
+import { ALL_SPECS } from './drawings-v2/specs/index.js';
+
+// Register all V2 specs once on module load
+try { ALL_SPECS.forEach(s => registerSpec(s)); } catch (e) { console.warn('[v2 specs registration]', e); }
+
+// Feature flag for V2 drawing engine (default ON; toggle via window.tvUseDrawingsV2(true|false))
+function _useDrawingsV2() {
+  try {
+    const v = localStorage.getItem('tv.useDrawingsV2');
+    return v == null ? true : (v === '1');  // default: V2
+  } catch { return true; }
+}
+if (typeof window !== 'undefined') {
+  window.tvUseDrawingsV2 = (on) => {
+    try { localStorage.setItem('tv.useDrawingsV2', on ? '1' : '0'); } catch {}
+    location.reload();
+  };
+}
 import {
   SMA, EMA, WMA, RSI, MACD, BB, Stochastic, ATR, ADX, VWAP,
   Momentum, OBV, CCI, WilliamsR, Ichimoku,
@@ -46,17 +66,15 @@ import {
   ChaikinMoneyFlow, MFI, TRIX, PivotsHL, DEMA, TEMA, HMA, KAMA, VWMA,
   PivotPoints, BollingerBandWidth, ChandeMomentumOscillator, PriceROC, ZLEMA,
   VolumeOscillator,
+  // KLineChart-compatible additions
+  BRAR, CR, PSY, EMV, PVT, VR, WR, BBI, DMA, AwesomeOscillator,
   INDICATOR_CATALOG, INDICATOR_PALETTE,
 } from './indicators.js';
 import {
   FairValueGap, OrderBlocks, BreakOfStructure, ChangeOfCharacter,
   LiquiditySweeps, VolumeDelta, AnchoredVolumeProfile,
 } from './indicators-smc.js';
-import { createDrawingManager } from './drawing-tools.js';
 import { backtest, PRESET_STRATEGIES } from './backtester.js';
-
-// Drawing manager instance — created in mountChart, reused across symbol/TF changes
-let _dm = null;
 
 /* =========================================================================
    GLOBAL STATE + PERSISTENCE
@@ -823,14 +841,21 @@ function buildCenter() {
 
   <!-- Context menu (right-click on chart) -->
   <div class="ctx-menu" id="ctxMenu" style="display:none">
-    <div class="ctx-item" data-act="settings">Configuración…</div>
+    <div class="ctx-item" data-act="add-alert">Añadir alerta aquí</div>
+    <div class="ctx-item" data-act="add-hline">Añadir línea horizontal aquí</div>
+    <div class="ctx-item" data-act="add-vline">Añadir línea vertical aquí</div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" data-act="reset-price">Restablecer escala precio</div>
+    <div class="ctx-item" data-act="center-last">Centrar en última vela</div>
+    <div class="ctx-sep"></div>
     <div class="ctx-item" data-act="fullscreen">Pantalla completa</div>
     <div class="ctx-item" data-act="screenshot">Captura de pantalla</div>
-    <div class="ctx-sep"></div>
     <div class="ctx-item" data-act="backtest">Backtest…</div>
     <div class="ctx-sep"></div>
     <div class="ctx-item" data-act="reset">Restablecer escala</div>
     <div class="ctx-item" data-act="autoscale">Autoescalar</div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" data-act="settings">Configuración…</div>
   </div>
 
   <!-- Generic modal/dropdown shell -->
@@ -966,6 +991,25 @@ function fmtDate(ts) {
   const dd = String(d.getDate()).padStart(2, '0');
   const mm = String(d.getMonth() + 1).padStart(2, '0');
   return `${dd}/${mm}/${d.getFullYear()}`;
+}
+
+// Relative date formatter used by the crosshair tooltip — shows "Hoy HH:MM"
+// for same-day bars, "Ayer HH:MM" for previous day, otherwise the full date.
+function fmtDateRel(ts) {
+  if (ts == null) return '';
+  const d = new Date(ts * 1000);
+  if (Number.isNaN(d.getTime())) return '';
+  const now = new Date();
+  const sameDay = (a, b) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mi = String(d.getMinutes()).padStart(2, '0');
+  if (sameDay(d, now)) return `Hoy ${hh}:${mi}`;
+  const y = new Date(now); y.setDate(y.getDate() - 1);
+  if (sameDay(d, y)) return `Ayer ${hh}:${mi}`;
+  return fmtDate(ts) + ((d.getHours() || d.getMinutes()) ? ` ${hh}:${mi}` : '');
 }
 
 let _chart = null;
@@ -1197,6 +1241,12 @@ function mountChart(container, candles) {
       borderColor: '#1e2230',
       textColor: '#b2b5be',
       scaleMargins: { top: paneSplit.top, bottom: paneSplit.candleBottom },
+      // Force the Y axis to stay visible with a border and tick marks; some
+      // earlier versions hid it implicitly when overlay drawings spanned the
+      // whole container.
+      visible: true,
+      borderVisible: true,
+      ticksVisible: true,
     },
     timeScale: {
       borderColor: '#1e2230',
@@ -1204,6 +1254,12 @@ function mountChart(container, candles) {
       secondsVisible: false,
       rightOffset: 6,
       barSpacing: 8,
+      visible: true,
+      borderVisible: true,
+      minBarSpacing: 0.5,
+      // Note: lwc's `timeScale` doesn't take a `textColor` directly; the time
+      // axis text color is inherited from `layout.textColor`. We set that
+      // explicitly elsewhere, but pin it here too via `layout` override below.
       tickMarkFormatter: (time) => {
         const d = new Date(time * 1000);
         const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -1343,6 +1399,18 @@ function mountChart(container, candles) {
   const chgPct = document.getElementById('chgPct');
   const volVal = document.getElementById('volVal');
   const crossTip = document.getElementById('crossTip');
+  // Inline-style polish for the crosshair tip (KLineChart-style background +
+  // subtle shadow). Set once so we don't touch styles.css.
+  if (crossTip && crossTip.dataset.styledv2 !== '1') {
+    crossTip.dataset.styledv2 = '1';
+    Object.assign(crossTip.style, {
+      background: '#14171f',
+      border: '1px solid #2a2e39',
+      borderRadius: '4px',
+      padding: '8px 10px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.35)',
+    });
+  }
 
   const updateLegend = (data) => {
     if (!data) return;
@@ -1402,7 +1470,7 @@ function mountChart(container, candles) {
       const upCls = ch >= 0 ? 'up' : 'dn';
       // Main symbol line (OHLC summary)
       let html = `
-        <div class="ct-date">${fmtDate(d.time || p.time)}</div>
+        <div class="ct-date">${fmtDateRel(d.time || p.time)}</div>
         <div class="ct-sym"><b>${escapeHtml(state.symbol)}</b>
           <span class="ct-mini">O:${fmt(open)} H:${fmt(high)} L:${fmt(low)} C:${fmt(close)}</span>
           <span class="ct-${upCls}">(${(ch>=0?'+':'')+fmt(ch)} ${(pct>=0?'+':'')+fmt(pct)}%)</span>
@@ -1429,6 +1497,62 @@ function mountChart(container, candles) {
         if (val == null) continue;
         html += `<div class="ct-row"><span style="color:${cmp.color}">${escapeHtml(cmp.symbol)}</span><b>${fmt(val)}</b></div>`;
       }
+      // Nearest drawing value at the cursor — gives the user instant context
+      // when hovering candles that intersect a trend-line / fib / position.
+      try {
+        const dm = _ctx?.drawingMgr;
+        const drawings = dm && typeof dm.list === 'function' ? dm.list() : [];
+        if (drawings.length && p.point) {
+          let best = null;
+          let bestDist = 30; // px tolerance
+          for (const dr of drawings) {
+            try {
+              const ctx = dm._buildCtx ? dm._buildCtx() : null;
+              if (!ctx) continue;
+              // Cheap distance: use first projected point.
+              const pts = dr.projectPoints ? dr.projectPoints(ctx) : null;
+              if (!pts || !pts.length) continue;
+              let dmin = Infinity;
+              for (const pp of pts) {
+                if (!pp.valid) continue;
+                const dx = pp.x - p.point.x, dy = pp.y - p.point.y;
+                const dd2 = Math.hypot(dx, dy);
+                if (dd2 < dmin) dmin = dd2;
+              }
+              if (dmin < bestDist) { bestDist = dmin; best = dr; }
+            } catch {}
+          }
+          if (best) {
+            const Cls = dm.types?.[best.type] || best.constructor;
+            const label = Cls?.label || best.type;
+            const color = best.options?.color || '#2962ff';
+            let info = '';
+            if (best.type === 'trend-line' || best.type === 'segment' || best.type === 'ray') {
+              const [a, b] = best.points || [];
+              if (a && b && b.time !== a.time) {
+                // Linear interp at cursor time when within range.
+                const tCur = d.time || p.time;
+                const t0 = Math.min(a.time, b.time), t1 = Math.max(a.time, b.time);
+                if (tCur >= t0 && tCur <= t1) {
+                  const m = (b.price - a.price) / (b.time - a.time);
+                  const py = a.price + m * (tCur - a.time);
+                  info = fmt(py);
+                }
+              }
+            } else if (best.type === 'horizontal-line' || best.type === 'hline') {
+              if (best.points?.[0]?.price != null) info = fmt(best.points[0].price);
+            } else if (best.type === 'long-position' || best.type === 'short-position') {
+              const [entry, stop, target] = best.points || [];
+              if (entry && stop && target) {
+                const risk = Math.abs(entry.price - stop.price);
+                const reward = Math.abs(target.price - entry.price);
+                info = 'R:R ' + (risk > 0 ? (reward / risk).toFixed(2) : '∞');
+              }
+            }
+            html += `<div class="ct-row" style="border-top:1px solid #2a2e39;margin-top:4px;padding-top:4px"><span style="color:${color}">${escapeHtml(label)}</span><b>${escapeHtml(info || '·')}</b></div>`;
+          }
+        }
+      } catch {}
       crossTip.innerHTML = html;
       crossTip.style.display = 'block';
       const cw = crossTip.offsetWidth || 140;
@@ -1469,6 +1593,13 @@ function mountChart(container, candles) {
   if (_resizeObs) _resizeObs.disconnect();
   _resizeObs = ro;
 
+  // Safety net: force both axes to be visible after construction. Some persisted
+  // settings could have hidden them on a previous session.
+  try {
+    chart.timeScale().applyOptions({ visible: true, borderVisible: true, timeVisible: true });
+    chart.priceScale('right').applyOptions({ visible: true, borderVisible: true, ticksVisible: true });
+  } catch {}
+
   // Fit visible range to last ~250 bars
   const lastT = candles[candles.length - 1].time;
   const startT = candles[Math.max(0, candles.length - 250)].time;
@@ -1504,16 +1635,60 @@ function mountChart(container, candles) {
   // Initialize drawing/trendline subsystem (inline impl: trendlines)
   initDrawings(container);
 
-  // Initialize drawing-tools.js manager (handles hline / fib / rect — separate
-  // storage key `tv.drawings_dm` so the two systems coexist without clashing).
+  // One-shot migration: convert legacy storage (drawings_dm + native_trend/rect)
+  // into the unified `tv.drawings_v3` format used by drawing-system.js, then
+  // drop the legacy keys. Runs once per browser; guarded by a flag.
   try {
-    if (_dm) { try { _dm.removeAll(); } catch {} }
-    _dm = createDrawingManager(chart, series, container);
-    if (_dm) _dm.loadFromStorage();
-  } catch (e) {
-    console.warn('[chart-view] createDrawingManager failed:', e);
-    _dm = null;
-  }
+    if (!localStorage.getItem('tv.drawings_migrated_v3')) {
+      const v3Key = 'tv.drawings_v3';
+      const existingV3 = (() => {
+        try { return JSON.parse(localStorage.getItem(v3Key) || '[]') || []; }
+        catch { return []; }
+      })();
+      const migrated = Array.isArray(existingV3) ? existingV3.slice() : [];
+      const typeMap = {
+        trend: 'trend-line',
+        hline: 'horizontal-line',
+        fib: 'fib-retracement',
+        rect: 'rectangle',
+      };
+      const tryMigrate = (key, defaultType) => {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) return;
+          const arr = JSON.parse(raw);
+          if (!Array.isArray(arr)) return;
+          for (const item of arr) {
+            if (!item) continue;
+            const srcType = item.type || defaultType;
+            const mapped = typeMap[srcType] || defaultType;
+            if (!mapped) continue;
+            const points = Array.isArray(item.points) ? item.points
+              : (item.p1 && item.p2 ? [item.p1, item.p2]
+              : (item.price != null ? [{ time: item.time || 0, price: item.price }]
+              : null));
+            if (!points) continue;
+            migrated.push({
+              id: item.id || ('mig_' + Math.random().toString(36).slice(2, 9)),
+              type: mapped,
+              points,
+              options: item.options || item.style || {},
+            });
+          }
+        } catch (e) { console.warn('[drawings migration]', key, e); }
+      };
+      tryMigrate('tv.drawings_dm', null);
+      tryMigrate('tv.drawings_native_trend', 'trend-line');
+      tryMigrate('tv.drawings_native_rect', 'rectangle');
+      if (migrated.length > (Array.isArray(existingV3) ? existingV3.length : 0)) {
+        try { localStorage.setItem(v3Key, JSON.stringify(migrated)); } catch {}
+      }
+      try { localStorage.removeItem('tv.drawings_dm'); } catch {}
+      try { localStorage.removeItem('tv.drawings_native_trend'); } catch {}
+      try { localStorage.removeItem('tv.drawings_native_rect'); } catch {}
+      try { localStorage.setItem('tv.drawings_migrated_v3', '1'); } catch {}
+    }
+  } catch (e) { console.warn('[drawings migration] skipped', e); }
 
   // Create SVG overlay used by advanced drawings (position-range, pitchfork-gann, elliott-text)
   try {
@@ -1527,15 +1702,36 @@ function mountChart(container, candles) {
     if (_ctx) _ctx.svgOverlay = svg;
   } catch (e) { console.warn('[chart-view] svg overlay failed', e); }
 
-  // Initialize native trend-line + rectangle drawing tools (lightweight-charts primitives)
+  // === NEW unified drawing system (handles + drag + selection + context menu) ===
   try {
     if (_ctx) {
-      _ctx.nativeTrend = createNativeTrendLine(chart, series, container, { color: '#2962FF', lineWidth: 2, showLabels: true });
-      _ctx.nativeRect  = createNativeRectangle(chart, series, container, { color: '#2962FF', fillColor: 'rgba(41,98,255,0.18)', lineWidth: 1 });
-      try { _ctx.nativeTrend.loadFromStorage(); } catch {}
-      try { _ctx.nativeRect.loadFromStorage(); } catch {}
+      if (_ctx.drawingMgr) { try { _ctx.drawingMgr.destroy(); } catch {} }
+      const Mgr = _useDrawingsV2() ? DrawingManagerV2 : DrawingManager;
+      console.log('[drawing engine]', Mgr === DrawingManagerV2 ? 'v2 (new)' : 'v1 (legacy)');
+      _ctx.drawingMgr = new Mgr(chart, series, container, {
+        storageKey: 'tv.drawings_v3',
+        // Magnet-snap needs OHLC access — expose the live candles array.
+        getCandles: () => (_ctx && Array.isArray(_ctx.candles) ? _ctx.candles : []),
+      });
+      _ctx.drawingMgr.loadFromStorage();
+      // Toolbar active-state feedback: highlight the toolbar button while a
+      // drawing tool is active so the user can see they're in draw mode.
+      try {
+        container.addEventListener('drawing-tool-change', (ev) => {
+          const active = !!(ev.detail && ev.detail.active);
+          // Clear any previously active toolbar buttons
+          document.querySelectorAll('.lb-btn.tool-active').forEach(b => b.classList.remove('tool-active'));
+          if (active) {
+            const lastId = _ctx._lastToolbarToolId;
+            if (lastId) {
+              const btn = document.querySelector(`.lb-btn[data-tool="${lastId}"]`);
+              if (btn) btn.classList.add('tool-active');
+            }
+          }
+        });
+      } catch (e) {}
     }
-  } catch (e) { console.warn('[native drawings]', e); }
+  } catch (e) { console.warn('[drawing-system]', e); }
 }
 
 /* ---------- Tier-1 API additions ---------- */
@@ -2182,14 +2378,31 @@ function enablePaneResize(container) {
 
 function enableContextMenu(container) {
   const menu = document.getElementById('ctxMenu');
+  // Remember the chart-local coords (and derived time/price) of the click that
+  // opened the menu, so positional actions can use them.
+  let _ctxAnchor = { x: 0, y: 0, time: null, price: null };
   container.addEventListener('contextmenu', (ev) => {
     if (ev.target.closest('.legend, .replay-panel, .modal, .sym-pop, .trade-pop')) return;
+    // Let the drawing-system handle right-clicks over drawings (it stops propagation).
+    if (ev.defaultPrevented) return;
+    // Skip the right-axis area (handled by scale ctx menu).
+    const rr = container.getBoundingClientRect();
+    if ((ev.clientX - rr.left) > rr.width - 60) return;
     ev.preventDefault();
     const r = container.getBoundingClientRect();
-    const x = Math.min(ev.clientX - r.left, r.width - 200);
-    const y = Math.min(ev.clientY - r.top, r.height - 160);
-    menu.style.left = x + 'px';
-    menu.style.top  = y + 'px';
+    const lx = ev.clientX - r.left;
+    const ly = ev.clientY - r.top;
+    // Derive time/price for positional menu actions.
+    let time = null, price = null;
+    try {
+      if (_chart) time = _chart.timeScale().coordinateToTime(lx);
+      if (_series) price = _series.coordinateToPrice(ly);
+    } catch {}
+    _ctxAnchor = { x: lx, y: ly, time, price };
+    const x = Math.min(lx, r.width - 220);
+    const y = Math.min(ly, r.height - 260);
+    menu.style.left = Math.max(4, x) + 'px';
+    menu.style.top  = Math.max(4, y) + 'px';
     menu.style.display = 'block';
   });
   window.addEventListener('mousedown', (ev) => {
@@ -2197,6 +2410,7 @@ function enableContextMenu(container) {
   });
   menu.addEventListener('click', (ev) => {
     const act = ev.target.dataset?.act;
+    if (!act) return;
     menu.style.display = 'none';
     if (act === 'settings') openSettingsModal();
     if (act === 'fullscreen') toggleFullscreen();
@@ -2204,6 +2418,64 @@ function enableContextMenu(container) {
     if (act === 'backtest') openBacktestStrategyPicker();
     if (act === 'reset' && _chart) _chart.timeScale().resetTimeScale();
     if (act === 'autoscale' && _series) _series.priceScale().applyOptions({ autoScale: true });
+
+    // Positional actions ---------------------------------------------------
+    if (act === 'add-alert') {
+      // Seed default alert value from the right-click price when available.
+      try {
+        if (_ctxAnchor.price != null) {
+          if (typeof _alState === 'object' && _alState) {
+            _alState.value = +(_ctxAnchor.price).toFixed(4);
+            _alState.condition = _alState.condition || 'Cruzando';
+            _alState.message = `${state.symbol} ${_alState.condition} ${String(_alState.value).replace('.', ',')}`;
+          }
+        }
+      } catch {}
+      try { if (typeof openAlertModal === 'function') openAlertModal(); } catch {}
+    }
+    if (act === 'add-hline') {
+      try {
+        const dm = _ctx?.drawingMgr;
+        const price = _ctxAnchor.price;
+        if (dm && price != null) {
+          // Add a horizontal-line drawing through the right-click price.
+          const Cls = dm.types?.['horizontal-line'] || dm.types?.['hline'];
+          if (Cls) {
+            // Use any time in the candle set as the anchor (horizontal lines
+            // are constant in price, time is irrelevant for rendering).
+            const anyT = (_ctx?.candles?.[_ctx.candles.length - 1]?.time) || _ctxAnchor.time || 0;
+            const drawing = new Cls([{ time: anyT, price }], {});
+            dm.add(drawing);
+          } else if (_series && typeof _series.createPriceLine === 'function') {
+            _series.createPriceLine({ price, color: '#2962ff', lineWidth: 1, axisLabelVisible: true });
+          }
+        }
+      } catch (e) { console.warn('[ctxMenu add-hline]', e); }
+    }
+    if (act === 'add-vline') {
+      try {
+        const dm = _ctx?.drawingMgr;
+        const t = _ctxAnchor.time;
+        if (dm && t != null) {
+          const Cls = dm.types?.['vertical-line'] || dm.types?.['vline'];
+          if (Cls) {
+            const anyP = _ctxAnchor.price ?? (_ctx?.lastCandle?.close ?? 0);
+            const drawing = new Cls([{ time: t, price: anyP }], {});
+            dm.add(drawing);
+          }
+        }
+      } catch (e) { console.warn('[ctxMenu add-vline]', e); }
+    }
+    if (act === 'reset-price') {
+      try { _series && _series.priceScale().applyOptions({ autoScale: true }); } catch {}
+    }
+    if (act === 'center-last') {
+      try {
+        if (_chart && _ctx?.candles?.length) {
+          _chart.timeScale().scrollToRealTime();
+        }
+      } catch {}
+    }
   });
 }
 
@@ -2407,40 +2679,151 @@ function openToolMenu(toolId, anchorEl) {
         ev.stopPropagation();
         return;
       }
+      // === UNIFIED DRAWING SYSTEM (handles, drag, selection, context menu) ===
+      // Master map: toolbar item id → drawing type
+      // Versión actualizada para V2 (77 specs). Si V1 está activo, los types no soportados caen
+      // a un fallback más cercano automáticamente en _activateUnifiedDrawing().
+      const UNIFIED_MAP = {
+        // Trend / Líneas
+        'trend-line':  'trend-line',
+        'ray':         'ray',
+        'info-line':   'info-line',
+        'ext-line':    'ext-line',
+        'trend-angle': 'trend-angle',
+        'h-line':      'horizontal-line',
+        'h-ray':       'h-ray',
+        'v-line':      'vertical-line',
+        'cross-line':  'cross-line',
+        // Channels
+        'par-chan':    'parallel-channel',
+        'regr-trend':  'regression-trend',
+        'top-bottom':  'price-channel',
+        'disc-chan':   'disjoint-channel',
+        // Fibonacci (8 variantes)
+        'fib-ret':     'fib-retracement',
+        'fib-ext':     'fib-extension',
+        'fib-chan':    'fib-channel',
+        'fib-time':    'fib-time',
+        'fib-fan':     'fib-fan',
+        'fib-circ':    'fib-circle',
+        'fib-spir':    'fib-spiral',
+        'fib-arc':     'fib-arcs',
+        'fib-wedge':   'fib-wedge',
+        // Pitchfork variantes
+        'pitch':       'pitchfork',
+        'schiff':      'schiff-pitchfork',
+        'schiff-mod':  'modified-schiff-pitchfork',
+        'inside-pitch':'inside-pitchfork',
+        // Gann variantes
+        'gann-grid':   'gann-grid',
+        'gann-sq-fix': 'gann-square-144',
+        'gann-sq':     'gann-square',
+        'gann-fan':    'gann-fan',
+        'gann-box':    'gann-box',
+        // Elliott + harmonics + patterns
+        'ell-imp':     'elliott-impulse',
+        'ell-corr':    'elliott-correction',
+        'ell-tri':     'elliott-triangle',
+        'ell-dbl':     'elliott-double-combo',
+        'ell-trp':     'elliott-triple-combo',
+        'pat-xabcd':   'xabcd',
+        'pat-cypher':  'cypher',
+        'pat-abcd':    'abcd',
+        'pat-hs':      'head-and-shoulders',
+        'pat-tri':     'triangle-pattern',
+        'pat-3imp':    'three-drives',
+        'bar-pat':     'bar-pattern',
+        // Predict
+        'long-pos':    'long-position',
+        'short-pos':   'short-position',
+        'fcst-pos':    'forecast',
+        'ghost':       'ghost-feed',
+        'range-p':     'measure-distance',
+        'range-d':     'measure-volume',
+        'range-pd':    'measure-distance',
+        'vwap-anchor': 'anchored-vwap',
+        'vp-fixed':    'fixed-range-volume-profile',
+        // Text + iconos + flags
+        'text':        'text',
+        'note':        'callout',
+        'price-note':  'price-label',
+        'comment':     'comment',
+        'pin':         'anchored-note',
+        'flag':        'flag',
+        'arrow':       'arrow',
+        'arrow-mark':  'arrow-mark',
+        'arrow-up':    'arrow-up',
+        'arrow-down':  'arrow-down',
+        // Shapes
+        'rect':        'rectangle',
+        'rect-rot':    'rotated-rectangle',
+        'circle':      'circle',
+        'ellipse':     'ellipse',
+        'triangle':    'triangle',
+        'polyline':    'polyline',
+        'arc':         'arc',
+        'path':        'path-bezier',
+        'curve':       'curve',
+        'dbl-curve':   'double-curve',
+        // Brushes
+        'pencil':      'brush',
+        'highliter':   'highlighter',
+        // Cycles
+        'cyclic-lines':'cyclic-lines',
+        'time-cycles': 'time-cycles',
+        'sine-line':   'sine-line',
+      };
+
+      // V1 doesn't have all V2 types. Fallback mapping if drawing manager rejects a type.
+      const V1_FALLBACK = {
+        'ext-line': 'trend-line', 'trend-angle': 'trend-line', 'cross-line': 'horizontal-line', 'h-ray': 'horizontal-line',
+        'schiff-pitchfork': 'pitchfork', 'modified-schiff-pitchfork': 'pitchfork', 'inside-pitchfork': 'pitchfork',
+        'gann-grid': 'gann-box', 'gann-square-144': 'gann-box', 'gann-square': 'gann-box', 'gann-fan': 'gann-box',
+        'fib-arcs': 'fib-circle', 'fib-wedge': 'fib-fan',
+        'forecast': 'long-position', 'ghost-feed': 'long-position', 'fixed-range-volume-profile': 'rectangle',
+        'head-and-shoulders': 'polyline', 'triangle-pattern': 'triangle', 'three-drives': 'polyline', 'bar-pattern': 'rectangle',
+        'anchored-note': 'callout', 'arrow-mark': 'arrow', 'arrow-up': 'arrow', 'arrow-down': 'arrow',
+        'rotated-rectangle': 'rectangle', 'path-bezier': 'polyline', 'curve': 'arc', 'double-curve': 'arc',
+        'brush': 'polyline', 'highlighter': 'polyline',
+        'cyclic-lines': 'vertical-line', 'time-cycles': 'fib-circle', 'sine-line': 'polyline',
+      };
+
+      if (UNIFIED_MAP[id] && _ctx && _ctx.drawingMgr) {
+        closeToolMenu();
+        try {
+          let walker = ev.target;
+          let topToolId = null;
+          while (walker && walker !== document.body) {
+            if (walker.classList && walker.classList.contains('lb-btn') && walker.dataset && walker.dataset.tool) {
+              topToolId = walker.dataset.tool; break;
+            }
+            walker = walker.parentNode;
+          }
+          _ctx._lastToolbarToolId = topToolId || id;
+          let targetType = UNIFIED_MAP[id];
+          // If the active engine doesn't have this type, try V1 fallback
+          const mgrTypes = _ctx.drawingMgr.types || _ctx.drawingMgr._registry || null;
+          const hasType = mgrTypes ? !!mgrTypes[targetType] : true;
+          if (!hasType && V1_FALLBACK[targetType]) {
+            console.log('[drawing] type not available, falling back:', targetType, '→', V1_FALLBACK[targetType]);
+            targetType = V1_FALLBACK[targetType];
+          }
+          _ctx.drawingMgr.activate(targetType);
+        }
+        catch (e) { console.error('[drawing-system activate]', id, e); }
+        ev.stopPropagation();
+        return;
+      }
+
+      // Legacy fallbacks (for ids without unified mapping)
       if (id === 'trend-line') {
         closeToolMenu();
-        // Prefer the native lightweight-charts primitive trend line (imported from plugin examples).
-        if (_ctx && _ctx.nativeTrend) {
-          try { _ctx.nativeTrend.activate(); } catch (e) { console.warn('[trend-line] native failed, falling back', e); activateTrendlineMode(); }
-        } else {
-          activateTrendlineMode();
-        }
+        activateTrendlineMode();
         ev.stopPropagation();
         return;
       }
-      // Drawing-tools.js handlers (hline, fib, rect)
-      if (_dm && id === 'h-line') {
-        closeToolMenu();
-        _dm.activate('hline');
-        ev.stopPropagation();
-        return;
-      }
-      if (_dm && id === 'fib-ret') {
-        closeToolMenu();
-        _dm.activate('fib');
-        ev.stopPropagation();
-        return;
-      }
-      if (id === 'rect') {
-        closeToolMenu();
-        // Prefer native lightweight-charts primitive rectangle.
-        if (_ctx && _ctx.nativeRect) {
-          try { _ctx.nativeRect.activate(); } catch (e) { console.warn('[rect] native failed, falling back', e); if (_dm) _dm.activate('rect'); }
-        } else if (_dm) { _dm.activate('rect'); }
-        ev.stopPropagation();
-        return;
-      }
-      // === New advanced drawings (position-range, pitchfork-gann, elliott-text) ===
+
+      // === Old advanced drawing factories (kept for ids not in unified map) ===
       const ADV_MAP = {
         // Position / range tools (5th icon "predict")
         'long-pos':   { reg: 'position',  key: 'long' },
@@ -2554,6 +2937,8 @@ const DEFAULT_SETTINGS = {
   // Línea de estado
   ls_logo:       true,
   ls_title:      true,
+  ls_titleFormat:'name',
+  ls_bgOpacity:  60,
   ls_ohlc:       true,
   ls_changeBar:  true,
   ls_volume:     true,
@@ -2564,10 +2949,22 @@ const DEFAULT_SETTINGS = {
   ls_indValues:  true,
   ls_background: false,
   // Escalas y líneas
-  sc_currency:        true,
+  sc_currency:        'always',
   sc_scaleMode:       'normal',
   sc_lockRatio:       false,
-  sc_axisPosition:    'right',
+  sc_lockRatioVal:    '0.0078739',
+  sc_axisPosition:    'auto',
+  sc_symbolLabelMode: 'nvl',
+  sc_symbolColorUp:   '#089981',
+  sc_symbolColorDn:   '#f23645',
+  sc_symbolValueMode: 'scale',
+  sc_prevCloseMode:   'hidden',
+  sc_indDataMode:     'hidden',
+  sc_prePostMode:     'vl',
+  sc_prePostColorPre: '#fdb92c',
+  sc_prePostColorPost:'#0075ff',
+  sc_highLowMode:     'hidden',
+  sc_bidAskMode:      'hidden',
   sc_noOverlap:       true,
   sc_moreBtn:         true,
   sc_countdown:       false,
@@ -2612,10 +3009,15 @@ const DEFAULT_SETTINGS = {
   tr_extLines:        false,
   tr_order:           'price',
   tr_screenshots:     true,
+  tr_volume:          50,
+  tr_pnlMode:         'daily',
+  tr_posMode:         'daily',
   // Alertas
   al_lines:           true,
+  al_color:           '#f7525f',
   al_onlyActive:      false,
   al_sound:           true,
+  al_volume:          50,
   al_autoHide:        false,
   // Eventos
   ev_ideas:           true,
@@ -2625,6 +3027,7 @@ const DEFAULT_SETTINGS = {
   ev_earningsBreak:   false,
   ev_sessionBreak:    false,
   ev_news:            true,
+  ev_ideasRange:      '1m',
 };
 
 function loadSettings() {
@@ -2636,14 +3039,24 @@ function saveSettings(s) { lsSet(SETTINGS_LS, s); }
 let _settingsDraft = null;     // working copy during dialog
 let _settingsActiveTab = 'symbol';
 
+// SVG icons matching Figma sidebar tabs (real Figma assets, currentColor)
+const _CS_ICONS = {
+  symbol: '<svg viewBox="0 0 13 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 0H2V3H0.5C0.367392 3 0.240214 3.05268 0.146446 3.14645C0.052678 3.24021 0 3.36739 0 3.5V16.5C0 16.6326 0.052678 16.7598 0.146446 16.8536C0.240214 16.9473 0.367392 17 0.5 17H2V20H3V17H4.5C4.63261 17 4.75979 16.9473 4.85355 16.8536C4.94732 16.7598 5 16.6326 5 16.5V3.5C5 3.36739 4.94732 3.24021 4.85355 3.14645C4.75979 3.05268 4.63261 3 4.5 3H3V0ZM1 4V16H4V4H1ZM11 3H10V6H8.5C8.36739 6 8.24021 6.05268 8.14645 6.14645C8.05268 6.24021 8 6.36739 8 6.5V13.5C8 13.6326 8.05268 13.7598 8.14645 13.8536C8.24021 13.9473 8.36739 14 8.5 14H10V17H11V14H12.5C12.6326 14 12.7598 13.9473 12.8536 13.8536C12.9473 13.7598 13 13.6326 13 13.5V6.5C13 6.36739 12.9473 6.24021 12.8536 6.14645C12.7598 6.05268 12.6326 6 12.5 6H11V3ZM9 13V7H12V13H9Z" fill="currentColor"/></svg>',
+  status: '<svg viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2 1H16C16.2652 1 16.5196 1.10536 16.7071 1.29289C16.8946 1.48043 17 1.73478 17 2C17 2.26522 16.8946 2.51957 16.7071 2.70711C16.5196 2.89464 16.2652 3 16 3H2C1.73478 3 1.48043 2.89464 1.29289 2.70711C1.10536 2.51957 1 2.26522 1 2C1 1.73478 1.10536 1.48043 1.29289 1.29289C1.48043 1.10536 1.73478 1 2 1ZM0 2C0 0.9 0.9 0 2 0H16C16.5304 0 17.0391 0.210714 17.4142 0.585786C17.7893 0.960859 18 1.46957 18 2C18 2.53043 17.7893 3.03914 17.4142 3.41421C17.0391 3.78929 16.5304 4 16 4H2C1.46957 4 0.960859 3.78929 0.585786 3.41421C0.210714 3.03914 0 2.53043 0 2ZM13 7H1V8H13V7ZM13 11H1V12H13V11ZM1 15H13V16H1V15Z" fill="currentColor"/></svg>',
+  scales: '<svg viewBox="0 0 20.5607 20.5607" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.85355 16.7071C5.85355 17.1027 5.73626 17.4893 5.51649 17.8182C5.29673 18.1471 4.98437 18.4035 4.61892 18.5549C4.25347 18.7062 3.85133 18.7458 3.46337 18.6687C3.07541 18.5915 2.71904 18.401 2.43934 18.1213C2.15963 17.8416 1.96915 17.4852 1.89198 17.0973C1.81481 16.7093 1.85442 16.3072 2.00579 15.9417C2.15717 15.5763 2.41351 15.2639 2.74241 15.0442C3.07131 14.8244 3.45799 14.7071 3.85355 14.7071M5.85355 16.7071C5.85355 16.1767 5.64284 15.668 5.26777 15.2929C4.89269 14.9178 4.38399 14.7071 3.85355 14.7071M5.85355 16.7071H19.8536M3.85355 14.7071V0.707107M16.3536 20.2071L19.8536 16.7071L16.3536 13.2071M0.353553 4.20711L3.85355 0.707107L7.35355 4.20711" stroke="currentColor"/></svg>',
+  canvas: '<svg viewBox="0 0 18.002 18.002" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.967 0.00201894C14.5943 0.0275331 15.189 0.28813 15.633 0.732019L17.27 2.36902C17.76 2.85902 18.003 3.50102 18.002 4.14202C18.0011 4.80274 17.7386 5.43623 17.272 5.90402L16.484 6.69302L5.174 18.002H0V12.832L0.146 12.686L1.262 11.569L11.312 1.52102L12.097 0.734019C12.3412 0.489363 12.6334 0.297996 12.9553 0.172003C13.2771 0.0460109 13.6216 -0.011869 13.967 0.00201894ZM1.002 13.245V17.003H4.76L5.376 16.387L1.618 12.628L1.002 13.245ZM2.325 11.921L6.084 15.68L15.424 6.34002L11.666 2.58102L2.325 11.921ZM14.926 1.44002C14.7867 1.30063 14.6213 1.19005 14.4392 1.11461C14.2572 1.03917 14.0621 1.00034 13.865 1.00034C13.6679 1.00034 13.4728 1.03917 13.2908 1.11461C13.1087 1.19005 12.9433 1.30063 12.804 1.44002L12.371 1.87302L16.129 5.63102L16.564 5.19702C16.8448 4.91564 17.0024 4.53431 17.0022 4.13681C17.002 3.73931 16.844 3.35814 16.563 3.07702L14.926 1.44002Z" fill="currentColor"/></svg>',
+  trade:  '<svg viewBox="0 0 24.0112 16.0099" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.1439 12.2113C15.5948 12.5377 15.8975 13.0298 15.9856 13.5793C16.0736 14.1289 15.9397 14.691 15.6134 15.1418C15.287 15.5927 14.795 15.8954 14.2454 15.9835C13.6958 16.0715 13.1338 15.9377 12.6829 15.6113L8.00289 12.2523L3.32989 15.6093C2.87928 15.9359 2.31739 16.0702 1.76782 15.9825C1.21824 15.8948 0.726002 15.5924 0.399388 15.1418C0.0727736 14.6912 -0.0614621 14.1293 0.0262111 13.5797C0.113884 13.0302 0.416285 12.5379 0.866888 12.2113L8.00289 7.00432L15.1439 12.2113ZM1.45689 13.0193C1.3387 13.1057 1.23898 13.2148 1.16363 13.3403C1.08827 13.4658 1.03879 13.6051 1.0181 13.75C0.997409 13.8949 1.00593 14.0425 1.04316 14.1841C1.0804 14.3257 1.14558 14.4583 1.23489 14.5743C1.40887 14.8002 1.66377 14.9497 1.94583 14.9913C2.2279 15.0329 2.5151 14.9633 2.74689 14.7973L8.00289 11.0223L13.2659 14.7983C13.5025 14.9537 13.7899 15.0119 14.0683 14.9608C14.3467 14.9097 14.5946 14.7533 14.7607 14.524C14.9267 14.2948 14.9979 14.0104 14.9596 13.7299C14.9213 13.4495 14.7763 13.1946 14.5549 13.0183L8.00289 8.24132L1.45689 13.0193ZM20.6829 0.398318C21.1338 0.0721014 21.6957 -0.0616472 22.2452 0.0264949C22.7947 0.114637 23.2867 0.417449 23.6129 0.868317C23.9391 1.31919 24.0729 1.88118 23.9847 2.43066C23.8966 2.98014 23.5938 3.4721 23.1429 3.79832L16.0039 9.00432L8.86789 3.79732C8.41742 3.4707 8.11514 2.97852 8.02757 2.42904C7.93999 1.87955 8.07427 1.31779 8.40089 0.867318C8.7275 0.416847 9.21969 0.114574 9.76917 0.0269946C10.3187 -0.0605849 10.8804 0.0737035 11.3309 0.400318L16.0039 3.75632L20.6829 0.398318ZM22.7779 1.43332C22.6039 1.20744 22.349 1.05794 22.0669 1.01634C21.7849 0.974743 21.4977 1.04429 21.2659 1.21032L16.0029 4.98632L10.7469 1.21132C10.5151 1.04529 10.2279 0.975743 9.94584 1.01734C9.66377 1.05894 9.40888 1.20844 9.23489 1.43432C9.14558 1.5503 9.0804 1.68298 9.04316 1.82455C9.00593 1.96612 8.99741 2.1137 9.0181 2.25861C9.03879 2.40353 9.08827 2.54283 9.16363 2.66832C9.23898 2.79382 9.3387 2.90296 9.45689 2.98932L16.0029 7.76732L22.5549 2.98932C23.0539 2.62532 23.1549 1.92232 22.7779 1.43332Z" fill="currentColor"/></svg>',
+  alerts: '<svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><g transform="translate(3 4)"><path d="M4.83 0L0 4.95L1.08 6L5.9 1.04L4.83 0ZM17.17 0L22 4.95L20.93 6L16.1 1.04L17.17 0ZM10.5 11V6H12V12.5H7V11H10.5Z" fill="currentColor"/></g><g transform="translate(5 6)"><path fill-rule="evenodd" clip-rule="evenodd" d="M9 18C11.3869 18 13.6761 17.0518 15.364 15.364C17.0518 13.6761 18 11.3869 18 9C18 6.61305 17.0518 4.32387 15.364 2.63604C13.6761 0.948211 11.3869 0 9 0C6.61305 0 4.32387 0.948211 2.63604 2.63604C0.948211 4.32387 0 6.61305 0 9C0 11.3869 0.948211 13.6761 2.63604 15.364C4.32387 17.0518 6.61305 18 9 18ZM9 16.5C10.9891 16.5 12.8968 15.7098 14.3033 14.3033C15.7098 12.8968 16.5 10.9891 16.5 9C16.5 7.01088 15.7098 5.10322 14.3033 3.6967C12.8968 2.29018 10.9891 1.5 9 1.5C7.01088 1.5 5.10322 2.29018 3.6967 3.6967C2.29018 5.10322 1.5 7.01088 1.5 9C1.5 10.9891 2.29018 12.8968 3.6967 14.3033C5.10322 15.7098 7.01088 16.5 9 16.5Z" fill="currentColor"/></g></svg>',
+  events: '<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 2H13V0H14V2H15.5C16.163 2 16.7989 2.26339 17.2678 2.73223C17.7366 3.20107 18 3.83696 18 4.5V15.5C18 16.163 17.7366 16.7989 17.2678 17.2678C16.7989 17.7366 16.163 18 15.5 18H2.5C1.83696 18 1.20107 17.7366 0.732233 17.2678C0.263392 16.7989 0 16.163 0 15.5V4.5C0 3.83696 0.263392 3.20107 0.732233 2.73223C1.20107 2.26339 1.83696 2 2.5 2H4V0H5V2ZM1 15.5C1 15.8978 1.15804 16.2794 1.43934 16.5607C1.72064 16.842 2.10218 17 2.5 17H15.5C15.8978 17 16.2794 16.842 16.5607 16.5607C16.842 16.2794 17 15.8978 17 15.5V7H1V15.5ZM2.5 3C2.10218 3 1.72064 3.15804 1.43934 3.43934C1.15804 3.72064 1 4.10218 1 4.5V6H17V4.5C17 4.10218 16.842 3.72064 16.5607 3.43934C16.2794 3.15804 15.8978 3 15.5 3H14V4H13V3H5V4H4V3H2.5Z" fill="currentColor"/></svg>',
+};
 const SETTINGS_TABS = [
-  { id: 'symbol',   label: 'Símbolo',           icon: 'S' },
-  { id: 'status',   label: 'Línea de estado',   icon: 'E' },
-  { id: 'scales',   label: 'Escalas y líneas',  icon: 'X' },
-  { id: 'canvas',   label: 'Lienzo',            icon: 'L' },
-  { id: 'trade',    label: 'Comerciar',         icon: 'C' },
-  { id: 'alerts',   label: 'Alertas',           icon: 'A' },
-  { id: 'events',   label: 'Eventos',           icon: 'V' },
+  { id: 'symbol',   label: 'Símbolo',           icon: _CS_ICONS.symbol },
+  { id: 'status',   label: 'Línea de estado',   icon: _CS_ICONS.status },
+  { id: 'scales',   label: 'Escalas y líneas',  icon: _CS_ICONS.scales },
+  { id: 'canvas',   label: 'Lienzo',            icon: _CS_ICONS.canvas },
+  { id: 'trade',    label: 'Trading',           icon: _CS_ICONS.trade  },
+  { id: 'alerts',   label: 'Alertas',           icon: _CS_ICONS.alerts },
+  { id: 'events',   label: 'Eventos',           icon: _CS_ICONS.events },
 ];
 
 /* ----- Form-builder helpers (return HTML) ----- */
@@ -2668,6 +3081,19 @@ function _cs_num(key, min, max, step) {
   return `<input type="number" class="cs-num" data-csk="${key}" value="${v}" min="${min}" max="${max}" step="${step||1}"/>`;
 }
 function _cs_section(title) { return `<div class="cs-sec-title">${title}</div>`; }
+function _cs_chk_row(key, label, controlHtml) {
+  const v = _settingsDraft[key];
+  return `<div class="cs-chk-row"><label class="cs-chk"><input type="checkbox" data-csk="${key}" ${v?'checked':''}/><span class="cs-chkbox"></span><span class="cs-chk-l">${label}</span></label><div class="cs-chk-row-c">${controlHtml}</div></div>`;
+}
+function _cs_slider(key, min, max) {
+  const v = Number(_settingsDraft[key]) || 0;
+  const pct = Math.max(0, Math.min(100, ((v - min) / (max - min)) * 100));
+  return `<div class="cs-slider"><div class="cs-slider-fill" style="width:${pct}%"></div><input type="range" min="${min}" max="${max}" value="${v}" data-csk="${key}"/></div>`;
+}
+function _cs_chk_hint(key, label, hint) {
+  const v = _settingsDraft[key];
+  return `<label class="cs-chk cs-chk-hint"><input type="checkbox" data-csk="${key}" ${v?'checked':''}/><span class="cs-chkbox"></span><span class="cs-chk-l">${label}</span><span class="cs-hint" title="${hint}">?</span></label>`;
+}
 
 /* ----- Tab content builders ----- */
 function _settingsTabSymbol() {
@@ -2690,39 +3116,75 @@ function _settingsTabSymbol() {
   `;
 }
 function _settingsTabStatus() {
+  // Figma node 5:42722 — sections: INSTRUMENTOS (with "Nombre" select next to Título)
+  // and INDICADORES (with slider for Fondo, "Entradas de datos" indented under Títulos).
   return `
-    ${_cs_section('Instrumento')}
+    ${_cs_section('Instrumentos')}
     ${_cs_chk('ls_logo','Logo')}
-    ${_cs_chk('ls_title','Título')}
-    ${_cs_section('Valores del gráfico')}
-    ${_cs_chk('ls_ohlc','Valores OHLC en la barra')}
+    <div class="cs-chk-row">
+      ${_cs_chk('ls_title','Título')}
+      <div class="cs-chk-row-c">${_cs_select('ls_titleFormat', [['name','Nombre'],['ticker','Ticker'],['descr','Descripción']])}</div>
+    </div>
+    ${_cs_chk('ls_ohlc','Valores del gráfico')}
     ${_cs_chk('ls_changeBar','Valores de los cambios en la barra')}
     ${_cs_chk('ls_volume','Volumen')}
     ${_cs_chk('ls_changeDay','Valores del cambio del último día')}
     ${_cs_section('Indicadores')}
     ${_cs_chk('ls_indTitles','Títulos')}
-    ${_cs_chk('ls_indInputs','Entradas de datos')}
+    <div class="cs-chk-indent">${_cs_chk('ls_indInputs','Entradas de datos')}</div>
     ${_cs_chk('ls_indValues','Valores')}
-    ${_cs_chk('ls_background','Fondo')}
+    <div class="cs-chk-row">
+      ${_cs_chk('ls_background','Fondo')}
+      <div class="cs-chk-row-c"><div class="cs-slider"><div class="cs-slider-fill" style="width:60%"></div><input type="range" min="0" max="100" value="60" data-csk="ls_bgOpacity"/></div></div>
+    </div>
   `;
 }
 function _settingsTabScales() {
+  // Figma node 5:46973 — Escala de precios / Etiquetas y líneas de precios / Escala de tiempo.
+  const visOpts   = [['always','Siempre visible'],['hover','Visible al pasar el ratón'],['hidden','Oculto']];
+  const labelOpts = [['nvl','Nombre, Valor, Línea'],['vl','Valor, Línea'],['n','Nombre'],['v','Valor'],['hidden','Oculto']];
+  const valueScale = [['scale','Valor conforme a la escala'],['percent','Porcentual']];
   return `
     ${_cs_section('Escala de precios')}
-    ${_cs_chk('sc_currency','Mostrar divisa y unidad')}
+    ${_cs_row('Divisa y unidad', _cs_select('sc_currency', visOpts))}
     ${_cs_row('Modos de escala (A y L)', _cs_select('sc_scaleMode',[['normal','Normal'],['log','Logarítmica'],['percent','Porcentual'],['indexed','Indexada a 100']]))}
-    ${_cs_chk('sc_lockRatio','Bloquear la relación precio/barra')}
-    ${_cs_row('Colocación de escalas', _cs_select('sc_axisPosition',[['right','Derecha'],['left','Izquierda'],['both','Ambas'],['none','Ninguna']]))}
+    <div class="cs-chk-row">
+      ${_cs_chk('sc_lockRatio','Bloquear la relación precio/barra')}
+      <div class="cs-chk-row-c"><input type="text" class="cs-num cs-num-wide" data-csk="sc_lockRatioVal" value="0.0078739"/></div>
+    </div>
+    ${_cs_row('Colocación de escalas', _cs_select('sc_axisPosition',[['auto','Automático'],['right','Derecha'],['left','Izquierda'],['both','Ambas'],['none','Ninguna']]))}
     ${_cs_section('Etiquetas y líneas de precios')}
     ${_cs_chk('sc_noOverlap','Sin etiquetas superpuestas')}
     ${_cs_chk('sc_moreBtn','Botón "más"')}
     ${_cs_chk('sc_countdown','Cuenta atrás del cierre de barra')}
-    ${_cs_chk('sc_symbolLabel','Símbolo')}
-    ${_cs_chk('sc_prevClose','Cierre del día anterior')}
-    ${_cs_chk('sc_indDataLabels','Indicadores y datos financieros')}
-    ${_cs_chk('sc_prePostMarket','Previo a apertura y posterior al cierre de mercado')}
-    ${_cs_chk('sc_highLow','Máximo y mínimo')}
-    ${_cs_chk('sc_bidAsk','Compra y venta (bid/ask)')}
+    <div class="cs-chk-row">
+      ${_cs_chk('sc_symbolLabel','Símbolo')}
+      <div class="cs-chk-row-c">${_cs_select('sc_symbolLabelMode', labelOpts)}${_cs_color('sc_symbolColorUp')}${_cs_color('sc_symbolColorDn')}</div>
+    </div>
+    <div class="cs-chk-row cs-chk-row-sub">
+      <div class="cs-chk-sub-spacer"></div>
+      <div class="cs-chk-row-c">${_cs_select('sc_symbolValueMode', valueScale)}</div>
+    </div>
+    <div class="cs-chk-row">
+      ${_cs_chk('sc_prevClose','Cierre del día anterior')}
+      <div class="cs-chk-row-c">${_cs_select('sc_prevCloseMode', labelOpts)}</div>
+    </div>
+    <div class="cs-chk-row">
+      ${_cs_chk('sc_indDataLabels','Indicadores y datos financieros')}
+      <div class="cs-chk-row-c">${_cs_select('sc_indDataMode', labelOpts)}</div>
+    </div>
+    <div class="cs-chk-row">
+      ${_cs_chk('sc_prePostMarket','Previo a apertura y posterior al cierre de mercado')}
+      <div class="cs-chk-row-c">${_cs_select('sc_prePostMode', labelOpts)}${_cs_color('sc_prePostColorPre')}${_cs_color('sc_prePostColorPost')}</div>
+    </div>
+    <div class="cs-chk-row">
+      ${_cs_chk('sc_highLow','Máximo y mínimo')}
+      <div class="cs-chk-row-c">${_cs_select('sc_highLowMode', labelOpts)}</div>
+    </div>
+    <div class="cs-chk-row">
+      ${_cs_chk('sc_bidAsk','Compra y venta (bid/ask)')}
+      <div class="cs-chk-row-c">${_cs_select('sc_bidAskMode', labelOpts)}</div>
+    </div>
     ${_cs_section('Escala de tiempo')}
     ${_cs_chk('sc_dayOfWeek','Día de la semana en las etiquetas')}
     ${_cs_row('Formato de fecha', _cs_select('sc_dateFormat',[["dd MMM 'yy","dd MMM 'yy"],['yyyy-MM-dd','yyyy-MM-dd'],['MM/dd/yyyy','MM/dd/yyyy'],['dd/MM/yyyy','dd/MM/yyyy']]))}
@@ -2752,39 +3214,41 @@ function _settingsTabCanvas() {
   `;
 }
 function _settingsTabTrade() {
+  const pnlOpts = [['daily','Diarios'],['session','Sesión'],['total','Total']];
   return `
     ${_cs_section('General')}
-    ${_cs_chk('tr_buySellBtns','Botones de Compra/Venta','Muestra los botones de compra y venta directamente en el gráfico')}
-    ${_cs_chk('tr_oneClick','Operaciones con un solo clic','Emita, modifique o cancele órdenes sin confirmación')}
-    ${_cs_chk('tr_execSound','Sonido de ejecución')}
+    ${_cs_chk_hint('tr_buySellBtns','Botones de Compra/Venta','Muestra los botones de compra y venta directamente en el gráfico')}
+    ${_cs_chk_hint('tr_oneClick','Operaciones con un solo clic','Emita, modifique o cancele órdenes sin confirmación')}
+    ${_cs_chk_row('tr_execSound','Sonido de ejecución', _cs_slider('tr_volume',0,100))}
     ${_cs_chk('tr_onlyRejects','Mostrar solo notificaciones de rechazo')}
     ${_cs_section('Apariencia')}
-    ${_cs_chk('tr_revBtn','Botón de reversión de posición','Añade el botón de revertir junto a la posición abierta en el gráfico')}
-    ${_cs_chk('tr_marketProj','Proyección de órdenes de mercado','Muestra una orden proyectada en el gráfico antes de enviarla')}
-    ${_cs_chk('tr_pnl','Valor de ganancias y pérdidas')}
-    ${_cs_chk('tr_positions','Posiciones')}
-    ${_cs_chk('tr_brackets','Corchetes')}
+    ${_cs_chk('tr_positions','Posiciones y órdenes')}
+    <div class="cs-chk-indent">${_cs_chk_hint('tr_revBtn','Botón de reversión de posición','Añade el botón de revertir junto a la posición abierta en el gráfico')}</div>
+    <div class="cs-chk-indent">${_cs_chk_hint('tr_marketProj','Proyección de órdenes de mercado','Muestra una orden proyectada en el gráfico antes de enviarla')}</div>
+    ${_cs_chk_row('tr_pnl','Valor de ganancias y pérdidas', _cs_select('tr_pnlMode', pnlOpts))}
+    ${_cs_chk_row('tr_brackets','Corchetes', _cs_select('tr_posMode', pnlOpts))}
     ${_cs_chk('tr_execMarks','Marcas de ejecución')}
     ${_cs_chk('tr_execLabels','Etiquetas de ejecución')}
     ${_cs_chk('tr_extLines','Líneas de precios extendidas a lo largo de todo el ancho del gráfico')}
     ${_cs_row('Orden y alineación de posiciones', _cs_select('tr_order',[['price','Por precio'],['time','Por tiempo'],['type','Por tipo']]))}
-    ${_cs_chk('tr_screenshots','Órdenes, ejecuciones y posiciones en capturas de gráficos','Muestra sus operaciones en el gráfico mediante imágenes')}
+    ${_cs_chk_hint('tr_screenshots','Órdenes, ejecuciones y posiciones en capturas de gráficos','Muestra sus operaciones en el gráfico mediante imágenes')}
   `;
 }
 function _settingsTabAlerts() {
   return `
     ${_cs_section('Visibilidad de la línea del gráfico')}
-    ${_cs_chk('al_lines','Líneas de alerta')}
+    ${_cs_chk_row('al_lines','Líneas de alerta', _cs_color('al_color'))}
     ${_cs_chk('al_onlyActive','Solo alertas activas')}
     ${_cs_section('Notificaciones')}
-    ${_cs_chk('al_sound','Volumen de alertas')}
-    ${_cs_chk('al_autoHide','Ocultar automáticamente los avisos')}
+    ${_cs_chk_row('al_sound','Volumen de alertas', _cs_slider('al_volume',0,100))}
+    ${_cs_chk_hint('al_autoHide','Ocultar automáticamente los avisos','Oculta el aviso tras un tiempo')}
   `;
 }
 function _settingsTabEvents() {
+  const rangeOpts = [['1w','1 semana'],['1m','1 mes'],['3m','3 meses'],['6m','6 meses'],['1y','1 año'],['all','Todo']];
   return `
     ${_cs_section('Eventos')}
-    ${_cs_chk('ev_ideas','Ideas')}
+    ${_cs_chk_row('ev_ideas','Ideas', _cs_select('ev_ideasRange', rangeOpts))}
     ${_cs_chk('ev_dividends','Dividendos')}
     ${_cs_chk('ev_splits','Splits')}
     ${_cs_chk('ev_earnings','Beneficios')}
@@ -2813,7 +3277,7 @@ function _renderSettingsBody() {
   const content = SETTINGS_TAB_BUILDERS[_settingsActiveTab]();
   return `
     <div class="cs-head">
-      <div class="cs-title">Opciones de configuración del gráfico</div>
+      <div class="cs-title">Opciones de configuración</div>
       <button class="cs-x" id="csX" title="Cerrar" aria-label="Cerrar">
         <svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4 L14 14 M14 4 L4 14" stroke-linecap="round"/></svg>
       </button>
@@ -2823,7 +3287,7 @@ function _renderSettingsBody() {
       <section class="cs-content" id="csContent">${content}</section>
     </div>
     <div class="cs-foot">
-      <button class="cs-btn cs-btn-ghost" id="csTpl">Plantilla</button>
+      <button class="cs-btn cs-btn-tpl" id="csTpl">Plantilla</button>
       <div class="cs-foot-r">
         <button class="cs-btn cs-btn-ghost" id="csCancel">Cancelar</button>
         <button class="cs-btn cs-btn-primary" id="csOk">Aceptar</button>
@@ -2937,13 +3401,20 @@ function applySettings(s, persist) {
       rightPriceScale: {
         borderColor: s.ca_scales,
         textColor:   s.ca_text,
-        visible:     s.sc_axisPosition === 'right' || s.sc_axisPosition === 'both',
+        // 'auto' (default) and undefined → keep right axis visible. Only
+        // explicit 'left' or 'none' hides it.
+        visible: s.sc_axisPosition !== 'left' && s.sc_axisPosition !== 'none',
+        borderVisible: true,
+        ticksVisible: true,
       },
       leftPriceScale: {
-        visible:     s.sc_axisPosition === 'left' || s.sc_axisPosition === 'both',
+        visible: s.sc_axisPosition === 'left' || s.sc_axisPosition === 'both',
       },
       timeScale: {
         borderColor: s.ca_scales,
+        visible: true,
+        borderVisible: true,
+        timeVisible: true,
       },
     });
 
@@ -3333,6 +3804,76 @@ function applyIndicator(entry, persist = true) {
   } else if (entry.id === 'volosc') {
     const data = VolumeOscillator(candles, entry.params?.fast ?? 5, entry.params?.slow ?? 10);
     const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  }
+  /* ───── KLineChart-compatible additions ───── */
+  else if (entry.id === 'brar') {
+    const { ar, br } = BRAR(candles, entry.params?.period ?? 26);
+    const sAr = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    const sBr = _chart.addSeries(LineSeries, lineOpts('#ec407a', 1.5), paneIndex);
+    sAr.setData(ar); sBr.setData(br);
+    seriesList.push(sAr, sBr);
+    valueByTime.ar = new Map(ar.map(d => [d.time, d.value]));
+    valueByTime.br = new Map(br.map(d => [d.time, d.value]));
+  } else if (entry.id === 'cr') {
+    const data = CR(candles, entry.params?.period ?? 26);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'psy') {
+    const data = PSY(candles, entry.params?.period ?? 12);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    s.createPriceLine({ price: 75, color: '#888', lineStyle: LineStyle.Dashed, lineWidth: 1, axisLabelVisible: false });
+    s.createPriceLine({ price: 25, color: '#888', lineStyle: LineStyle.Dashed, lineWidth: 1, axisLabelVisible: false });
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'emv') {
+    const data = EMV(candles, entry.params?.period ?? 14);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'pvt') {
+    const data = PVT(candles);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'vr') {
+    const data = VR(candles, entry.params?.period ?? 26);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'wr') {
+    const data = WR(candles, entry.params?.period ?? 14);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    s.createPriceLine({ price: -20, color: '#888', lineStyle: LineStyle.Dashed, lineWidth: 1, axisLabelVisible: false });
+    s.createPriceLine({ price: -80, color: '#888', lineStyle: LineStyle.Dashed, lineWidth: 1, axisLabelVisible: false });
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'bbi') {
+    const data = BBI(candles, entry.params?.p1 ?? 3, entry.params?.p2 ?? 6, entry.params?.p3 ?? 12, entry.params?.p4 ?? 24);
+    const s = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    s.setData(data);
+    seriesList.push(s);
+    valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
+  } else if (entry.id === 'dma') {
+    const { dif, dma } = DMA(candles, entry.params?.short ?? 10, entry.params?.long ?? 50, entry.params?.mDma ?? 10);
+    const sDif = _chart.addSeries(LineSeries, lineOpts(entry.color, 1.5), paneIndex);
+    const sDma = _chart.addSeries(LineSeries, lineOpts('#ec407a', 1.2), paneIndex);
+    sDif.setData(dif); sDma.setData(dma);
+    seriesList.push(sDif, sDma);
+    valueByTime.dif = new Map(dif.map(d => [d.time, d.value]));
+    valueByTime.dma = new Map(dma.map(d => [d.time, d.value]));
+  } else if (entry.id === 'ao') {
+    const data = AwesomeOscillator(candles, entry.params?.fast ?? 5, entry.params?.slow ?? 34);
+    const s = _chart.addSeries(HistogramSeries, { priceFormat: { type: 'price', precision: 4, minMove: 0.0001 }, priceLineVisible: false, lastValueVisible: false }, paneIndex);
     s.setData(data);
     seriesList.push(s);
     valueByTime.primary = new Map(data.map(d => [d.time, d.value]));
@@ -4300,35 +4841,56 @@ function closeAllPops() {
 
 const IND_FAV_KEY = 'tv.favIndicators';
 
-// Sidebar mirrors Figma layout (Personal/Integrado/Comunidad sections).
-// "Personal" = Favoritos + custom buckets; "Integrado" = built-in categories;
-// "Comunidad" = community scripts (placeholders, like Figma original).
+// Sidebar mirrors Figma node 5:31470 (Personal / Integrado / Comunidad).
 const IND_SIDEBAR = [
   { header: 'Personal', items: [
-    { id: 'favs',       label: 'Favoritos' },
-    { id: 'mine',       label: 'Mis scripts' },
-    { id: 'recent',     label: 'Recientes' },
-    { id: 'invitations',label: 'Solo por invitación' },
+    { id: 'favs',        label: 'Favoritos',           icon: 'star' },
+    { id: 'mine',        label: 'Mis scripts',         icon: 'person' },
+    { id: 'invitations', label: 'Requiere invitación', icon: 'people' },
+    { id: 'purchased',   label: 'Comprados',           icon: 'bag' },
   ]},
   { header: 'Integrado', items: [
-    { id: 'tech',       label: 'Bases técnicas' },
-    { id: 'fin',        label: 'Financieros' },
+    { id: 'tech',        label: 'Datos técnicos',      icon: 'line' },
+    { id: 'fin',         label: 'Datos fundamentales', icon: 'bars' },
   ]},
   { header: 'Comunidad', items: [
-    { id: 'editor',     label: 'Selección del editor' },
-    { id: 'community',  label: 'Scripts de la comunidad' },
-    { id: 'volumeProf', label: 'Perfil de volumen' },
-    { id: 'candles',    label: 'Patrones de velas' },
+    { id: 'editor',      label: 'Selecciones de los editores', icon: 'bookmark' },
+    { id: 'top',         label: 'Parte superior',      icon: 'rocket' },
+    { id: 'trending',    label: 'Tendencias',          icon: 'flame' },
+    { id: 'store',       label: 'Tienda',              icon: 'store' },
   ]},
 ];
 
-// Top tabs as per Figma (Bases técnicas / Estrategias tabs)
+// Top tabs per Figma node 5:31566 (Indicadores / Estrategias / Perfiles / Patrones).
 const IND_TOP_TABS = [
-  { id: 'indicators', label: 'Indicadores técnicos' },
+  { id: 'indicators', label: 'Indicadores' },
   { id: 'strategies', label: 'Estrategias' },
   { id: 'profiles',   label: 'Perfiles' },
   { id: 'patterns',   label: 'Patrones' },
 ];
+
+// Badges Figma (frames 5:27442 / 5:22002): "New" en naranja, "Updated" en azul.
+const _IND_BADGES = {
+  aroon: 'new',
+  macd: 'updated',
+};
+
+// Sidebar ids con label "Nombre del script" en cabecera de lista (Figma 5:22002).
+const _IND_SCRIPT_HEADER_IDS = new Set(['favs', 'mine', 'invitations', 'purchased']);
+
+// Inline SVG icons for sidebar items (18px viewBox, currentColor stroke).
+const _IND_ICONS = {
+  star:    '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9 2 l2.18 4.42 4.88.71 -3.53 3.44 .83 4.85 L9 13.14 4.64 15.42 5.47 10.57 1.94 7.13 6.82 6.42 Z"/></svg>',
+  person:  '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3 16 c1.5-3 4-4 6-4 s4.5 1 6 4"/></svg>',
+  people:  '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="12.5" cy="7" r="2"/><path d="M2 15 c1-2.5 3-3.5 4.5-3.5 s3.5 1 4.5 3.5"/><path d="M11 14 c.6-2 2.2-2.8 3.5-2.8 s1.7.4 2 1.2"/></svg>',
+  bag:     '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3.5 6 h11 l-1 9 h-9 Z"/><path d="M6.5 6 v-1.5 a2.5 2.5 0 0 1 5 0 V6"/></svg>',
+  line:    '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14 L6 9 L9 11 L12 6 L16 10"/><circle cx="6" cy="9" r="1" fill="currentColor"/><circle cx="9" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="6" r="1" fill="currentColor"/></svg>',
+  bars:    '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M3 15 v-5"/><path d="M7 15 v-9"/><path d="M11 15 v-7"/><path d="M15 15 v-11"/></svg>',
+  bookmark:'<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M5 2.5 h8 v13 l-4-3 -4 3 Z"/></svg>',
+  rocket:  '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2 c2 1 4 3 5 5 l-5 5 l-3-3 Z"/><path d="M6.5 11.5 L3 15"/><path d="M5 8 c-1 .5-2 1.5-2.5 3"/></svg>',
+  flame:   '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9 2 c1 3 4 4 4 7.5 a4 4 0 0 1 -8 0 c0-2 1.5-3 2-4.5 c1 1 1.5 2 2-3 Z"/></svg>',
+  store:   '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 7 v8 h12 v-8"/><path d="M2 4 h14 l-1 3 h-12 Z"/><path d="M7 15 v-4 h4 v4"/></svg>',
+};
 
 // Map each Figma category (label in sidebar) → filter over INDICATOR_CATALOG
 function _indFilterFor(sidebarId) {
@@ -4340,13 +4902,13 @@ function _indFilterFor(sidebarId) {
     case 'tech':
       return INDICATOR_CATALOG.slice();
     case 'mine':
-    case 'recent':
     case 'invitations':
+    case 'purchased':
     case 'fin':
     case 'editor':
-    case 'community':
-    case 'volumeProf':
-    case 'candles':
+    case 'top':
+    case 'trending':
+    case 'store':
       return []; // empty state for non-built-in buckets
     default:
       return INDICATOR_CATALOG.slice();
@@ -4409,7 +4971,7 @@ function openIndicatorsModal() {
       <aside class="ind-m-side" id="indMSide">${_indRenderSidebar()}</aside>
       <section class="ind-m-main">
         <div class="ind-m-tabs" id="indMTabs">${_indRenderTopTabs()}</div>
-        <div class="ind-m-list-head"><span>Nombre del script</span></div>
+        <div class="ind-m-list-head" id="indMListHead"><span>Nombre</span></div>
         <div class="ind-m-list" id="indMList"></div>
       </section>
     </div>
@@ -4451,21 +5013,20 @@ function openIndicatorsModal() {
     _indRenderList();
   });
 
-  // Wire list (delegated)
+  // Wire list (delegated) — Figma row: pin (favorito) + row click (aplicar indicador)
   m.querySelector('#indMList').addEventListener('click', (ev) => {
-    const star = ev.target.closest('.ind-m-star');
-    if (star) {
+    const pin = ev.target.closest('.ind-m-pin');
+    if (pin) {
       ev.stopPropagation();
-      const id = star.dataset.id;
+      const id = pin.dataset.id;
       const now = _indToggleFav(id);
-      star.classList.toggle('is-on', now);
+      pin.classList.toggle('is-on', now);
       if (_indState.sidebar === 'favs') _indRenderList();
       return;
     }
-    const add = ev.target.closest('.ind-m-add');
     const row = ev.target.closest('.ind-m-row');
-    if (add || row) {
-      const id = (add || row).dataset.id;
+    if (row) {
+      const id = row.dataset.id;
       const meta = INDICATOR_CATALOG.find(x => x.id === id);
       if (!meta) return;
       applyIndicator({ id, params: { ...meta.defaults } });
@@ -4487,16 +5048,16 @@ function closeIndicatorsModal() {
    ======================================================================== */
 
 const COMPARE_RECENT_SYMBOLS = [
-  { sym: 'IXIC',   desc: 'NASDAQ Composite Index',          exch: 'NASDAQ', type: 'index' },
+  { sym: 'NVDA',   desc: 'NVIDIA Corporation',              exch: 'NASDAQ', type: 'stock' },
   { sym: 'USDCAD', desc: 'US Dollar/Canadian Dollar',       exch: 'FXCM',   type: 'forex' },
-  { sym: 'EURCHF', desc: 'Euro/Swiss Franc',                exch: 'FXCM',   type: 'forex' },
+  { sym: 'EURGBP', desc: 'Euro/British Pound',              exch: 'FXCM',   type: 'forex' },
   { sym: 'USDCHF', desc: 'US Dollar/Swiss Franc',           exch: 'FXCM',   type: 'forex' },
-  { sym: 'SPX',    desc: 'S&P 500',                         exch: 'SPCFD',  type: 'index' },
-  { sym: 'NDQ',    desc: 'US 100 Index',                    exch: 'TVC',    type: 'index' },
+  { sym: 'SPX',    desc: 'S&P 500 Index',                   exch: 'SPCFD',  type: 'index' },
+  { sym: 'NVS',    desc: 'Novartis AG',                     exch: 'NYSE',   type: 'stock' },
+  { sym: 'AUDUSD', desc: 'Australian Dollar/US Dollar',     exch: 'FXCM',   type: 'forex' },
+  { sym: 'NZDUSD', desc: 'New Zealand Dollar/US Dollar',    exch: 'FXCM',   type: 'forex' },
   { sym: 'DJI',    desc: 'Dow Jones Industrial Average Index', exch: 'DJCFD', type: 'index' },
-  { sym: 'NI225',  desc: 'Japan 225 Index',                 exch: 'TVC',    type: 'index' },
-  { sym: 'DEU40',  desc: 'GERMAN STOCK INDEX (DAX)',        exch: 'XETR',   type: 'index' },
-  { sym: 'UKX',    desc: 'UK 100 INDEX',                    exch: 'FTSE',   type: 'index' },
+  { sym: 'DEU40',  desc: 'Germany 40 Index (DAX)',          exch: 'XETR',   type: 'index' },
 ];
 
 function openCompareModal() {
@@ -4623,17 +5184,25 @@ function _cmpRenderActive() {
   `;
 }
 
+const _CMP_TYPE_LABELS = {
+  forex:  'forex pair',
+  index:  'index',
+  stock:  'stock',
+  crypto: 'crypto',
+};
+
 function _cmpRenderRow(r) {
   const initial = r.sym.charAt(0).toUpperCase();
+  const typeLabel = _CMP_TYPE_LABELS[r.type] || r.type;
   return `
-    <div class="cmp-m-row" data-sym="${r.sym}" role="button" tabindex="0">
+    <div class="cmp-m-row" data-sym="${r.sym}" data-type="${r.type}" role="button" tabindex="0">
       <div class="cmp-m-row-logo"><span>${initial}</span></div>
       <div class="cmp-m-row-info">
         <div class="cmp-m-row-sym">${r.sym}</div>
         <div class="cmp-m-row-desc">${r.desc}</div>
       </div>
       <div class="cmp-m-row-exch">${r.exch}</div>
-      <div class="cmp-m-row-type">${r.type}</div>
+      <div class="cmp-m-row-type">${typeLabel}</div>
     </div>
   `;
 }
@@ -4644,6 +5213,7 @@ function _indRenderSidebar() {
       <div class="ind-m-side-title">${sec.header}</div>
       ${sec.items.map(it => `
         <div class="ind-m-side-item ${it.id === _indState.sidebar ? 'is-active' : ''}" data-id="${it.id}">
+          <span class="ind-m-side-icon">${_IND_ICONS[it.icon] || ''}</span>
           <span class="ind-m-side-label">${it.label}</span>
         </div>
       `).join('')}
@@ -4720,6 +5290,13 @@ function _indRenderList() {
     );
   }
 
+  // Header de columna dinámico (debe actualizarse incluso si la lista está vacía).
+  const headEl = document.getElementById('indMListHead');
+  if (headEl && headEl.firstElementChild) {
+    headEl.firstElementChild.textContent =
+      _IND_SCRIPT_HEADER_IDS.has(_indState.sidebar) ? 'Nombre del script' : 'Nombre';
+  }
+
   if (!items.length) {
     const msg = _indState.sidebar === 'favs'
       ? 'No tienes indicadores en Favoritos. Marca la estrella en la lista de Bases técnicas.'
@@ -4729,19 +5306,22 @@ function _indRenderList() {
   }
 
   const favs = _indReadFavs();
-  list.innerHTML = items.map(i => `
+  list.innerHTML = items.map(i => {
+    const badge = _IND_BADGES[i.id];
+    const isFav = favs.includes(i.id);
+    return `
     <div class="ind-m-row" data-id="${i.id}">
-      <button class="ind-m-star ${favs.includes(i.id) ? 'is-on' : ''}" data-id="${i.id}" title="Favorito" aria-label="Favorito">
-        <svg viewBox="0 0 18 18" width="16" height="16">
-          <path d="M9 1.7 l2.18 4.42 4.88.71 -3.53 3.44 .83 4.85 L9 12.84 4.64 15.12 5.47 10.27 1.94 6.83 6.82 6.12 Z"
-                fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/>
+      <span class="ind-m-name">${i.name}</span>
+      ${badge ? `<span class="ind-m-badge is-${badge}">${badge === 'new' ? 'New' : 'Updated'}</span>` : ''}
+      <button class="ind-m-pin ${isFav ? 'is-on' : ''}" data-id="${i.id}" title="Anclar a favoritos" aria-label="Anclar a favoritos">
+        <svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11.5 2 L16 6.5 L13.5 7.5 L13 11 L7 5 L10.5 4.5 Z"/>
+          <path d="M7 5 L2.5 13.5 L3.5 14.5 L9 11"/>
         </svg>
       </button>
-      <span class="ind-m-name">${i.name}</span>
-      <span class="ind-m-cat">${i.category}</span>
-      <button class="ind-m-add" data-id="${i.id}" title="Añadir al gráfico" aria-label="Añadir">+</button>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 /* =========================================================================
@@ -5481,6 +6061,49 @@ function wireTopbar() {
     if (tm && tm.style.display === 'block') { closeToolMenu(); return; }
     openToolMenu('magnet', ev.currentTarget);
   });
+
+  // Trash icon → eliminate ALL drawings (with confirmation + diagnostic breakdown)
+  document.querySelector('.lb-btn[data-tool="trash"]')?.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    const mgr = _ctx && _ctx.drawingMgr;
+    const list = mgr ? (mgr.list?.() || []) : [];
+    const count = list.length;
+    if (count === 0) { _showToast?.('No hay dibujos para eliminar'); return; }
+    // Breakdown by type for diagnostic
+    const breakdown = list.reduce((acc, d) => { acc[d.type] = (acc[d.type]||0) + 1; return acc; }, {});
+    const types = Object.entries(breakdown).map(([t,n]) => `${t} (${n})`).join(', ');
+    console.log('[drawings on chart]', breakdown);
+    if (confirm(`¿Eliminar los ${count} dibujo${count===1?'':'s'} del gráfico?\n\n${types}`)) {
+      try {
+        mgr.removeAll();
+        // Also purge legacy storage keys just in case
+        localStorage.removeItem('tv.drawings_dm');
+        localStorage.removeItem('tv.drawings_native_trend');
+        localStorage.removeItem('tv.drawings_native_rect');
+        _showToast?.(`${count} dibujo${count===1?'':'s'} eliminado${count===1?'':'s'}`);
+      } catch (e) { console.error('[trash]', e); }
+    }
+  });
+
+  // Global diagnostic: expose helper to inspect drawings
+  try {
+    window.tvDiagnoseDrawings = () => {
+      const arr = JSON.parse(localStorage.getItem('tv.drawings_v3') || '[]');
+      console.table(arr.map(d => ({ type: d.type, points: d.points?.length, color: d.options?.color, locked: d.options?.locked })));
+      console.log('Total drawings:', arr.length);
+      const counts = arr.reduce((a, d) => { a[d.type] = (a[d.type] || 0) + 1; return a; }, {});
+      console.log('By type:', counts);
+      return arr;
+    };
+    window.tvClearAllDrawings = () => {
+      localStorage.removeItem('tv.drawings_v3');
+      localStorage.removeItem('tv.drawings_dm');
+      localStorage.removeItem('tv.drawings_native_trend');
+      localStorage.removeItem('tv.drawings_native_rect');
+      localStorage.removeItem('tv.drawings_migrated_v3');
+      location.reload();
+    };
+  } catch {}
 
   // Search palette (lightning bolt)
   document.getElementById('searchPaletteBtn')?.addEventListener('click', (ev) => {
@@ -6724,9 +7347,173 @@ export function renderChartView(container) {
   if (_clockId) clearInterval(_clockId);
   _clockId = startClock();
 
-  document.querySelector('.h-btn')?.addEventListener('click', () => {
-    window.location.hash = '#/';
+  document.querySelector('.h-btn')?.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    openUserMenu(ev.currentTarget);
   });
+}
+
+/* =========================================================================
+   USER MENU DROPDOWN (TradingView-style, opens from H avatar top-left)
+   ========================================================================= */
+function openUserMenu(anchorEl) {
+  const existing = document.getElementById('userMenuPop');
+  if (existing) { existing.remove(); return; }
+
+  const t = (k, d) => { try { return JSON.parse(localStorage.getItem('tv.userMenu') || '{}')[k] ?? d; } catch { return d; } };
+  const setT = (k, v) => { try { const o = JSON.parse(localStorage.getItem('tv.userMenu') || '{}'); o[k] = v; localStorage.setItem('tv.userMenu', JSON.stringify(o)); } catch {} };
+
+  const darkOn = t('darkTheme', true);
+  const drawingPanelOn = t('drawingPanel', true);
+  const lang = t('lang', 'Español');
+
+  const pop = document.createElement('div');
+  pop.id = 'userMenuPop';
+  pop.className = 'tool-menu';
+  pop.style.cssText = 'position:fixed;left:46px;top:6px;width:300px;padding:0';
+  pop.innerHTML = `
+    <style>
+      #userMenuPop .um-head { padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2e2e2e }
+      #userMenuPop .um-tv-logo { width:22px;height:22px;background:var(--azure-58,#2962ff);color:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:var(--font-ui) }
+      #userMenuPop .um-tv-title { font-weight:600;color:var(--grey-86,#d1d4dc);font-size:14px;font-family:var(--font-ui) }
+      #userMenuPop .um-row { display:flex;align-items:center;padding:8px 12px;gap:10px;cursor:pointer;color:var(--grey-86,#d1d4dc);font-size:13px;line-height:18px }
+      #userMenuPop .um-row:hover { background:var(--azure-58,#2962ff);color:#fff }
+      #userMenuPop .um-row:hover .um-icon,
+      #userMenuPop .um-row:hover .um-meta,
+      #userMenuPop .um-row:hover .um-arrow { color:#fff }
+      #userMenuPop .um-icon { display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;color:var(--grey-55,#787b86);flex-shrink:0 }
+      #userMenuPop .um-icon svg { width:20px;height:20px }
+      #userMenuPop .um-label { flex:1 }
+      #userMenuPop .um-meta { color:var(--grey-55,#787b86);font-size:12px;display:flex;align-items:center;gap:6px }
+      #userMenuPop .um-arrow { color:var(--grey-55,#787b86);font-size:14px }
+      #userMenuPop .um-badge { background:#f23645;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:600;min-width:20px;text-align:center }
+      #userMenuPop .um-divider { height:1px;background:#2e2e2e;margin:4px 0 }
+      #userMenuPop .um-row.user-row .um-icon { background:#7e57c2;color:#fff;border-radius:50%;font-weight:600;font-size:12px }
+      #userMenuPop .um-row.user-row:hover .um-icon { background:#7e57c2;color:#fff }
+      #userMenuPop .um-row.logout { color:#f23645 }
+      #userMenuPop .um-row.logout .um-icon { color:#f23645 }
+      #userMenuPop .um-row.logout:hover { background:#f23645;color:#fff }
+      #userMenuPop .um-row.logout:hover .um-icon { color:#fff }
+    </style>
+    <div class="um-head">
+      <div class="um-tv-logo">tv</div>
+      <div class="um-tv-title">TradingView</div>
+    </div>
+
+    <div class="um-row user-row" data-action="profile">
+      <div class="um-icon">H</div>
+      <div class="um-label">Hectorvidal</div>
+      <div class="um-arrow">›</div>
+    </div>
+
+    <div class="um-row" data-action="home">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></div>
+      <div class="um-label">Inicio</div>
+    </div>
+    <div class="um-row" data-action="help">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r="0.7" fill="currentColor"/></svg></div>
+      <div class="um-label">Centro de ayuda</div>
+    </div>
+    <div class="um-row" data-action="support">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+      <div class="um-label">Solicitudes de asistencia</div>
+    </div>
+    <div class="um-row" data-action="news">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+      <div class="um-label">Novedades</div>
+      <div class="um-badge">11</div>
+    </div>
+
+    <div class="um-divider"></div>
+
+    <div class="um-row" data-toggle="darkTheme">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5 7 7 0 0 0 20.5 14.5z"/></svg></div>
+      <div class="um-label">Tema Oscuro</div>
+      <span class="tm-toggle${darkOn ? ' on' : ''}" data-tk="darkTheme"></span>
+    </div>
+    <div class="um-row" data-toggle="drawingPanel">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="18" rx="1"/><rect x="11" y="3" width="10" height="18" rx="1"/></svg></div>
+      <div class="um-label">Panel de dibujos</div>
+      <span class="tm-toggle${drawingPanelOn ? ' on' : ''}" data-tk="drawingPanel"></span>
+    </div>
+    <div class="um-row" data-action="lang">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div>
+      <div class="um-label">Idioma</div>
+      <div class="um-meta">${lang} <span class="um-arrow">›</span></div>
+    </div>
+    <div class="um-row" data-action="hotkeys">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg></div>
+      <div class="um-label">Teclas de acceso rápido</div>
+      <div class="um-meta">Ctrl + /</div>
+    </div>
+    <div class="um-row" data-action="desktop">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+      <div class="um-label">Descargar la aplicación de escritorio</div>
+      <div class="um-arrow">↗</div>
+    </div>
+
+    <div class="um-divider"></div>
+
+    <div class="um-row logout" data-action="logout">
+      <div class="um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></div>
+      <div class="um-label">Cerrar sesión</div>
+    </div>
+  `;
+  document.body.appendChild(pop);
+
+  // Toggles
+  pop.querySelectorAll('[data-toggle]').forEach(row => {
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const key = row.dataset.toggle;
+      const tog = row.querySelector('.um-toggle');
+      const wasOff = tog.classList.contains('off');
+      tog.classList.toggle('off');
+      setT(key, wasOff);
+      if (key === 'darkTheme') {
+        document.documentElement.classList.toggle('light-theme', !wasOff);
+        _showToast?.(wasOff ? 'Tema oscuro activado' : 'Tema claro activado');
+      }
+      if (key === 'drawingPanel') {
+        const lb = document.querySelector('.leftbar');
+        if (lb) lb.style.display = wasOff ? '' : 'none';
+      }
+    });
+  });
+
+  // Actions
+  pop.querySelectorAll('[data-action]').forEach(row => {
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const a = row.dataset.action;
+      switch (a) {
+        case 'profile':  _showToast?.('Perfil de usuario — próximamente'); break;
+        case 'home':     window.location.hash = '#/'; break;
+        case 'help':     window.location.hash = '#/calculators'; break;
+        case 'support':  _showToast?.('Solicitudes de asistencia — próximamente'); break;
+        case 'news':     window.location.hash = '#/news'; break;
+        case 'lang':     _showToast?.('Selector de idioma — próximamente'); break;
+        case 'hotkeys':  _showToast?.('Atajos: Alt+T trend · Alt+H hline · Alt+V vline · Alt+F fib · Ctrl+S screenshot'); break;
+        case 'desktop':  _showToast?.('Descarga de app de escritorio — próximamente'); break;
+        case 'logout':   if (confirm('¿Cerrar sesión?')) { localStorage.clear(); location.reload(); } break;
+      }
+      pop.remove();
+    });
+  });
+
+  // Close on outside click / Esc
+  const closeFn = (ev) => {
+    if (!pop.contains(ev.target) && !ev.target.closest('.h-btn')) {
+      pop.remove();
+      document.removeEventListener('click', closeFn, true);
+      document.removeEventListener('keydown', escFn);
+    }
+  };
+  const escFn = (ev) => { if (ev.key === 'Escape') { pop.remove(); document.removeEventListener('click', closeFn, true); document.removeEventListener('keydown', escFn); } };
+  setTimeout(() => {
+    document.addEventListener('click', closeFn, true);
+    document.addEventListener('keydown', escFn);
+  }, 0);
 }
 
 /* =========================================================================

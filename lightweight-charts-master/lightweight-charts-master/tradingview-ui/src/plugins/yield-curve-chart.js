@@ -25,7 +25,7 @@ import {
 const DEFAULT_LAYOUT = {
 	background: { type: 'solid', color: '#0d1117' },
 	textColor: '#c9d1d9',
-	fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+	fontFamily: "'Trebuchet MS', -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
 };
 
 const DEFAULT_GRID = {

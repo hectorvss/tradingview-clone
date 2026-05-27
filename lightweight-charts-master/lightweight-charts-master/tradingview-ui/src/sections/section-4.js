@@ -17,7 +17,7 @@ const IDEAS = [
     body:  '💻 UN CONFLICTO QUE POCO A POCO CRECE  EASYMARKETS:OILUSD La situación entre Estados Unidos…',
     author: 'por easyMarkets', date: 'Mayo 22', comments: 1, likes: 8,
     ticker: 'OILUSD', tickerColor: '#000000', up: false, seed: 11,
-    href: 'https://es.tradingview.com/chart/OILUSD/gTqtMCpn/',
+    href: '#/chart/OILUSD',
     brokerStripe: 'linear-gradient(90deg,#003488 5%,#057cda 39.94%,#0067af 78.94%,#083976 100%)',
   },
   {
@@ -25,14 +25,14 @@ const IDEAS = [
     body:  '🌐¡Hola, traders! Soy Jack Blackwell, con 15 años de experiencia en análisis y trading en los mercados de…',
     author: 'por GoldTrend_Master', date: 'Mayo 22', likes: 2,
     ticker: 'XAUUSD', tickerColor: '#D69A00', up: true, seed: 22,
-    href: 'https://es.tradingview.com/chart/XAUUSD/tZYyNkM0/',
+    href: '#/chart/XAUUSD',
   },
   {
     title: 'Xuusd la semana en estructura lateral podria ver una correccion',
     body:  'Estamos aun en una temporalida bajista pero el precio podria hacer una correcion el dia martes el precio en…',
     author: 'por julianjrbtrading', date: 'Actualizado Mayo 22', comments: 6, likes: 9,
     ticker: 'XAUUSD', tickerColor: '#D69A00', up: false, seed: 33,
-    href: 'https://es.tradingview.com/chart/XAUUSD/l1YAHFQt/',
+    href: '#/chart/XAUUSD',
   },
   {
     title: 'WTI: zona de demanda comprando alrededor de 62$',
@@ -350,6 +350,57 @@ const CSS = `
   .s4-news-grid    { grid-template-columns: 1fr; }
   .s4-idea { flex-basis: 320px; }
 }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.s4-idea,
+.s4-news,
+.s4-card { transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease; cursor: pointer; }
+.s4-idea:hover,
+.s4-news:hover,
+.s4-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  border-color: #2962ff;
+}
+.s4-idea:active,
+.s4-news:active,
+.s4-card:active { opacity: .7; transform: translateY(-1px); }
+
+.s4-idea-btn,
+.s4-foot-link { transition: background-color 100ms ease, color 100ms ease, opacity 100ms ease; cursor: pointer; }
+.s4-idea-btn:active,
+.s4-foot-link:active { opacity: .7; }
+
+/* Loading shimmer */
+.s4-idea-img:empty,
+.s4-chart:empty,
+[id^="s4-chart-"]:empty {
+  background: linear-gradient(90deg, #131722 0%, #1e222d 50%, #131722 100%);
+  background-size: 200% 100%;
+  animation: s4-shimmer 1.4s ease-in-out infinite;
+  border-radius: 4px;
+}
+@keyframes s4-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty state */
+.s4-empty {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 140px; color: #787b86; font-size: 13px; text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .s4-news-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .s4-news-grid { grid-template-columns: 1fr; }
+  .s4-idea-btn { min-height: 44px; min-width: 44px; }
+  .s4-foot-link { min-height: 44px; }
+  .s4-h1 { font-size: 22px; }
+}
 `;
 
 /* ────────────────────────── ENTRY POINT ─────────────────────────── */
@@ -372,13 +423,13 @@ export function render(container, ctx = {}) {
     <section class="s4" aria-label="Futuros y materias primas">
       <div class="s4-inner">
 
-        <a class="s4-h1" href="https://es.tradingview.com/markets/futures/" target="_blank" rel="noopener">
+        <a class="s4-h1" href="#/screener">
           Futuros y materias primas <span class="s4-chev">${CHEV_SVG}</span>
         </a>
 
         <!-- (1) Ideas de trading -->
         <div class="s4-section">
-          <a class="s4-h2" href="https://es.tradingview.com/markets/futures/ideas/" target="_blank" rel="noopener">
+          <a class="s4-h2" href="#/news">
             Ideas de trading <span class="s4-chev">${CHEV_SVG}</span>
           </a>
           <div class="s4-ideas-wrap">
@@ -390,20 +441,20 @@ export function render(container, ctx = {}) {
         <!-- (2) Quotes: energy + metals -->
         <div class="s4-section s4-quotes-row">
           <div class="s4-quotes-col">
-            <a class="s4-h2" href="https://es.tradingview.com/markets/futures/quotes-energy/" target="_blank" rel="noopener">
+            <a class="s4-h2" href="#/screener">
               Futuros de energía <span class="s4-chev">${CHEV_SVG}</span>
             </a>
             <div class="s4-quotes-table">${energyHtml}</div>
-            <a class="s4-foot-link" href="https://es.tradingview.com/markets/futures/quotes-energy/" target="_blank" rel="noopener">
+            <a class="s4-foot-link" href="#/screener">
               Ver todos los futuros de energía <span class="s4-chev">${CHEV_SVG}</span>
             </a>
           </div>
           <div class="s4-quotes-col">
-            <a class="s4-h2" href="https://es.tradingview.com/markets/futures/quotes-metals/" target="_blank" rel="noopener">
+            <a class="s4-h2" href="#/screener">
               Futuros de metales <span class="s4-chev">${CHEV_SVG}</span>
             </a>
             <div class="s4-quotes-table">${metalsHtml}</div>
-            <a class="s4-foot-link" href="https://es.tradingview.com/markets/futures/quotes-metals/" target="_blank" rel="noopener">
+            <a class="s4-foot-link" href="#/screener">
               Ver todos los futuros de metales <span class="s4-chev">${CHEV_SVG}</span>
             </a>
           </div>
@@ -411,11 +462,11 @@ export function render(container, ctx = {}) {
 
         <!-- (3) News -->
         <div class="s4-section">
-          <a class="s4-h2" href="https://es.tradingview.com/markets/futures/news/" target="_blank" rel="noopener">
+          <a class="s4-h2" href="#/news">
             Noticias sobre futuros <span class="s4-chev">${CHEV_SVG}</span>
           </a>
           <div class="s4-news-grid">${newsHtml}</div>
-          <a class="s4-foot-link" href="https://es.tradingview.com/markets/futures/news/" target="_blank" rel="noopener">
+          <a class="s4-foot-link" href="#/news">
             Seguir leyendo <span class="s4-chev">${CHEV_SVG}</span>
           </a>
         </div>

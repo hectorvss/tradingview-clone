@@ -254,6 +254,69 @@ const CSS = `
 }
 .mo1-idea__title { font-size: 14px; font-weight: 600; color: var(--grey-86, #dbdbdb); line-height: 1.3; }
 .mo1-idea__author { font-size: 11px; color: var(--grey-55, #8c8c8c); }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.mo1-card,
+.mo1-idea { transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease; }
+.mo1-card[role="button"]:hover,
+.mo1-idea:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  border-color: #2962ff;
+}
+.mo1-card[role="button"]:active,
+.mo1-idea:active { opacity: .7; transform: translateY(-1px); }
+.mo1-row { transition: background-color 120ms ease, transform 120ms ease; }
+.mo1-row:hover { background: #1e222d; transform: translateX(2px); }
+.mo1-row:active { opacity: .7; }
+.mo1-head__link,
+.mo1-sub__link,
+.mo1-side__more,
+.mo1-mini__more { transition: color 100ms ease, opacity 100ms ease; min-height: 36px; align-items: center; }
+.mo1-head__link:active,
+.mo1-sub__link:active,
+.mo1-side__more:active,
+.mo1-mini__more:active { opacity: .7; }
+.mo1-hero__star:active { opacity: .5; }
+.mo1-chg { transition: background-color 100ms ease, color 100ms ease; }
+.mo1-idea__badge { transition: transform 100ms ease; }
+.mo1-idea:hover .mo1-idea__badge { transform: scale(1.08); }
+
+/* Loading shimmer skeleton for charts (visible while lightweight-charts mounts) */
+.mo1-hero__chart:empty,
+.mo1-mini__chart:empty,
+.mo1-idea__chart:empty {
+  background: linear-gradient(90deg, #131722 0%, #1e222d 50%, #131722 100%);
+  background-size: 200% 100%;
+  animation: mo1-shimmer 1.4s ease-in-out infinite;
+  border-radius: 4px;
+}
+@keyframes mo1-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty state */
+.mo1-empty {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 120px; color: #787b86; font-size: 13px; text-align: center;
+}
+
+/* Responsive grids */
+@media (max-width: 1200px) {
+  .mo1-sec { padding: 24px 24px 48px; }
+  .mo1-ideas { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .mo1-sec { padding: 16px 12px 32px; }
+  .mo1-head__title { font-size: 22px; }
+  .mo1-sub__title { font-size: 17px; }
+  .mo1-ideas { grid-template-columns: 1fr; }
+  .mo1-hero { min-height: 320px; }
+  .mo1-mini { min-height: 260px; }
+  .mo1-row { min-height: 44px; }
+  .mo1-side__more, .mo1-mini__more, .mo1-head__link, .mo1-sub__link { min-height: 44px; }
+}
 `;
 
 /* ---------------------------------------------------------------- */

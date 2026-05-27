@@ -18,7 +18,7 @@ function ensureStyles() {
 
   const css = `
 .fxm-root, .cmh-root {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   color: #d1d4dc;
   background: var(--grey-6, #0f0f0f);
   padding: 12px;
@@ -61,24 +61,38 @@ function ensureStyles() {
   user-select: none;
 }
 .fxm-table th {
-  background: transparent;
+  background: #0f0f0f;
   color: #787b86;
   font-weight: 600;
   height: 28px;
   letter-spacing: 0.4px;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+.fxm-table tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 2;
 }
 .fxm-table th.fxm-corner {
-  background: transparent;
+  background: #0f0f0f;
+  z-index: 4;
+  left: 0;
 }
 .fxm-cell {
   background: #1e222d;
   cursor: pointer;
-  transition: transform 0.08s ease, filter 0.08s ease;
+  transition: transform 0.1s ease, filter 0.1s ease, box-shadow 0.1s ease, outline-color 0.1s ease;
   position: relative;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
 }
 .fxm-cell:hover {
-  filter: brightness(1.15);
-  transform: scale(1.02);
+  filter: brightness(1.18);
+  transform: translateY(-1px) scale(1.03);
+  outline-color: #2962ff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   z-index: 2;
 }
 .fxm-cell.fxm-diag {
@@ -89,10 +103,14 @@ function ensureStyles() {
 .fxm-cell.fxm-diag:hover {
   filter: none;
   transform: none;
+  outline-color: transparent;
+  box-shadow: none;
 }
-.fxm-cell.fxm-up   { background: #0f3a26; color: #26a69a; }
-.fxm-cell.fxm-down { background: #3a1418; color: #ef5350; }
+.fxm-cell.fxm-up   { color: #b6f0c8; }
+.fxm-cell.fxm-down { color: #ffd0d0; }
 .fxm-cell.fxm-flat { background: #1e222d; color: #d1d4dc; }
+.fxm-cell.fxm-strong-up   { color: #fff; }
+.fxm-cell.fxm-strong-down { color: #fff; }
 .fxm-cell .fxm-rate {
   display: block;
   font-size: 13px;
@@ -149,6 +167,20 @@ function ensureStyles() {
   width: 100%;
   height: 100%;
   cursor: pointer;
+}
+.fxm-spinner, .cmh-spinner {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 24px; height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #2962ff;
+  border-radius: 50%;
+  animation: fxm-spin 0.8s linear infinite;
+  z-index: 5;
+}
+@keyframes fxm-spin {
+  to { transform: rotate(360deg); }
 }
 `;
   const style = document.createElement('style');
@@ -288,6 +320,22 @@ function createCrossRatesMatrix(container, opts = {}) {
     if (chg < -0.01) return 'fxm-down';
     return 'fxm-flat';
   }
+  // Grade background colour intensity: |chg| >= 0.5% is "strong", otherwise
+  // softer. Returns an inline-style background string.
+  function gradedBg(chg) {
+    if (chg > 0.01) {
+      const strong = chg >= 0.5;
+      // green palette
+      // soft: #0f3a26   strong: #0a6b40
+      return strong ? '#0a6b40' : '#0f3a26';
+    }
+    if (chg < -0.01) {
+      const strong = chg <= -0.5;
+      // red palette: soft #3a1418  strong #6b1a22
+      return strong ? '#6b1a22' : '#3a1418';
+    }
+    return '#1e222d';
+  }
 
   function render() {
     tableEl.innerHTML = '';
@@ -321,7 +369,12 @@ function createCrossRatesMatrix(container, opts = {}) {
           continue;
         }
         const cell = rates[base][quote];
-        td.className = 'fxm-cell ' + classifyChange(cell.chgPct);
+        const cls = classifyChange(cell.chgPct);
+        const strong = Math.abs(cell.chgPct) >= 0.5
+          ? (cell.chgPct > 0 ? ' fxm-strong-up' : ' fxm-strong-down')
+          : '';
+        td.className = 'fxm-cell ' + cls + strong;
+        td.style.background = gradedBg(cell.chgPct);
         td.innerHTML = `
           <span class="fxm-rate">${_fmtRate(cell.rate)}</span>
           <span class="fxm-chg">${_fmtPct(cell.chgPct)}</span>
@@ -371,8 +424,16 @@ function createCrossRatesMatrix(container, opts = {}) {
     const cell = rates[td.dataset.base][td.dataset.quote];
     if (cell) showTooltip(cell, ev);
   }
+  let _ttRaf = 0;
+  let _ttEvt = null;
   function onMouseMove(ev) {
-    if (tooltip.style.display === 'block') moveTooltip(ev);
+    if (tooltip.style.display !== 'block') return;
+    _ttEvt = ev;
+    if (_ttRaf) return;
+    _ttRaf = requestAnimationFrame(() => {
+      _ttRaf = 0;
+      if (_ttEvt) moveTooltip(_ttEvt);
+    });
   }
   function onMouseOut(ev) {
     const td = ev.target.closest('td.fxm-cell');
@@ -584,6 +645,7 @@ function createCryptoMarketCapHeatmap(container, opts = {}) {
   let layout = []; // {item, x, y, w, h} in CSS px
   let dpr = window.devicePixelRatio || 1;
   let cssW = 0, cssH = 0;
+  let hoverNode = null;
 
   function computeLayout() {
     const rect = wrap.getBoundingClientRect();
@@ -635,6 +697,11 @@ function createCryptoMarketCapHeatmap(container, opts = {}) {
       ctx.fillStyle = '#ffffff';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
+      // Drop shadow on labels for legibility on coloured backgrounds.
+      ctx.shadowColor = 'rgba(0,0,0,0.65)';
+      ctx.shadowBlur = 3;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 1;
 
       ctx.font = `700 ${tickerSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
       const tickerY = h > 70 ? cy - tickerSize * 0.55 : cy - tickerSize * 0.1;
@@ -651,6 +718,19 @@ function createCryptoMarketCapHeatmap(container, opts = {}) {
           ctx.fillText(_fmtPct(item.chgPct), cx, cy + subSize * 1.6);
         }
       }
+      // reset shadow before next tile
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+    }
+
+    // Hover highlight on top of everything
+    if (hoverNode) {
+      const { x, y, w, h } = hoverNode;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x + 1, y + 1, Math.max(0, w - 2), Math.max(0, h - 2));
     }
   }
 
@@ -697,14 +777,26 @@ function createCryptoMarketCapHeatmap(container, opts = {}) {
     tooltip.style.display = 'none';
   }
 
+  let _moveRaf = 0;
+  let _moveEvt = null;
   function onMove(ev) {
-    const rect = canvas.getBoundingClientRect();
-    const hit = hitTest(ev.clientX - rect.left, ev.clientY - rect.top);
-    if (hit) showTooltip(hit.item, ev);
-    else hideTooltip();
+    _moveEvt = ev;
+    if (_moveRaf) return;
+    _moveRaf = requestAnimationFrame(() => {
+      _moveRaf = 0;
+      const e = _moveEvt;
+      if (!e) return;
+      const rect = canvas.getBoundingClientRect();
+      const hit = hitTest(e.clientX - rect.left, e.clientY - rect.top);
+      const changed = hit !== hoverNode;
+      hoverNode = hit;
+      if (hit) showTooltip(hit.item, e);
+      else hideTooltip();
+      if (changed) draw();
+    });
   }
 
-  function onLeave() { hideTooltip(); }
+  function onLeave() { hideTooltip(); if (hoverNode) { hoverNode = null; draw(); } }
 
   function onClick(ev) {
     const rect = canvas.getBoundingClientRect();

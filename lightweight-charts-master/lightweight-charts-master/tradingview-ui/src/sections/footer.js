@@ -105,6 +105,25 @@ const CSS = `
   .mo-footer-inner { grid-template-columns: 1fr; gap: 32px; }
   .mo-footer-bottom { flex-direction: column; gap: 8px; }
 }
+
+/* ---------------- Polish layer (UI/UX) ---------------- */
+.mo-footer a,
+.mo-footer-social a,
+.mo-footer-lang { transition: color 100ms ease, background-color 100ms ease, opacity 100ms ease, transform 100ms ease; }
+.mo-footer a:active,
+.mo-footer-social a:active,
+.mo-footer-lang:active { opacity: .7; }
+.mo-footer-social a:hover { transform: translateY(-2px); color: #2962ff; }
+.mo-footer a:focus-visible,
+.mo-footer-social a:focus-visible,
+.mo-footer-lang:focus-visible { outline: 2px solid #2962ff; outline-offset: 2px; border-radius: 2px; }
+
+/* Tap-friendly */
+@media (max-width: 768px) {
+  .mo-footer a,
+  .mo-footer-social a,
+  .mo-footer-lang { min-height: 36px; display: inline-flex; align-items: center; }
+}
 `;
 
 // Inline SVG icons (Figma-style stroke/fill simplified social glyphs)

@@ -91,10 +91,20 @@ function ensureStyles() {
 .st-card {
   background: #1e222d; border: 1px solid #2a2e39; border-radius: 4px;
   padding: 8px 10px;
+  border-top: 2px solid #2a2e39;
+  transition: border-top-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  position: relative;
 }
+.st-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+}
+.st-card.st-card-pos { border-top-color: #26a69a; }
+.st-card.st-card-neg { border-top-color: #ef5350; }
+.st-card.st-card-neu { border-top-color: #4a4e5a; }
 .st-card-label { color: #787b86; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; }
 .st-card-value { font-size: 16px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
-.st-card-spark { display: block; margin-top: 4px; }
+.st-card-spark { display: block; margin-top: 4px; opacity: 0.75; }
 .st-pos { color: #26a69a; }
 .st-neg { color: #ef5350; }
 .st-neu { color: #d1d4dc; }
@@ -176,6 +186,16 @@ function ensureStyles() {
 .st-empty {
   padding: 40px; text-align: center; color: #787b86; font-size: 12px;
 }
+.st-spinner {
+  display: block;
+  margin: 24px auto;
+  width: 22px; height: 22px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #2962ff;
+  border-radius: 50%;
+  animation: st-spin 0.8s linear infinite;
+}
+@keyframes st-spin { to { transform: rotate(360deg); } }
 `;
   const style = document.createElement('style');
   style.setAttribute('data-strategy-tester', '1');
@@ -509,13 +529,17 @@ export function createStrategyTesterPanel(container, opts = {}) {
 
     pane.innerHTML = `
       <div class="st-cards">
-        ${cards.map(c => `
-          <div class="st-card">
+        ${cards.map(c => {
+          const sc = colorClass(c.sign); // st-pos / st-neg / st-neu
+          const cardCls = sc === 'st-pos' ? 'st-card-pos'
+                        : sc === 'st-neg' ? 'st-card-neg' : 'st-card-neu';
+          return `
+          <div class="st-card ${cardCls}">
             <div class="st-card-label">${c.label}</div>
-            <div class="st-card-value ${colorClass(c.sign)}">${c.value}</div>
+            <div class="st-card-value ${sc}">${c.value}</div>
             ${c.spark}
           </div>
-        `).join('')}
+        `;}).join('')}
       </div>
       <div class="st-charts">
         <div class="st-chart-box">
@@ -565,10 +589,14 @@ export function createStrategyTesterPanel(container, opts = {}) {
       width: eqEl.clientWidth || 600,
       height: eqEl.clientHeight || 140,
     });
+    // Equity curve — green gradient when net positive, red when net negative.
+    const initCap = state.backtestOpts.initialCapital;
+    const finalEq = equity[equity.length - 1]?.equity ?? initCap;
+    const netPos = finalEq >= initCap;
     state.equitySeries = state.equityChart.addSeries(AreaSeries, {
-      lineColor: '#2962ff',
-      topColor: 'rgba(41,98,255,0.4)',
-      bottomColor: 'rgba(41,98,255,0.02)',
+      lineColor: netPos ? '#26a69a' : '#ef5350',
+      topColor:    netPos ? 'rgba(38,166,154,0.45)' : 'rgba(239,83,80,0.45)',
+      bottomColor: netPos ? 'rgba(38,166,154,0.02)' : 'rgba(239,83,80,0.02)',
       lineWidth: 2,
       priceLineVisible: false,
     });

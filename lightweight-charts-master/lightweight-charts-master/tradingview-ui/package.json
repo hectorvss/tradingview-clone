@@ -6,7 +6,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "lightweight-charts": "file:.."
+    "klinecharts": "^10.0.0-beta2",
+    "lightweight-charts": "^5.2.0"
   },
   "devDependencies": {
     "vite": "^5.0.0"

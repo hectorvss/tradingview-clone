@@ -6,12 +6,13 @@ const DEFAULTS = {
     bins: 60,
     side: 'right',        // 'right' | 'left'
     width: 100,           // pixel width of the longest bar
-    opacity: 0.6,
-    color: '#9c27b0',
-    pocColor: '#ffeb3b',
-    vaColor: '#f7a600',
+    opacity: 0.5,
+    color: '#2962ff',
+    pocColor: '#2962ff',
+    vaColor: '#2962ff',
     showPOC: true,
     showVA: true,
+    showPriceLabels: true,
     valueAreaPct: 0.70,
     barGap: 1,            // pixels between bars
 };
@@ -46,12 +47,13 @@ export function createVolumeProfile(chart, series, container, userOptions = {}) 
     tooltip.style.position = 'absolute';
     tooltip.style.pointerEvents = 'none';
     tooltip.style.zIndex = '6';
-    tooltip.style.padding = '4px 8px';
-    tooltip.style.background = 'rgba(20,20,28,0.92)';
-    tooltip.style.color = '#fff';
-    tooltip.style.font = '11px/1.3 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif';
-    tooltip.style.border = '1px solid rgba(255,255,255,0.15)';
+    tooltip.style.padding = '8px 12px';
+    tooltip.style.background = '#1e222d';
+    tooltip.style.color = '#d1d4dc';
+    tooltip.style.font = '12px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif';
+    tooltip.style.border = '1px solid #2a2e39';
     tooltip.style.borderRadius = '4px';
+    tooltip.style.boxShadow = '0 6px 18px rgba(0,0,0,0.55)';
     tooltip.style.display = 'none';
     tooltip.style.whiteSpace = 'nowrap';
     container.appendChild(tooltip);
@@ -245,35 +247,73 @@ export function createVolumeProfile(chart, series, container, userOptions = {}) 
             ctx.fillRect(x, yBinTop, len, barHeight);
         }
 
-        // VA boundary lines
+        // VA boundary lines — thin dashed
         if (opts.showVA) {
-            ctx.globalAlpha = Math.min(1, opts.opacity + 0.3);
+            ctx.globalAlpha = 1;
             ctx.strokeStyle = opts.vaColor;
             ctx.lineWidth = 1;
-            const drawLine = (binIdx) => {
-                const y = yBot - (binIdx / res.nBins) * (yBot - yTop);
+            ctx.setLineDash([4, 3]);
+            const vahY = yBot - ((res.vah + 1) / res.nBins) * (yBot - yTop);
+            const valY = yBot - (res.val / res.nBins) * (yBot - yTop);
+            const drawLine = (y) => {
                 ctx.beginPath();
                 if (isRight) { ctx.moveTo(edge - opts.width, y); ctx.lineTo(edge, y); }
                 else         { ctx.moveTo(0, y); ctx.lineTo(opts.width, y); }
                 ctx.stroke();
             };
-            drawLine(res.vah + 1);
-            drawLine(res.val);
+            drawLine(vahY);
+            drawLine(valY);
+            ctx.setLineDash([]);
+
+            if (opts.showPriceLabels) {
+                const vahPrice = res.lo + ((res.vah + 1) / res.nBins) * (res.hi - res.lo);
+                const valPrice = res.lo + (res.val / res.nBins) * (res.hi - res.lo);
+                drawPriceLabel('VAH ' + vahPrice.toFixed(2), vahY, opts.vaColor);
+                drawPriceLabel('VAL ' + valPrice.toFixed(2), valY, opts.vaColor);
+            }
         }
 
-        // POC line
+        // POC line — bold 3px dashed
         if (opts.showPOC) {
-            ctx.globalAlpha = Math.min(1, opts.opacity + 0.3);
+            ctx.globalAlpha = 1;
             ctx.strokeStyle = opts.pocColor;
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 3;
+            ctx.setLineDash([6, 4]);
             const y = yBot - ((res.poc + 0.5) / res.nBins) * (yBot - yTop);
             ctx.beginPath();
             if (isRight) { ctx.moveTo(edge - opts.width, y); ctx.lineTo(edge, y); }
             else         { ctx.moveTo(0, y); ctx.lineTo(opts.width, y); }
             ctx.stroke();
+            ctx.setLineDash([]);
+
+            if (opts.showPriceLabels) {
+                const pocPrice = res.lo + ((res.poc + 0.5) / res.nBins) * (res.hi - res.lo);
+                drawPriceLabel('POC ' + pocPrice.toFixed(2), y, opts.pocColor, true);
+            }
         }
 
         ctx.globalAlpha = 1;
+
+        function drawPriceLabel(text, y, color, bold) {
+            ctx.save();
+            ctx.font = (bold ? '600 ' : '500 ') + '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            const pad = 4;
+            const w = Math.ceil(ctx.measureText(text).width) + pad * 2;
+            const h = 14;
+            // Right-aligned: place label just inside the edge.
+            const lx = isRight ? edge - opts.width - w - 4 : opts.width + 4;
+            const ly = Math.round(y - h / 2);
+            ctx.fillStyle = '#1e222d';
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.fillRect(lx, ly, w, h);
+            ctx.strokeRect(lx + 0.5, ly + 0.5, w - 1, h - 1);
+            ctx.fillStyle = color;
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, lx + w - pad, ly + h / 2);
+            ctx.restore();
+        }
     }
 
     // ---- Tooltip ----
@@ -338,7 +378,11 @@ export function createVolumeProfile(chart, series, container, userOptions = {}) 
     }
     chart.subscribeCrosshairMove(onCrosshair);
 
-    const ro = new ResizeObserver(() => render());
+    let _resizeRaf = 0;
+    const ro = new ResizeObserver(() => {
+        if (_resizeRaf) cancelAnimationFrame(_resizeRaf);
+        _resizeRaf = requestAnimationFrame(() => { _resizeRaf = 0; render(); });
+    });
     ro.observe(container);
 
     // Initial render (next tick so chart has dimensions)
