@@ -1112,8 +1112,14 @@ export function createPricingPage(mount, opts = {}) {
   }
 
   paint();
-  // Clear any prior content (e.g. global loading state) before mounting.
-  mount.innerHTML = '';
+  // Clear any prior content (e.g. global loading state) before mounting,
+  // but PRESERVE the global header (#tv-global-header) and right-rail
+  // (#tv-global-rightbar) — those are injected into #app by main.js and
+  // must persist across page navigations.
+  const PRESERVE_IDS = new Set(['tv-global-header', 'tv-global-rightbar']);
+  Array.from(mount.children).forEach((child) => {
+    if (!PRESERVE_IDS.has(child.id)) child.remove();
+  });
   mount.appendChild(root);
 
   return { render, destroy };
