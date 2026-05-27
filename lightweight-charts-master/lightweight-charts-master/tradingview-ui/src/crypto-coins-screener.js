@@ -36,6 +36,7 @@ const CSS = `
   background: #0f0f0f;
   border-bottom: 1px solid #2e2e2e;
 }
+body.has-global-header .tvcryp-header { display: none !important; }
 .tvcryp-logo {
   display: flex;
   align-items: center;

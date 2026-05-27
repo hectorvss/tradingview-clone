@@ -40,7 +40,7 @@ const ROWS = [
 function styleBlock() {
   return `
   <style>
-    .optf-wrap{color:#dbdbdb;font:13px/1.4 -apple-system,BlinkMacSystemFont,Roboto,'Trebuchet MS',Ubuntu,sans-serif;padding:8px 0 24px}
+    .optf-wrap{color:#dbdbdb;font:13px/1.4 'Trebuchet MS',-apple-system,BlinkMacSystemFont,Roboto,Ubuntu,sans-serif;padding:8px 0 24px}
     .optf-filters{display:flex;flex-direction:column;gap:8px;padding:0 0 14px}
     .optf-frow{display:flex;flex-wrap:wrap;gap:8px}
     /* Filter pill: 34px tall, 17px radius, transparent bg, 1px #4a4a4a border, padding 12px */

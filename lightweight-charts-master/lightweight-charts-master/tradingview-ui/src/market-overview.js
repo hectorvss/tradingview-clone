@@ -926,6 +926,15 @@ export function renderMarketOverview(container, onChartNav) {
   mount(Sec7,      'mo-mount-sec7',      'section-7');
   mount(Footer,    'mo-mount-footer',    'footer');
   mount(RightSide, 'mo-mount-rightside', 'right-sidebar');
+  // Wire each rb-icon to the shared global action map (navigates to routes or
+  // opens stub side panels) — same handlers used by the global injector for
+  // all non-chart pages.
+  try {
+    const rs = container.querySelector('#mo-mount-rightside');
+    import('./sidebars/sidebar-actions.js').then(({ attachSidebarHandlers }) => {
+      attachSidebarHandlers(rs);
+    });
+  } catch {}
   mount(StickyBar, 'mo-mount-sticky',    'sticky-bar');
 
   // Global delegated nav (covers any [data-ticker] that bypassed module wiring)

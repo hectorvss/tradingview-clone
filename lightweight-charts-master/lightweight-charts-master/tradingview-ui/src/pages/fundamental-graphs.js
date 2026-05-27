@@ -43,7 +43,7 @@ function ensureStyles() {
   const css = `
 .tv-fg-root {
   position: fixed;
-  inset: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: ${T.bg0};
   color: ${T.txt1};
   font-family: -apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, sans-serif;
@@ -53,6 +53,16 @@ function ensureStyles() {
   overflow: hidden;
   z-index: 1;
 }
+body.has-global-header  .tv-fg-root { top: 48px; }
+body.has-global-rightbar .tv-fg-root { right: 45px; }
+body.has-global-header  .tv-fg-header { display: none !important; }
+body.has-global-rightbar .tv-fg-rail   { display: none !important; }
+.tv-fg-root .tv-fg-logo, .tv-fg-root .tv-fg-logo-mark, .tv-fg-root .tv-fg-logo-word { display: none !important; }
+/* Defensive: any SVG inside the root with default white fill (from Figma
+ * var(--fill-0, white)) gets a transparent fill so it can't bleed. */
+.tv-fg-root svg path[fill="var(--fill-0, white)"],
+.tv-fg-root svg path[fill="white"] { fill: transparent; }
+.tv-fg-header img, .tv-fg-rail img { max-width: 100%; max-height: 100%; }
 .tv-fg-root *, .tv-fg-root *::before, .tv-fg-root *::after { box-sizing: border-box; }
 .tv-fg-root button { font-family: inherit; }
 

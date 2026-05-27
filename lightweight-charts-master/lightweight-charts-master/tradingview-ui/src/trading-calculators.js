@@ -61,7 +61,7 @@ function ensureStyles() {
   min-height: 480px;
   background: var(--grey-6, #0f0f0f);
   color: #d1d4dc;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 13px;
   box-sizing: border-box;
   overflow: hidden;

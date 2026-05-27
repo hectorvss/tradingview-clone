@@ -199,7 +199,11 @@ function renderFigmaSection(container) {
   const closeBtn = container.querySelector('.mkt-popup-close');
   const popup = container.querySelector('.mkt-popup');
   if (closeBtn && popup) {
-    closeBtn.addEventListener('click', () => { popup.style.display = 'none'; });
+    closeBtn.addEventListener('click', () => {
+      popup.style.display = 'none';
+      // Remove from DOM on next tick so the hide takes effect first.
+      setTimeout(() => popup.remove(), 0);
+    });
   }
 }
 

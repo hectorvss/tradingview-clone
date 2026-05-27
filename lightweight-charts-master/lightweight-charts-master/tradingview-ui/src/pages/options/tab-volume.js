@@ -7,7 +7,7 @@ const STYLES = `
 .optvol-root{
   display:flex;flex-direction:column;width:100%;min-height:calc(100vh - 220px);
   background:var(--tv-bg-0,#0f0f0f);color:var(--tv-text,#d1d4dc);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-family:'Trebuchet MS',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   padding:8px 24px 24px;box-sizing:border-box;
 }
 .optvol-toolbar{

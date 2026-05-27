@@ -120,8 +120,13 @@ textarea:focus:not(:focus-visible) { outline: none; }
 }
 
 html, body {
-  width: 100%; height: 100%;
-  overflow: hidden;
+  width: 100%;
+  min-height: 100%;
+  /* Allow vertical scrolling on content pages (community, markets, news...).
+   * The chart page caps its grid at 100vh + overflow:hidden internally so the
+   * body's scroll never engages there. */
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--grey-6);
   color: var(--grey-86);
   font-family: var(--font-ui);
@@ -129,6 +134,9 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+/* On chart pages, body must NOT scroll — the .chart-page grid already fills
+ * the viewport and any extra scroll would expose blank space below. */
+body:has(.chart-page) { overflow: hidden; height: 100vh; }
 
 #app { width: 100%; height: 100%; }
 

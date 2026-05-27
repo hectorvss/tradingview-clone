@@ -448,7 +448,7 @@ export function createPaperTradingPanel(container, opts = {}) {
         const style = document.createElement('style');
         style.id = 'pt-styles';
         style.textContent = `
-.pt-root{display:flex;flex-direction:column;height:100%;width:100%;background:#0f0f0f;color:#d1d4dc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;}
+.pt-root{display:flex;flex-direction:column;height:100%;width:100%;background:#0f0f0f;color:#d1d4dc;font-family:'Trebuchet MS',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;}
 .pt-tabs{display:flex;border-bottom:1px solid #2a2e39;background:#131722;flex-shrink:0;}
 .pt-tab{padding:10px 16px;cursor:pointer;color:#787b86;border-bottom:2px solid transparent;font-weight:500;user-select:none;transition:color 100ms ease;}
 .pt-tab:hover{color:#d1d4dc;}

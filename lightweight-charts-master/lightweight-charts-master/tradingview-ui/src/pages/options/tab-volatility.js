@@ -1,12 +1,15 @@
 // Options → Volatility sub-tab
 // Matches Figma frame 17:156881 (.figma-cache/09-17-156881.png)
-// Date strip + large volatility-smile chart (inline SVG).
+// Date strip + large volatility-smile chart rendered with the real
+// `lightweight-charts` library (same engine used by the chart-view page).
+
+import { createChart, LineSeries, LineStyle, CrosshairMode } from 'lightweight-charts';
 
 const STYLES = `
 .optv-root{
   display:flex;flex-direction:column;width:100%;min-height:calc(100vh - 220px);
   background:var(--tv-bg-0,#0f0f0f);color:var(--tv-text,#d1d4dc);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-family:'Trebuchet MS',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   padding:8px 24px 24px;box-sizing:border-box;
 }
 .optv-datebar{
@@ -50,8 +53,9 @@ const STYLES = `
 .optv-day.is-muted{color:var(--tv-text-dim,#5d6168);}
 .optv-chart-wrap{
   position:relative;flex:1;min-height:540px;margin-top:4px;
+  background:#0f0f0f;
 }
-.optv-chart-svg{display:block;width:100%;height:100%;}
+.optv-chart-host{position:absolute;inset:0;}
 .optv-grid-line{stroke:rgba(255,255,255,0.06);stroke-width:1;}
 .optv-axis-text{
   fill:var(--tv-text-muted,#787b86);font-size:11px;
@@ -145,9 +149,97 @@ export function renderOptionsVolatilityTab(mount, opts = {}) {
           <button class="optv-nav optv-next" aria-label="Siguiente">&#10095;</button>
         </div>
       </div>
-      <div class="optv-chart-wrap">${renderChart()}</div>
+      <div class="optv-chart-wrap"><div class="optv-chart-host" data-chart></div></div>
     </div>
   `;
+
+  // ----- Real lightweight-charts volatility smile -----
+  const chartHost = mount.querySelector('[data-chart]');
+  let chart = null;
+  let series = null;
+  let chartRO = null;
+  function mountChart() {
+    if (!chartHost) return;
+    chart = createChart(chartHost, {
+      layout: {
+        background: { type: 'solid', color: '#0f0f0f' },
+        textColor: '#9598a1',
+        fontFamily: 'Trebuchet MS, system-ui, sans-serif',
+        fontSize: 11,
+      },
+      grid: {
+        vertLines: { color: 'rgba(255,255,255,0.06)' },
+        horzLines: { color: 'rgba(255,255,255,0.06)' },
+      },
+      rightPriceScale: {
+        borderColor: '#2e2e2e',
+        scaleMargins: { top: 0.05, bottom: 0.05 },
+      },
+      timeScale: {
+        borderColor: '#2e2e2e',
+        timeVisible: false,
+        secondsVisible: false,
+        tickMarkFormatter: (time) => String(time),  // raw strike value
+      },
+      crosshair: {
+        mode: CrosshairMode.Magnet,
+        vertLine: { color: '#4a4a4a', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#2962ff' },
+        horzLine: { color: '#4a4a4a', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#2962ff' },
+      },
+      width:  chartHost.clientWidth  || 1400,
+      height: chartHost.clientHeight || 540,
+      handleScroll: false,
+      handleScale: false,
+      watermark: {
+        visible: true,
+        text: 'TradingView',
+        fontSize: 14,
+        color: 'rgba(34, 166, 196, 0.65)',
+        horzAlign: 'left',
+        vertAlign: 'bottom',
+      },
+    });
+    series = chart.addSeries(LineSeries, {
+      color: '#2962ff',
+      lineWidth: 2,
+      lastValueVisible: false,
+      priceLineVisible: false,
+      crosshairMarkerVisible: true,
+      crosshairMarkerRadius: 5,
+      priceFormat: { type: 'custom', formatter: (v) => v.toFixed(2) + '%' },
+    });
+    // Build the volatility smile from CURVE — strike as synthetic time so
+    // lightweight-charts plots strike on X and IV% on Y.
+    const data = CURVE
+      .slice()
+      .sort((a, b) => a[0] - b[0])
+      .map(([strike, iv]) => ({ time: strike, value: iv }));
+    series.setData(data);
+
+    // Dashed vertical at the at-the-money strike, plus a horizontal at IV=0
+    // for reference. lightweight-charts doesn't natively support vertical
+    // price lines, so we add a price line on the series instead.
+    const strikeIv = (data.find(d => d.time === STRIKE_LINE) || data[Math.floor(data.length/2)]).value;
+    series.createPriceLine({
+      price: strikeIv,
+      color: 'rgba(255,255,255,0.35)',
+      lineWidth: 1,
+      lineStyle: LineStyle.Dashed,
+      axisLabelVisible: true,
+      title: 'Strike ' + STRIKE_LINE,
+    });
+
+    chart.timeScale().fitContent();
+
+    // Resize chart with its container.
+    chartRO = new ResizeObserver(() => {
+      if (!chartHost.clientWidth || !chartHost.clientHeight) return;
+      chart.applyOptions({ width: chartHost.clientWidth, height: chartHost.clientHeight });
+    });
+    chartRO.observe(chartHost);
+  }
+  // Defer to next frame so flex layout has computed real dimensions.
+  requestAnimationFrame(mountChart);
 
   const track = mount.querySelector('.optv-days-track');
   const labelRow = mount.querySelector('.optv-month-row');
@@ -180,6 +272,9 @@ export function renderOptionsVolatilityTab(mount, opts = {}) {
   return {
     destroy(){
       ro.disconnect();
+      try { chartRO && chartRO.disconnect(); } catch {}
+      try { chart && chart.remove(); } catch {}
+      chart = null; series = null; chartRO = null;
       track.removeEventListener('click', onClick);
       mount.innerHTML = '';
     }

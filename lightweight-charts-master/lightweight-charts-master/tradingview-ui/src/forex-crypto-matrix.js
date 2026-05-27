@@ -18,7 +18,7 @@ function ensureStyles() {
 
   const css = `
 .fxm-root, .cmh-root {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   color: #d1d4dc;
   background: var(--grey-6, #0f0f0f);
   padding: 12px;

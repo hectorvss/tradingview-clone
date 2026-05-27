@@ -48,6 +48,9 @@ const CSS = `
   position: relative;
   box-sizing: border-box;
 }
+body.has-global-header  .brk-header { display: none !important; }
+.brk-root .brk-logo, .brk-root .brk-logo-mark { display: none !important; }
+.brk-root img { max-width: 100%; max-height: 100%; }
 .brk-root *, .brk-root *::before, .brk-root *::after { box-sizing: border-box; }
 .brk-root a { color: inherit; text-decoration: none; }
 .brk-root button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
@@ -488,8 +491,8 @@ function brokerCardHTML(b) {
           </div>
         </div>
         <div class="brk-cta-row">
-          <button type="button" class="brk-cta-primary">Abrir cuenta</button>
-          <a class="brk-cta-link" href="#">Más información</a>
+          <a class="brk-cta-primary" href="#/brokers" role="button">Abrir cuenta</a>
+          <a class="brk-cta-link" href="#/brokers">Más información</a>
         </div>
       </div>
       <div class="brk-card-art">${logo3D(b.logo, b.name)}</div>
@@ -509,8 +512,8 @@ function featuredCardHTML() {
         <h2 style="margin:8px 0 0;font-size:28px;font-weight:700;letter-spacing:-0.5px;color:#fff">Active TradingView Plus</h2>
         <div class="brk-card-promo-line" style="margin-top:6px">Operadores con futuros + acciones · Promoción exclusiva para nuevas cuentas</div>
         <div class="brk-cta-row" style="margin-top:18px">
-          <button type="button" class="brk-cta-primary">Abrir cuenta</button>
-          <a class="brk-cta-link" href="#">Más información</a>
+          <a class="brk-cta-primary" href="#/brokers" role="button">Abrir cuenta</a>
+          <a class="brk-cta-link" href="#/brokers">Más información</a>
         </div>
       </div>
       <div class="brk-card-art">

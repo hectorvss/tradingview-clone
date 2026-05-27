@@ -32,7 +32,7 @@ const FILTER_TABS = ['Todo', 'Alcista', 'Neutral', 'Bajista'];
 function styleBlock() {
   return `
   <style>
-    .optb-wrap{display:flex;gap:20px;padding:8px 0 24px;color:#dbdbdb;font:13px/1.4 -apple-system,BlinkMacSystemFont,Roboto,'Trebuchet MS',Ubuntu,sans-serif}
+    .optb-wrap{display:flex;gap:20px;padding:8px 0 24px;color:#dbdbdb;font:13px/1.4 'Trebuchet MS',-apple-system,BlinkMacSystemFont,Roboto,Ubuntu,sans-serif}
     .optb-left{flex:0 0 41%;display:flex;flex-direction:column;gap:8px;min-width:0}
     .optb-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:0}
 

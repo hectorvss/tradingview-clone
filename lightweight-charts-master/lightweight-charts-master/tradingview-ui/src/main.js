@@ -29,6 +29,8 @@ import { renderMarketsWorldEconomyMaps } from './pages/markets-world-economy-map
 import { renderIdeasRecent } from './pages/ideas-recent.js';
 import { renderScriptsEditorsPicks } from './pages/scripts-editors-picks.js';
 import { render as renderSiteHeader } from './sections/header.js';
+import { render as renderGlobalSidebar } from './sections/right-sidebar.js';
+import { attachSidebarHandlers } from './sidebars/sidebar-actions.js';
 
 // Mapa de rutas limpias (History API) → render(mount)
 const PATH_ROUTES = [
@@ -108,12 +110,27 @@ const ACTIVE_NAV_BY_ROUTE = [
 ];
 
 function _mountSiteHeader(host) {
+  // Brand-click should ALWAYS take the user to the real home, even when the
+  // browser is currently on a clean-path route like /community. We must reset
+  // BOTH pathname and hash, otherwise navigate() sees the lingering path and
+  // re-renders that page instead of the market overview.
+  const goHome = () => {
+    if (window.location.pathname !== '/') {
+      history.pushState({}, '', '/');
+    }
+    if (window.location.hash !== '#/') {
+      window.location.hash = '#/';
+    } else {
+      // Hash already #/ — manually trigger router (hashchange won't fire).
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
   renderSiteHeader(host, {
     onNavigate: (target) => {
-      if (target == null)         window.location.hash = '#/';
+      if (target == null)            goHome();
       else if (target === 'SEARCH')  window.location.hash = '#/screener';
-      else if (target === 'UPGRADE') window.location.hash = '#/';
-      else                        window.location.hash = '#/';
+      else if (target === 'UPGRADE') goHome();
+      else                            goHome();
     },
   });
   // Active-state highlight — match both hash route and clean pathname so
@@ -131,11 +148,17 @@ function _mountSiteHeader(host) {
   } catch {}
 }
 
-// Inject one-shot CSS for the active nav highlight + page-shell title strip.
+// Inject CSS for the active nav highlight + page-shell title strip + global
+// header/sidebar styling. Idempotent — keeps a single <style> element but
+// rewrites its textContent each call so hot-reloaded layout fixes propagate
+// without a hard refresh.
 function _ensurePageShellCss() {
-  if (document.getElementById('tv-page-shell-css')) return;
-  const s = document.createElement('style');
-  s.id = 'tv-page-shell-css';
+  let s = document.getElementById('tv-page-shell-css');
+  if (!s) {
+    s = document.createElement('style');
+    s.id = 'tv-page-shell-css';
+    document.head.appendChild(s);
+  }
   s.textContent = `
     .mo-header__menu-link.is-active { color: #2962ff !important; }
     .mo-header__menu-link.is-active::after {
@@ -161,18 +184,53 @@ function _ensurePageShellCss() {
     .tv-page-shell__mount { padding: 18px 24px; }
 
     /* Global site header injected on top of pages that don't ship their own.
-     * Sticky so internal page layouts (chart-page at 100vh, etc.) shift down. */
+     * Use position:fixed (not sticky) so it ALWAYS floats above page content,
+     * including pages that themselves use position:fixed (news, calendar,
+     * portfolio, symbol-overview, fundamental-graphs) which would otherwise
+     * compete with sticky positioning. The very high z-index guarantees the
+     * dropdown panels open above ANY page-level chrome. */
     #tv-global-header {
-      position: sticky; top: 0; z-index: 600;
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 9000;
       background: #0d1015;
       border-bottom: 1px solid #1e222d;
+      pointer-events: auto;
     }
+    /* Push everything in #app down by the 48px header height so it doesn't
+     * sit underneath the now-fixed header. Flow pages benefit immediately;
+     * fixed pages already set their own top:48px when has-global-header. */
+    body.has-global-header #app { padding-top: 48px; }
+    /* Dropdown panels need to outrank everything (page roots, modal overlays). */
+    #tv-global-header .hdr-dd-panel,
+    #tv-global-header .hdr-dd-subpanel { z-index: 9001 !important; }
     /* When the global header is mounted at top of #app, shrink chart-page to
      * fit the remaining viewport so the chart's full UI (top toolbar, axes,
      * bottom strip) is visible without scrolling. */
     body.has-global-header .chart-page { height: calc(100vh - 48px); }
+
+    /* Global right-sidebar (the same 11-icon strip from the chart view, mounted
+     * on every page that doesn't already include one). Fixed to the right edge
+     * so internal page layouts (which expect full-width #app) keep working.
+     * box-sizing:border-box so the 1px left border is INCLUDED in the 45px
+     * width — page content at right:45px touches the border with no gap. */
+    #tv-global-rightbar {
+      position: fixed;
+      top: 48px; right: 0;
+      width: 45px;
+      height: calc(100vh - 48px);
+      z-index: 550;
+      background: #0f0f0f;
+      border-left: 1px solid #2e2e2e;
+      box-sizing: border-box;
+    }
+    /* Push page content 45px in from the right so the sidebar doesn't overlap.
+     * For flow-positioned pages only — fixed pages already set their own
+     * right offset in their own CSS. */
+    body.has-global-rightbar .tv-page-shell,
+    body.has-global-rightbar #app > div:not(#tv-global-header):not(#tv-global-rightbar) {
+      padding-right: 45px;
+    }
   `;
-  document.head.appendChild(s);
 }
 
 // Mount the home header at the very top of #app if no .mo-header exists yet
@@ -485,14 +543,41 @@ async function navigate() {
   }
 }
 
+// Mount the same 11-icon right-sidebar (from the chart view) on the right
+// edge of every non-chart, non-home page. The chart page has its own embedded
+// rightbar with richer panels; the home page renders one internally via
+// market-overview.js. For everything else, we inject this fixed strip.
+function _ensureGlobalRightbar() {
+  const hash = window.location.hash || '';
+  const path = window.location.pathname || '';
+  const isChartPage = /^#\/(chart|chart-lwc|chart-kline)\b/.test(hash);
+  const isHome = (!hash || hash === '#/' || hash === '#') && path === '/';
+  // Home + chart already render their own version
+  if (isChartPage || isHome) {
+    const existing = document.getElementById('tv-global-rightbar');
+    if (existing) existing.remove();
+    document.body.classList.remove('has-global-rightbar');
+    return;
+  }
+  let host = document.getElementById('tv-global-rightbar');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'tv-global-rightbar';
+    document.body.appendChild(host);
+  }
+  try { renderGlobalSidebar(host); } catch {}
+  try { attachSidebarHandlers(host); } catch {}
+  document.body.classList.add('has-global-rightbar');
+}
+
 // After every navigation settles, ensure the home header is present at the
 // top of #app (so every screen shares the same nav) and highlight the active
 // category in blue. We run on a microtask + a short timeout so async page
 // renderers (dynamic imports) have time to flush their HTML into #app.
 function _afterNavigate() {
-  try { _ensureGlobalHeader(); } catch {}
-  setTimeout(() => { try { _ensureGlobalHeader(); } catch {} }, 0);
-  setTimeout(() => { try { _ensureGlobalHeader(); } catch {} }, 120);
+  try { _ensureGlobalHeader(); _ensureGlobalRightbar(); } catch {}
+  setTimeout(() => { try { _ensureGlobalHeader(); _ensureGlobalRightbar(); } catch {} }, 0);
+  setTimeout(() => { try { _ensureGlobalHeader(); _ensureGlobalRightbar(); } catch {} }, 120);
 }
 window.addEventListener('hashchange', () => { navigate(); _afterNavigate(); });
 window.addEventListener('popstate',   () => { navigate(); _afterNavigate(); });

@@ -126,7 +126,7 @@ function ensureStyles() {
   const css = `
 .tv-sym-root {
   position: fixed;
-  inset: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: ${T.bg0};
   color: ${T.txt1};
   font-family: -apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, sans-serif;
@@ -136,6 +136,16 @@ function ensureStyles() {
   overflow: hidden;
   z-index: 1;
 }
+body.has-global-header  .tv-sym-root { top: 48px; }
+body.has-global-rightbar .tv-sym-root { right: 45px; }
+body.has-global-header  .tv-sym-header { display: none !important; }
+body.has-global-rightbar .tv-sym-rail   { display: none !important; }
+.tv-sym-root .tv-sym-logo, .tv-sym-root .tv-sym-logo-mark, .tv-sym-root .tv-sym-logo-word { display: none !important; }
+/* Defensive: any SVG inside the root with default white fill (from Figma
+ * var(--fill-0, white)) gets a transparent fill so it can't bleed. */
+.tv-sym-root svg path[fill="var(--fill-0, white)"],
+.tv-sym-root svg path[fill="white"] { fill: transparent; }
+.tv-sym-header img, .tv-sym-rail img { max-width: 100%; max-height: 100%; }
 .tv-sym-root *, .tv-sym-root *::before, .tv-sym-root *::after { box-sizing: border-box; }
 .tv-sym-root button { font-family: inherit; }
 
@@ -649,7 +659,73 @@ export function createSymbolOverviewPage(mount, opts = {}) {
       pct: -2.34,
       bid: 142.80, ask: 142.85,
     },
+    TSLA: {
+      name: 'Tesla, Inc.',
+      logo: { kind: 'sym', bg: 'red', letter: 'T' },
+      price: 248.50,
+      currency: 'USD',
+      change: 4.12,
+      pct: 1.69,
+      bid: 248.47, ask: 248.53,
+    },
+    AAPL: {
+      name: 'Apple Inc.',
+      logo: { kind: 'sym', bg: 'gray', letter: 'A' },
+      price: 189.95,
+      currency: 'USD',
+      change: -0.78,
+      pct: -0.41,
+      bid: 189.92, ask: 189.98,
+    },
+    MSFT: {
+      name: 'Microsoft Corporation',
+      logo: { kind: 'sym', bg: 'blue', letter: 'M' },
+      price: 415.26,
+      currency: 'USD',
+      change: 2.34,
+      pct: 0.57,
+      bid: 415.22, ask: 415.30,
+    },
+    GOOGL: {
+      name: 'Alphabet Inc.',
+      logo: { kind: 'sym', bg: 'green', letter: 'G' },
+      price: 172.18,
+      currency: 'USD',
+      change: 1.05,
+      pct: 0.61,
+      bid: 172.15, ask: 172.21,
+    },
+    AMZN: {
+      name: 'Amazon.com Inc.',
+      logo: { kind: 'sym', bg: 'orange', letter: 'A' },
+      price: 198.42,
+      currency: 'USD',
+      change: -1.23,
+      pct: -0.62,
+      bid: 198.39, ask: 198.45,
+    },
+    META: {
+      name: 'Meta Platforms Inc.',
+      logo: { kind: 'sym', bg: 'meta', letter: 'M' },
+      price: 562.78,
+      currency: 'USD',
+      change: -12.15,
+      pct: -2.16,
+      bid: 562.72, ask: 562.84,
+    },
+    SPX: {
+      name: 'S&P 500 Index',
+      logo: { kind: 'sym', bg: 'blue', letter: 'S' },
+      price: 5825.34,
+      currency: 'USD',
+      change: 18.42,
+      pct: 0.32,
+      bid: 5825.20, ask: 5825.48,
+    },
   };
+  if (!PROFILE[symbol]) {
+    console.warn('[symbol-overview] no profile for', symbol, '— falling back to NVDA');
+  }
   const p = PROFILE[symbol] || PROFILE.NVDA;
 
   mount.innerHTML = '';

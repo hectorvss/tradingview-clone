@@ -155,8 +155,33 @@ const STYLE_TEXT = `
   --up:#089981; --down:#f23645;
   --accent:#2962ff; --accent-h:#1e88e5;
   background:var(--bg-0); color:var(--tx); font-family: 'Trebuchet MS', Inter, system-ui, -apple-system, sans-serif;
-  display:flex; min-height:836px; width:100%;
+  display:flex; width:100%;
+  /* Cap the screener at the visible viewport so only the table scrolls, not
+   * the whole page. When the global site header (48px) is mounted, subtract
+   * that. min-height removed so the layout doesn't push beyond the viewport. */
+  height: 100vh;
+  overflow: hidden;
 }
+body.has-global-header  .${NS}-root {
+  height: calc(100vh - 48px);
+  /* Force the screener to start BELOW the fixed global header AND give the
+   * page a clean 12px breathing margin between the header bottom edge and
+   * the breadcrumb + title row. Total reserved space at top = 48 + 12 = 60. */
+  position: fixed;
+  top: 48px; left: 0; right: 45px; bottom: 0;
+  width: auto;
+  padding-top: 12px;
+}
+body.has-global-header:not(.has-global-rightbar) .${NS}-root { right: 0; }
+/* Force ensureStyles to re-inject by changing the rule. Bumping the version
+ * comment forces the cached style element to be replaced.
+ * screener-style-v3 */
+/* Always hide the screener's own duplicated chrome — the global site header
+ * and right sidebar are mounted by main.js for every page. Also remove the
+ * energy-ad banner at the bottom so the symbols table reclaims that space. */
+.${NS}-root .${NS}-hdr,
+.${NS}-root .${NS}-side,
+.${NS}-root .${NS}-banner { display: none !important; }
 .${NS}-root *, .${NS}-root *::before, .${NS}-root *::after { box-sizing:border-box; }
 
 /* ----- Layout main + right sidebar ----- */
@@ -229,7 +254,18 @@ const STYLE_TEXT = `
 
 /* ----- Table ----- */
 .${NS}-twrap { flex:1; min-height:0; overflow:auto; background:var(--bg-0); }
+/* Custom scrollbars so the visual scroll edge sits right next to the global
+ * right sidebar — no fat browser-default scrollbar leaving an apparent gap. */
+.${NS}-twrap::-webkit-scrollbar { width:8px; height:8px; }
+.${NS}-twrap::-webkit-scrollbar-thumb { background:var(--bd); border-radius:4px; }
+.${NS}-twrap::-webkit-scrollbar-thumb:hover { background:var(--bd-soft); }
 .${NS}-table { width:100%; border-collapse:collapse; font-size:13px; min-width:1380px; }
+/* Filler column eats the leftover horizontal space so the table fills 100% of
+ * .tvscr-twrap when the viewport is wider than the sum of fixed column widths.
+ * Without it there's a dark dead-zone between the last "Rating" column and
+ * the global right sidebar. */
+.${NS}-filler { width:auto; min-width:0; padding:0; border-bottom:1px solid var(--bd-soft); background:inherit; }
+.${NS}-table thead .${NS}-filler { background:var(--bg-1); border-bottom:1px solid var(--bd); }
 .${NS}-table thead th { position:sticky; top:0; z-index:2; background:var(--bg-1); color:var(--tx-mute); font-weight:400; font-size:12px; text-align:right; padding:8px 12px; border-bottom:1px solid var(--bd); white-space:nowrap; cursor:pointer; user-select:none; }
 .${NS}-table thead th[data-align="left"]  { text-align:left; }
 .${NS}-table thead th[data-sticky]        { left:0; z-index:3; background:var(--bg-1); }
@@ -280,11 +316,15 @@ html.light-theme .${NS}-hdr-logo .${NS}-hdr-logo-tx { color:#131722; }
 `;
 
 function ensureStyles() {
-  if (document.getElementById(STYLE_ID)) return;
-  const s = document.createElement('style');
-  s.id = STYLE_ID;
+  // Re-inject every mount so layout fixes (and HMR edits) propagate without
+  // a hard refresh.
+  let s = document.getElementById(STYLE_ID);
+  if (!s) {
+    s = document.createElement('style');
+    s.id = STYLE_ID;
+    document.head.appendChild(s);
+  }
   s.textContent = STYLE_TEXT;
-  document.head.appendChild(s);
 }
 
 // ---------------------------------------------------------------------------
@@ -432,7 +472,7 @@ function renderTable(rows, sortKey, sortDir) {
   const head = COLUMNS.map(c => {
     const arrow = c.key === sortKey ? (sortDir === 'asc' ? '▲' : '▼') : '';
     return `<th data-key="${c.key}" data-align="${c.align}" ${c.sticky?'data-sticky':''} style="width:${c.w}px; min-width:${c.w}px;">${escapeHtml(c.label)} <span class="${NS}-th-arrow">${arrow}</span></th>`;
-  }).join('');
+  }).join('') + `<th class="${NS}-filler"></th>`;
 
   const body = rows.map(r => {
     const cls = r.chg >= 0 ? `${NS}-up` : `${NS}-down`;
@@ -462,6 +502,7 @@ function renderTable(rows, sortKey, sortDir) {
       <td>${fmtPct(r.dy)}</td>
       <td data-align="left">${escapeHtml(r.sect)}</td>
       <td data-align="left"><span class="${NS}-rating" style="background:${ratingColor}">${escapeHtml(r.rating)}</span></td>
+      <td class="${NS}-filler"></td>
     </tr>`;
   }).join('');
 
@@ -636,6 +677,21 @@ export function createScreener(mountEl, opts = {}) {
   // Mount + initial render
   mountEl.innerHTML = '';
   mountEl.appendChild(root);
+
+  // INLINE STYLES — guarantee the screener never gets clipped under the global
+  // header regardless of cached CSS. Inline `style` always wins specificity.
+  // 48px global header + 12px breathing margin = 60px from top.
+  // 45px global right sidebar offset.
+  root.style.position = 'fixed';
+  root.style.top = '48px';
+  root.style.left = '0';
+  root.style.right = '45px';
+  root.style.bottom = '0';
+  root.style.width = 'auto';
+  root.style.height = 'auto';
+  root.style.paddingTop = '12px';
+  root.style.zIndex = '1';
+
   render();
 
   return { render, destroy, root };

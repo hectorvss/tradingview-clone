@@ -41,16 +41,25 @@ function ensureStyles() {
   const css = `
 .tv-port-root {
   position: fixed;
-  inset: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: ${T.bg0};
   color: ${T.txt1};
-  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Trebuchet MS", Ubuntu, sans-serif;
+  font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, Roboto, Ubuntu, sans-serif;
   font-size: 13px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   z-index: 1;
 }
+body.has-global-header  .tv-port-root { top: 48px; }
+body.has-global-rightbar .tv-port-root { right: 45px; }
+body.has-global-header  .tv-port-header { display: none !important; }
+body.has-global-rightbar .tv-port-rail   { display: none !important; }
+.tv-port-root .tv-port-logo, .tv-port-root .tv-port-logo-mark, .tv-port-root .tv-port-logo-word { display: none !important; }
+/* Clamp ONLY images that are descendants of the (now-hidden) header / rail
+ * widgets — don't touch positioned card icons which rely on max-width:none
+ * to render at their natural Figma-vector dimensions inside a % inset box. */
+.tv-port-header img, .tv-port-rail img { max-width: 100%; max-height: 100%; }
 .tv-port-root *, .tv-port-root *::before, .tv-port-root *::after { box-sizing: border-box; }
 .tv-port-root button { font-family: inherit; }
 
@@ -103,8 +112,12 @@ function ensureStyles() {
 .tv-port-body { flex: 1; display: flex; min-height: 0; }
 .tv-port-main {
   flex: 1; min-width: 0; overflow-y: auto;
-  padding: 0 40px 64px;
+  /* Tighter right padding so cards reach the global right sidebar without a
+   * dead-zone. Top padding kept generous for breathing room. */
+  padding: 12px 20px 64px 28px;
 }
+.tv-port-main::-webkit-scrollbar { width: 8px; }
+.tv-port-main::-webkit-scrollbar-thumb { background: ${T.bd2}; border-radius: 4px; }
 .tv-port-rail {
   flex-shrink: 0; width: 45px; background: ${T.bg0};
   border-left: 1px solid ${T.bd1};
@@ -165,12 +178,21 @@ function ensureStyles() {
 }
 .tv-port-card-icon {
   position: relative;
-  width: 28px; height: 28px;
-  margin-bottom: 8px;
+  width: 32px; height: 32px;
+  margin-bottom: 12px;
+  overflow: hidden;            /* defensive: never let an oversized SVG escape */
+  display: flex; align-items: center; justify-content: center;
 }
 .tv-port-card-icon img {
-  position: absolute; display: block; max-width: none;
-  width: auto; height: auto;
+  /* Force the SVG to fill the icon box at most — the Figma exports use
+   * width="100%" height="100%" inside the SVG and would balloon without
+   * explicit dimensions on the <img>. */
+  width: 28px; height: 28px;
+  display: block;
+  object-fit: contain;
+  /* Cancel any inline top/right/bottom/left that older renderHTML branches
+   * might still set. */
+  position: static !important;
 }
 .tv-port-card-title {
   font-weight: 700;
@@ -456,10 +478,13 @@ export function createPortfolioPage(mount, opts = {}) {
   root.className = 'tv-port-root';
 
   function cardLayersHTML(layers) {
-    return layers.map((l) => {
-      const style = `position:absolute;top:${l.t}%;right:${l.r}%;bottom:${l.b}%;left:${l.l}%;`;
-      return `<img src="${l.src}" alt="" style="${style}width:auto;height:auto;max-width:none;" />`;
-    }).join('');
+    // Render only the FIRST (primary) layer per card — the secondary watchlist
+    // layer was a Figma flourish that doesn't scale cleanly when forced into a
+    // 28x28 box. Inline width/height attributes prevent the SVG from filling
+    // its viewport-sized 100% width/height when those attributes are absent.
+    if (!layers || !layers.length) return '';
+    const l = layers[0];
+    return `<img src="${l.src}" alt="" width="28" height="28" />`;
   }
 
   function cardHTML(c) {
@@ -603,14 +628,53 @@ export function createPortfolioPage(mount, opts = {}) {
     });
   });
 
-  // Autoplay
-  let autoTimer = setInterval(() => {
-    if (state.autoplay) setActive(state.activeItem + 1);
-  }, 4500);
+  // Scroll-driven onboarding: each step of scroll advances the active item.
+  // We intercept wheel events while the onboarding section is in view; once
+  // we reach the last (or first) item we release the scroll back to the page.
+  const onboardSection = root.querySelector('.tv-port-onboard');
+  let scrollAccum = 0;
+  const SCROLL_STEP = 80;       // pixels per advance
+  const ADVANCE_LOCK_MS = 450;  // debounce between advances
+  let lastAdvance = 0;
+
+  function isOnboardInView() {
+    if (!onboardSection) return false;
+    const r = onboardSection.getBoundingClientRect();
+    // Lock onto the section once its top is at or above the global header
+    // (~48px from the top of the viewport) and while its bottom is still
+    // below mid-viewport.
+    const vh = window.innerHeight || 0;
+    return r.top <= 64 && r.bottom > vh * 0.45;
+  }
+
+  function onWheel(e) {
+    if (!isOnboardInView()) { scrollAccum = 0; return; }
+    const now = Date.now();
+    if (now - lastAdvance < ADVANCE_LOCK_MS) {
+      e.preventDefault();
+      return;
+    }
+    const dir = e.deltaY > 0 ? 1 : -1;
+    const nextIdx = state.activeItem + dir;
+    // At boundaries, release scroll to the page so the user can leave the section
+    if (nextIdx < 0 || nextIdx >= ONBOARD_ITEMS.length) {
+      scrollAccum = 0;
+      return;  // let the browser scroll naturally
+    }
+    scrollAccum += e.deltaY;
+    if (Math.abs(scrollAccum) >= SCROLL_STEP) {
+      e.preventDefault();
+      setActive(nextIdx);
+      scrollAccum = 0;
+      lastAdvance = now;
+    } else {
+      e.preventDefault();
+    }
+  }
+  window.addEventListener('wheel', onWheel, { passive: false });
 
   function destroy() {
-    clearInterval(autoTimer);
-    autoTimer = null;
+    window.removeEventListener('wheel', onWheel);
     if (root.parentNode) root.parentNode.removeChild(root);
   }
 

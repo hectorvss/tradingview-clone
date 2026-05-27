@@ -51,23 +51,44 @@ const NAV_ITEMS = [
     label: 'Productos', href: '#/chart/BTCUSDT',
     dropdown: [
       { hero: { icon: ICO.bolt, label: 'Supergráficos', desc: 'El único terminal para dominarlos a todos', href: '#/chart/BTCUSDT' } },
-      { section: 'Herramientas de análisis', items: [
-        { icon: ICO.chart,     label: 'Screener de acciones',       href: '#/screener',                arrow: true },
-        { icon: ICO.fire,      label: 'Screener de cripto',         href: '#/crypto-coins-screener',   arrow: true },
-        { icon: ICO.bars,      label: 'Gráficos fundamentales',     href: '#/fundamental-graphs',      arrow: true },
-        { icon: ICO.grid,      label: 'Multi-timeframe',            href: '#/mtf/BTCUSD' },
-        { icon: ICO.cog,       label: 'Opciones (chain / builder)', href: '#/options' },
-        { icon: ICO.curve,     label: 'Curvas de rendimiento',      href: '#/yield' },
+      { section: 'Herramientas individuales', items: [
+        // Items with `sub` open a nested right-side panel on hover.
+        { icon: ICO.chart, label: 'Analizadores', href: '#/screener', arrow: true, sub: [
+          { section: 'Analizadores', items: [
+            { label: 'Acciones',       href: '#/screener' },
+            { label: 'ETFs',           href: '#/screener?asset=etf' },
+            { label: 'Bonos',          href: '#/yield' },
+            { label: 'Criptomonedas',  href: '#/crypto-coins-screener' },
+            { label: 'Pares CEX',      href: '#/crypto-coins-screener?type=cex' },
+            { label: 'Pares DEX',      href: '#/crypto-coins-screener?type=dex' },
+            { label: 'Pine',           href: '#/pine', meta: 'BETA' },
+          ]},
+          { section: 'Mapas de calor', items: [
+            { label: 'Acciones',      href: '#/crypto-hm?asset=stock' },
+            { label: 'ETFs',          href: '#/crypto-hm?asset=etf' },
+            { label: 'Criptomonedas', href: '#/crypto-hm' },
+          ]},
+        ]},
+        { icon: ICO.calendar, label: 'Calendarios', href: '#/calendar/economico', arrow: true, sub: [
+          { section: 'Calendarios', items: [
+            { label: 'Económico',  href: '#/calendar/economico' },
+            { label: 'Beneficios', href: '#/calendar/beneficios' },
+            { label: 'Ingresos',   href: '#/calendar/ingresos' },
+            { label: 'Dividendos', href: '#/calendar/dividendos' },
+            { label: 'IPOs',       href: '#/calendar/ipo' },
+          ]},
+        ]},
+        { icon: ICO.news,      label: 'Flujo de noticias',      href: '#/news' },
+        { icon: ICO.briefcase, label: 'Carteras',               href: '#/portfolio' },
+        { icon: ICO.bars,      label: 'Gráficos fundamentales', href: '#/fundamental-graphs' },
+        { icon: ICO.curve,     label: 'Curvas de rendimiento',  href: '#/yield' },
+        { icon: ICO.cog,       label: 'Opciones',               href: '#/options' },
+        { icon: ICO.globe,     label: 'Mapas macro',            href: '/markets/world-economy/maps' },
       ]},
-      { section: 'Datos & contenido', items: [
-        { icon: ICO.calendar,  label: 'Calendario económico',       href: '#/calendar',                arrow: true },
-        { icon: ICO.news,      label: 'Flujo de noticias',          href: '#/news' },
-        { icon: ICO.star,      label: 'Vista de símbolo',           href: '#/symbols/NVDA' },
-        { icon: ICO.globe,     label: 'Mapa de calor cripto',       href: '#/crypto-hm' },
-      ]},
-      { section: 'Motores de gráfico', items: [
-        { icon: ICO.chart,     label: 'Lightweight-Charts',         href: '#/chart-lwc' },
-        { icon: ICO.chart,     label: 'KLineChart',                 href: '#/chart-kline' },
+      { section: 'Acerca de', items: [
+        { label: 'Precios',         href: '/community' },
+        { label: 'Funcionalidades', href: '#/symbols/NVDA' },
+        { label: 'Novedades',       href: '#/news' },
       ]},
     ],
   },
@@ -83,6 +104,9 @@ const NAV_ITEMS = [
       { section: 'Crea & comparte', items: [
         { icon: ICO.pen,    label: 'Pine Script Editor',       href: '#/pine' },
         { icon: ICO.paper,  label: 'Paper Trading',            href: '#/paper' },
+      ]},
+      { section: 'Acerca de', items: [
+        { icon: ICO.globe,  label: 'El poder de la comunidad', href: '/community' },
       ]},
     ],
   },
@@ -461,6 +485,11 @@ const CSS = `
     left: -8px;
     min-width: 280px;
     max-width: 360px;
+    /* No overflow on the outer panel — that would clip the nested sub-panel
+     * (positioned left:100%). Scroll, if needed, is delegated to sub-panels
+     * via their own max-height + overflow-y:auto. */
+    max-height: none;
+    overflow: visible;
     background: rgba(22, 26, 36, 0.96);
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -477,6 +506,8 @@ const CSS = `
     font-size: 13px;
     font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
+  .hdr-dd-panel::-webkit-scrollbar { width: 6px; }
+  .hdr-dd-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
   .mo-header__menu-item:hover .hdr-dd-panel,
   .mo-header__menu-item:focus-within .hdr-dd-panel {
     opacity: 1; visibility: visible; transform: translateY(0);
@@ -491,15 +522,52 @@ const CSS = `
   }
   .hdr-dd-section:first-child { padding-top: 4px; }
   .hdr-dd-item {
+    position: relative;
+    display: block;
+    border-radius: 6px;
+    color: #d1d4dc;
+    transition: background 120ms ease, color 120ms ease;
+  }
+  .hdr-dd-link {
     display: block;
     text-decoration: none;
-    color: #d1d4dc;
+    color: inherit;
     border-radius: 6px;
-    transition: background 120ms ease, color 120ms ease;
   }
   .hdr-dd-item:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
   .hdr-dd-item:hover .hdr-dd-icon { color: #2962ff; }
   .hdr-dd-item:hover .hdr-dd-arrow { color: #d1d4dc; }
+
+  /* ----- Nested sub-panel (opens on hover/focus of .hdr-dd-item.has-sub) ----- */
+  .hdr-dd-subpanel {
+    position: absolute;
+    /* Anchor to the right edge of the parent panel, slightly offset. */
+    top: -6px;
+    left: 100%;
+    margin-left: 4px;
+    min-width: 240px;
+    max-width: 320px;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+    background: rgba(22, 26, 36, 0.98);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+    padding: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-4px);
+    transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
+    z-index: 210;
+  }
+  .hdr-dd-item.has-sub:hover > .hdr-dd-subpanel,
+  .hdr-dd-item.has-sub:focus-within > .hdr-dd-subpanel {
+    opacity: 1; visibility: visible; transform: translateX(0);
+  }
+  .hdr-dd-subpanel::-webkit-scrollbar { width: 6px; }
+  .hdr-dd-subpanel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
   .hdr-dd-row {
     display: flex; align-items: center; gap: 10px;
     padding: 9px 10px;
@@ -546,7 +614,13 @@ function _renderDropdownItem(it) {
   const arrow = it.arrow ? '<span class="hdr-dd-arrow">›</span>' : '';
   const meta = it.meta ? `<span class="hdr-dd-meta">${it.meta}</span>` : '';
   const icon = it.icon ? `<span class="hdr-dd-icon">${it.icon}</span>` : '<span class="hdr-dd-icon hdr-dd-icon--blank"></span>';
-  return `<a class="hdr-dd-item" href="${it.href || '#/'}"><span class="hdr-dd-row">${icon}<span class="hdr-dd-label">${it.label}</span>${meta}${arrow}</span></a>`;
+  // Items with `sub` get a nested right-side panel that opens on hover/focus.
+  const hasSub = Array.isArray(it.sub) && it.sub.length > 0;
+  const itemCls = 'hdr-dd-item' + (hasSub ? ' has-sub' : '');
+  const subPanel = hasSub
+    ? `<div class="hdr-dd-subpanel" role="menu">${it.sub.map(_renderDropdownSection).join('')}</div>`
+    : '';
+  return `<div class="${itemCls}"><a class="hdr-dd-link" href="${it.href || '#/'}"><span class="hdr-dd-row">${icon}<span class="hdr-dd-label">${it.label}</span>${meta}${arrow}</span></a>${subPanel}</div>`;
 }
 function _renderDropdownSection(sec) {
   if (sec.hero) {

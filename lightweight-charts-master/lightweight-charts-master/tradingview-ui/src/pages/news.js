@@ -76,7 +76,11 @@ function ensureStyles() {
   _stylesInjected = true;
   const css = `
 .tv-news-root {
-  position: fixed; inset: 0;
+  position: fixed;
+  /* Sit below the global site header (48px) and to the left of the global
+   * right-sidebar (45px) when those are present. Both layers tag the body
+   * with has-global-header / has-global-rightbar from main.js. */
+  top: 0; left: 0; right: 0; bottom: 0;
   background: ${T.bg0};
   color: ${T.txt1};
   font-family: -apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, sans-serif;
@@ -86,6 +90,25 @@ function ensureStyles() {
   overflow: hidden;
   z-index: 1;
 }
+body.has-global-header .tv-news-root { top: 48px; }
+body.has-global-rightbar .tv-news-root { right: 45px; }
+/* News page ships its own header + right rail that duplicate the global ones —
+ * hide them when the globals are mounted so the page doesn't show two stacked
+ * navigation chromes. */
+body.has-global-header  .tv-news-header  { display: none !important; }
+body.has-global-rightbar .tv-news-rail   { display: none !important; }
+/* The title strip ("Flujo de noticias" + "Datos completos" pill) reproduces
+ * Figma chrome whose embedded SVG logos (logo-mark-bg.svg, logo-wordmark.svg)
+ * fall back to white when CSS variables aren't defined, producing big white
+ * blobs over the filter row. Hide it — the global header already shows the
+ * page name via the active nav item ("Comunidad" / "Productos"). */
+body.has-global-header .tv-news-header2  { display: none !important; }
+/* Defensive: clamp ALL embedded news SVG images so they can never balloon
+ * past their html-attribute dimensions even if the parent layout shifts. */
+.tv-news-header img, .tv-news-rail img { max-width: 100%; max-height: 100%; }
+.tv-news-root .tv-news-logo-mark,
+.tv-news-root .tv-news-logo-word,
+.tv-news-root .tv-news-logo { display: none !important; }
 .tv-news-root *, .tv-news-root *::before, .tv-news-root *::after { box-sizing: border-box; }
 .tv-news-root button { font-family: inherit; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; }
 .tv-news-root a { color: inherit; text-decoration: none; }
@@ -285,7 +308,9 @@ function ensureStyles() {
 .tv-news-featured {
   overflow-y: auto;
   background: ${T.bg0};
-  padding: 20px 36px;
+  /* Trim right padding so the article content reaches the global right
+   * sidebar without a visible gap. */
+  padding: 20px 16px 20px 28px;
 }
 .tv-news-featured::-webkit-scrollbar { width: 10px; }
 .tv-news-featured::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }

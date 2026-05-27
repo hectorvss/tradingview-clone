@@ -177,7 +177,7 @@ function stockCard(item) {
     <div class="es-trendTop">
       ${iconSpan(item)}
       <div class="es-trendName">
-        <div class="es-tk">${esc(item.tk)}<sup class="es-D">D</sup></div>
+        <div class="es-tk"><a href="#/chart/${esc(item.tk)}" style="color:inherit;text-decoration:none">${esc(item.tk)}</a><sup class="es-D">D</sup></div>
         <div class="es-name">${esc(item.name)}</div>
       </div>
     </div>
@@ -198,7 +198,7 @@ function rankRow(item, withPill = false) {
       ${iconSpan(item)}
       <div class="es-rankName">
         <span class="es-rankTitle">${esc(item.name)} <sup class="es-D">D</sup></span>
-        <span class="es-rankTk">${esc(item.tk)}</span>
+        <a class="es-rankTk" href="#/chart/${esc(item.tk)}" style="color:inherit;text-decoration:none">${esc(item.tk)}</a>
       </div>
     </div>
     <div class="es-rankPrice">${esc(item.price)} <span class="es-unit">EUR</span></div>

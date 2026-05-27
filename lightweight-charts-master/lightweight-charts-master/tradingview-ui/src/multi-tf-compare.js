@@ -28,10 +28,10 @@ function injectStyles() {
   gap: 8px;
   width: 100%;
   height: 100%;
-  background: #0b0e13;
+  background: #0f0f0f;
   padding: 8px;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #d1d4dc;
 }
 .mtf-panel {
@@ -99,7 +99,7 @@ function injectStyles() {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #d1d4dc;
   animation: cmpmd-fade-in .15s ease-out;
 }
@@ -185,11 +185,11 @@ function injectStyles() {
   font-size: 12px;
   box-sizing: border-box;
 }
-.cmpmd-input:focus { outline: none; border-color: #3179f5; }
+.cmpmd-input:focus { outline: none; border-color: #2962ff; }
 .cmpmd-search-results {
   max-height: 160px;
   overflow-y: auto;
-  background: #0b0e13;
+  background: #0f0f0f;
   border: 1px solid #1e222d;
   border-radius: 4px;
   margin-top: 4px;
@@ -229,7 +229,7 @@ function injectStyles() {
   background: transparent; border: none; color: #787b86; cursor: pointer; padding: 0 2px;
 }
 .cmpmd-chip .x:hover { color: #ef5350; }
-.cmpmd-chip.base { border-color: #3179f5; }
+.cmpmd-chip.base { border-color: #2962ff; }
 .cmpmd-row {
   display: flex;
   gap: 6px;
@@ -244,7 +244,7 @@ function injectStyles() {
   cursor: pointer;
   font-size: 12px;
 }
-.cmpmd-pill.active { background: #3179f5; border-color: #3179f5; color: #fff; }
+.cmpmd-pill.active { background: #2962ff; border-color: #2962ff; color: #fff; }
 .cmpmd-pill:hover:not(.active) { background: #2a2e39; }
 .cmpmd-chart-wrap {
   flex: 1 1 auto;
@@ -423,7 +423,7 @@ const DEFAULT_SYMBOLS = [
 
 // Distinct palette
 const PALETTE = [
-  '#3179f5', '#ef5350', '#26a69a', '#ffb74d', '#ab47bc',
+  '#2962ff', '#ef5350', '#26a69a', '#ffb74d', '#ab47bc',
   '#26c6da', '#f06292', '#9ccc65', '#ff7043', '#7e57c2',
 ];
 

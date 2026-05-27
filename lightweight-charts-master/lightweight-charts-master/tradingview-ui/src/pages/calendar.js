@@ -158,13 +158,31 @@ function ensureStyles() {
   _stylesInjected = true;
   const css = `
 .tv-cal-root {
-  position: fixed; inset: 0;
+  position: fixed;
+  /* Nest inside the global frame (48px top header + 45px right sidebar)
+   * when those layers are present. main.js tags body with the matching
+   * has-global-* classes. */
+  top: 0; left: 0; right: 0; bottom: 0;
   background: ${T.bg0}; color: ${T.txt1};
   font-family: -apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, sans-serif;
   font-size: 13px;
   display: flex; flex-direction: column;
   overflow: hidden; z-index: 1;
 }
+body.has-global-header  .tv-cal-root { top: 48px; }
+body.has-global-rightbar .tv-cal-root { right: 45px; }
+/* Calendar page ships its own header + right rail that duplicate the global
+ * ones — hide them so we don't see two stacked nav chromes. */
+body.has-global-header  .tv-cal-header { display: none !important; }
+body.has-global-rightbar .tv-cal-rail   { display: none !important; }
+/* The Figma-exported logo SVGs use fill="var(--fill-0, white)" which falls
+ * back to WHITE when the variable isn't defined, producing big white blobs
+ * over the page title. Hide them — the global header already shows the brand. */
+.tv-cal-root .tv-cal-logo-mark,
+.tv-cal-root .tv-cal-logo-word,
+.tv-cal-root .tv-cal-logo { display: none !important; }
+.tv-cal-header img, .tv-cal-rail img { max-width: 100%; max-height: 100%; }
+
 .tv-cal-root *, .tv-cal-root *::before, .tv-cal-root *::after { box-sizing: border-box; }
 .tv-cal-root button { font-family: inherit; }
 
@@ -222,8 +240,14 @@ function ensureStyles() {
 .tv-cal-main {
   flex: 1; min-width: 0;
   display: flex; flex-direction: column;
-  padding: 0 40px;
-  overflow-y: auto;
+  /* Tighter right padding so the content reaches the global right sidebar
+   * without a dead zone. Left padding kept for breathing room from viewport. */
+  padding: 12px 16px 0 24px;
+  /* Cap to parent so only the inner table-wrap scrolls — the title row, day
+   * cards (lun/mar/mié/...) and the tabs row (Económico/Beneficios/...) stay
+   * fixed at the top. */
+  overflow: hidden;
+  min-height: 0;
 }
 .tv-cal-rail {
   flex-shrink: 0; width: 45px;
@@ -359,7 +383,15 @@ function ensureStyles() {
   margin-top: 16px;
   padding-bottom: 60px;
   position: relative;
+  /* The only scrolling region inside .tv-cal-main — flex:1 makes it take all
+   * remaining height after the title/day-cards/tabs rows, and overflow-y:auto
+   * engages on its own (the header above stays fixed). */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
+.tv-cal-table-wrap::-webkit-scrollbar { width: 8px; }
+.tv-cal-table-wrap::-webkit-scrollbar-thumb { background: ${T.bd2}; border-radius: 4px; }
 .tv-cal-table {
   width: 100%;
   border-collapse: collapse;

@@ -9,10 +9,17 @@ const STYLES = `
 .opt-page {
   background: var(--grey-6, #0f0f0f);
   color: var(--grey-86, #dbdbdb);
+  /* When the global header (48px) is mounted, cap the page to the visible
+   * viewport so the options table can scroll internally without page-level
+   * scroll. The global rightbar (45px) is accounted for via padding-right. */
   min-height: 100vh;
   font-family: var(--font-ui, 'Trebuchet MS', Arial, sans-serif);
   display: flex; flex-direction: column;
 }
+body.has-global-header  .opt-page  { min-height: calc(100vh - 48px); }
+body.has-global-header  .opt-header { display: none !important; }
+.opt-page .opt-logo, .opt-page .opt-logo-mark { display: none !important; }
+.opt-header img { max-width: 100%; max-height: 100%; }
 .opt-header {
   display: flex; align-items: center; gap: 18px;
   height: 48px; padding: 0 14px;
