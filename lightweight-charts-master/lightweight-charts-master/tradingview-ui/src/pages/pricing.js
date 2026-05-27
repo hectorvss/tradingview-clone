@@ -650,38 +650,19 @@ body.has-global-rightbar .tv-pri-root { padding-right: 0; }
   font-size: 16px;
   border-bottom: 1px solid ${T.bd2};
 }
-.tv-pri-table thead th:first-child { text-align: left; width: 35%; }
+.tv-pri-table { table-layout: fixed; }
+.tv-pri-table thead th:first-child,
+.tv-pri-table tbody td:first-child { text-align: left; width: 35%; }
+.tv-pri-table thead th:not(:first-child),
+.tv-pri-table tbody td:not(:first-child) { width: 13%; text-align: center; }
 .tv-pri-table .tv-pri-table-section td {
   background: ${T.bg2};
   color: ${T.txt0};
   font-weight: 700;
   font-size: 16px;
-  padding: 0;
-  border-top: 1px solid ${T.bd2};
-}
-.tv-pri-section-toggle {
-  display: flex; align-items: center; justify-content: space-between;
-  width: 100%;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-weight: 700;
-  font-size: 16px;
-  text-align: left;
-  border: 0;
   padding: 14px 12px;
-  cursor: pointer;
-}
-.tv-pri-section-toggle:hover { color: ${T.txt0}; background: ${T.bg3}; }
-.tv-pri-section-toggle .tv-pri-caret {
-  width: 14px; height: 14px;
-  transition: transform 0.18s ease;
-  color: ${T.txt2};
-  flex-shrink: 0;
-}
-.tv-pri-table-section-body.is-collapsed .tv-pri-table-row { display: none; }
-.tv-pri-table-section-body:not(.is-collapsed) .tv-pri-section-toggle .tv-pri-caret {
-  transform: rotate(180deg);
+  border-top: 1px solid ${T.bd2};
+  text-align: left;
 }
 .tv-pri-table tbody td {
   padding: 12px;
@@ -690,9 +671,43 @@ body.has-global-rightbar .tv-pri-root { padding-right: 0; }
   vertical-align: middle;
 }
 .tv-pri-table tbody td:first-child { color: ${T.txt2}; }
-.tv-pri-table tbody td:not(:first-child) { text-align: center; }
-.tv-pri-table img.tv-pri-check { width: 18px; height: 18px; vertical-align: middle; }
+.tv-pri-table img.tv-pri-check {
+  width: 18px; height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+}
 .tv-pri-table .tv-pri-dash { color: ${T.txt5}; }
+
+/* Single bottom toggle for the whole comparison table */
+.tv-pri-table-wrap { position: relative; overflow: hidden; }
+.tv-pri-table-wrap.is-collapsed-all .tv-pri-table-section-body[data-idx="0"] ~ .tv-pri-table-section-body { display: none; }
+.tv-pri-table-fade {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 180px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(15,15,15,0) 0%, ${T.bg0} 90%);
+  opacity: 0; transition: opacity .25s ease;
+}
+.tv-pri-table-wrap.is-collapsed-all .tv-pri-table-fade { opacity: 1; }
+.tv-pri-table-toggle-wrap { display: flex; justify-content: center; margin-top: 24px; }
+.tv-pri-table-toggle-all {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent;
+  color: ${T.txt0};
+  border: 1px solid ${T.bd2};
+  border-radius: 9999px;
+  padding: 12px 24px;
+  font: 600 14px/1 Roboto, sans-serif;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.tv-pri-table-toggle-all:hover { background: ${T.bg2}; border-color: ${T.bd3}; }
+.tv-pri-table-toggle-all .tv-pri-caret {
+  width: 14px; height: 14px; transition: transform 0.18s ease;
+}
+.tv-pri-table-toggle-all[aria-expanded="true"] .tv-pri-caret { transform: rotate(180deg); }
+.tv-pri-table-toggle-text-expanded { display: none; }
+.tv-pri-table-toggle-all[aria-expanded="true"] .tv-pri-table-toggle-text-collapsed { display: none; }
+.tv-pri-table-toggle-all[aria-expanded="true"] .tv-pri-table-toggle-text-expanded { display: inline; }
 
 /* ===== Testimonial / wall ===== */
 .tv-pri-testimonials {
@@ -726,6 +741,7 @@ body.has-global-rightbar .tv-pri-root { padding-right: 0; }
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   margin: 32px auto 48px;
+  max-width: 1100px;
   text-align: left;
 }
 .tv-pri-tweet {
@@ -914,7 +930,7 @@ function renderTableRow(row) {
 const CARET_SVG = '<svg class="tv-pri-caret" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function renderWall() {
-  return WALL_CARDS.map(c =>
+  return WALL_CARDS.slice(0, 4).map(c =>
     `<a class="tv-pri-tweet" href="${c.href}" target="_blank" rel="noopener noreferrer">
        <img class="tv-pri-tweet-img" src="/figma/pricing/tw/${c.slug}.jpg" alt="${c.handle}" loading="lazy">
        <span class="tv-pri-tweet-handle">${c.handle}</span>
@@ -927,13 +943,24 @@ function renderTable() {
     <th>Comparar planes</th>
     ${TABLE_COLS.map(c => `<th>${c}</th>`).join('')}
   </tr></thead>`;
-  // First section expanded by default, rest collapsed (matches tradingview.com/pricing).
+  // Single toggle below the table — default collapsed (only first section visible),
+  // click reveals everything. Matches tradingview.com/pricing layout.
   const bodies = TABLE_SECTIONS.map(([title, rows], idx) => {
-    const collapsed = idx === 0 ? '' : ' is-collapsed';
-    const header = `<tr class="tv-pri-table-section"><td colspan="6"><button type="button" class="tv-pri-section-toggle" aria-expanded="${idx === 0}">${title}${CARET_SVG}</button></td></tr>`;
-    return `<tbody class="tv-pri-table-section-body${collapsed}" data-section="${title}">${header}${rows.map(renderTableRow).join('')}</tbody>`;
+    const sectionRow = `<tr class="tv-pri-table-section"><td colspan="6">${title}</td></tr>`;
+    return `<tbody class="tv-pri-table-section-body" data-section="${title}" data-idx="${idx}">${sectionRow}${rows.map(renderTableRow).join('')}</tbody>`;
   }).join('');
-  return `<table class="tv-pri-table">${head}${bodies}</table>`;
+  return `
+    <div class="tv-pri-table-wrap is-collapsed-all">
+      <table class="tv-pri-table">${head}${bodies}</table>
+      <div class="tv-pri-table-fade" aria-hidden="true"></div>
+    </div>
+    <div class="tv-pri-table-toggle-wrap">
+      <button type="button" class="tv-pri-table-toggle-all" aria-expanded="false">
+        <span class="tv-pri-table-toggle-text-collapsed">Comparar todas las funcionalidades</span>
+        <span class="tv-pri-table-toggle-text-expanded">Ver menos</span>
+        ${CARET_SVG}
+      </button>
+    </div>`;
 }
 
 function renderFAQ() {
@@ -1067,12 +1094,12 @@ export function createPricingPage(mount, opts = {}) {
       paint();
       return;
     }
-    const toggle = e.target.closest('.tv-pri-section-toggle');
-    if (toggle) {
-      const body = toggle.closest('.tv-pri-table-section-body');
-      if (body) {
-        const collapsed = body.classList.toggle('is-collapsed');
-        toggle.setAttribute('aria-expanded', String(!collapsed));
+    const tableToggle = e.target.closest('.tv-pri-table-toggle-all');
+    if (tableToggle) {
+      const wrap = root.querySelector('.tv-pri-table-wrap');
+      if (wrap) {
+        const collapsed = wrap.classList.toggle('is-collapsed-all');
+        tableToggle.setAttribute('aria-expanded', String(!collapsed));
       }
       return;
     }
