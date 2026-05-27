@@ -7,14 +7,15 @@ import { createChart, LineSeries, LineStyle, CrosshairMode } from 'lightweight-c
 
 const STYLES = `
 .optv-root{
-  display:flex;flex-direction:column;width:100%;min-height:calc(100vh - 220px);
+  display:flex;flex-direction:column;width:100%;height:100%;min-height:0;
   background:var(--tv-bg-0,#0f0f0f);color:var(--tv-text,#d1d4dc);
   font-family:'Trebuchet MS',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  padding:8px 24px 24px;box-sizing:border-box;
+  padding:8px 24px 16px;box-sizing:border-box;overflow:hidden;
 }
 .optv-datebar{
   display:flex;flex-direction:column;gap:4px;padding:4px 0 10px;
-  position:relative;
+  position:sticky;top:0;z-index:5;background:var(--tv-bg-0,#0f0f0f);
+  flex-shrink:0;
 }
 .optv-month-row{
   display:flex;align-items:center;height:18px;padding:0 36px;
@@ -52,28 +53,26 @@ const STYLES = `
 }
 .optv-day.is-muted{color:var(--tv-text-dim,#5d6168);}
 .optv-chart-wrap{
-  position:relative;flex:1;min-height:540px;margin-top:4px;
-  background:#0f0f0f;
+  position:relative;flex:1 1 auto;min-height:0;width:100%;
+  margin-top:4px;background:#0f0f0f;overflow:hidden;
 }
-.optv-chart-host{position:absolute;inset:0;}
-.optv-grid-line{stroke:rgba(255,255,255,0.06);stroke-width:1;}
-.optv-axis-text{
-  fill:var(--tv-text-muted,#787b86);font-size:11px;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+.optv-chart-host{position:absolute;inset:0;width:100%;height:100%;}
+.optv-tooltip{
+  position:absolute;pointer-events:none;z-index:10;
+  background:rgba(20,22,28,0.96);color:var(--tv-text,#d1d4dc);
+  border:1px solid var(--tv-border,#2a2e39);border-radius:4px;
+  padding:6px 8px;font-size:11px;line-height:1.4;
+  box-shadow:0 4px 12px rgba(0,0,0,0.45);
+  display:none;white-space:nowrap;
 }
-.optv-axis-text.is-x{font-size:11px;}
-.optv-curve{fill:none;stroke:#2962ff;stroke-width:1.5;stroke-linejoin:round;}
-.optv-strike-line{stroke:rgba(255,255,255,0.35);stroke-width:1;stroke-dasharray:3 3;}
-.optv-watermark{
-  fill:#22a6c4;font-size:14px;font-weight:600;opacity:0.95;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-}
+.optv-tooltip.is-visible{display:block;}
+.optv-tooltip .row{display:flex;justify-content:space-between;gap:10px;}
+.optv-tooltip .lbl{color:var(--tv-text-muted,#787b86);}
+.optv-tooltip .val{color:var(--tv-text,#d1d4dc);font-weight:600;}
+.optv-tooltip .val.is-iv{color:#2962ff;}
 `;
 
 // Continuous day strip — labels mark where month boundaries fall.
-// Each entry: { day, month|null, muted? }
-// Built from Figma: leading "3 4 5" (no month label above them — prior month residue),
-// then jun (9..30), then jul (1,7,10,17,24,31), then ago (7,21,28,31), then sept dimmed.
 const DAYS = [
   { day:3,  month:null },
   { day:4,  month:null },
@@ -106,7 +105,6 @@ const DAYS = [
   { day:1,  month:'sept', muted:true },
 ];
 
-// Month label anchors (computed as group start index into DAYS).
 function monthSpans(){
   const spans = [];
   let curr = null;
@@ -121,13 +119,7 @@ function monthSpans(){
   return spans.filter(s => s.month);
 }
 
-// Y-axis labels top→bottom (every 40%)
-const Y_LABELS = [600,560,520,480,440,400,360,320,280,240,200,160,120,80,40,0,-40];
-// X-axis ticks (faithful to Figma)
-const X_TICKS = [100,5000,5700,6200,6550,6800,6975,7150,7325,7500,7675,7850,8000,8600];
-
-// Volatility-smile curve: very steep drop 100→5000, then near-flat floor with
-// imperceptible rise toward 8600. Mirrors Figma exactly.
+// Volatility-smile curve: steep drop 100→5000, near-flat floor with imperceptible rise.
 const CURVE = [
   [100,480],[300,380],[600,280],[1000,190],[1500,130],[2200,90],
   [3000,60],[4000,45],[5000,40],
@@ -149,15 +141,27 @@ export function renderOptionsVolatilityTab(mount, opts = {}) {
           <button class="optv-nav optv-next" aria-label="Siguiente">&#10095;</button>
         </div>
       </div>
-      <div class="optv-chart-wrap"><div class="optv-chart-host" data-chart></div></div>
+      <div class="optv-chart-wrap">
+        <div class="optv-chart-host" data-chart></div>
+        <div class="optv-tooltip" data-tt>
+          <div class="row"><span class="lbl">Strike</span><span class="val" data-tt-strike>—</span></div>
+          <div class="row"><span class="lbl">IV</span><span class="val is-iv" data-tt-iv>—</span></div>
+        </div>
+      </div>
     </div>
   `;
 
-  // ----- Real lightweight-charts volatility smile -----
   const chartHost = mount.querySelector('[data-chart]');
+  const chartWrap = mount.querySelector('.optv-chart-wrap');
+  const tooltipEl = mount.querySelector('[data-tt]');
+  const ttStrike = mount.querySelector('[data-tt-strike]');
+  const ttIv     = mount.querySelector('[data-tt-iv]');
   let chart = null;
   let series = null;
   let chartRO = null;
+  let onCrosshairMove = null;
+  let onMouseLeave = null;
+
   function mountChart() {
     if (!chartHost) return;
     chart = createChart(chartHost, {
@@ -179,7 +183,7 @@ export function renderOptionsVolatilityTab(mount, opts = {}) {
         borderColor: '#2e2e2e',
         timeVisible: false,
         secondsVisible: false,
-        tickMarkFormatter: (time) => String(time),  // raw strike value
+        tickMarkFormatter: (time) => String(time),
       },
       crosshair: {
         mode: CrosshairMode.Magnet,
@@ -208,17 +212,12 @@ export function renderOptionsVolatilityTab(mount, opts = {}) {
       crosshairMarkerRadius: 5,
       priceFormat: { type: 'custom', formatter: (v) => v.toFixed(2) + '%' },
     });
-    // Build the volatility smile from CURVE — strike as synthetic time so
-    // lightweight-charts plots strike on X and IV% on Y.
     const data = CURVE
       .slice()
       .sort((a, b) => a[0] - b[0])
       .map(([strike, iv]) => ({ time: strike, value: iv }));
     series.setData(data);
 
-    // Dashed vertical at the at-the-money strike, plus a horizontal at IV=0
-    // for reference. lightweight-charts doesn't natively support vertical
-    // price lines, so we add a price line on the series instead.
     const strikeIv = (data.find(d => d.time === STRIKE_LINE) || data[Math.floor(data.length/2)]).value;
     series.createPriceLine({
       price: strikeIv,
@@ -231,20 +230,46 @@ export function renderOptionsVolatilityTab(mount, opts = {}) {
 
     chart.timeScale().fitContent();
 
-    // Resize chart with its container.
     chartRO = new ResizeObserver(() => {
       if (!chartHost.clientWidth || !chartHost.clientHeight) return;
       chart.applyOptions({ width: chartHost.clientWidth, height: chartHost.clientHeight });
+      chart.timeScale().fitContent();
     });
     chartRO.observe(chartHost);
+
+    // Custom hover tooltip — follows cursor, shows strike + IV.
+    onCrosshairMove = (param) => {
+      if (!param || !param.point || param.point.x < 0 || param.point.y < 0 || !param.seriesData) {
+        tooltipEl.classList.remove('is-visible');
+        return;
+      }
+      const sData = param.seriesData.get(series);
+      if (!sData) {
+        tooltipEl.classList.remove('is-visible');
+        return;
+      }
+      ttStrike.textContent = String(param.time != null ? param.time : sData.time);
+      ttIv.textContent = (sData.value != null ? sData.value.toFixed(2) : '—') + '%';
+      tooltipEl.classList.add('is-visible');
+      // Position relative to chart-wrap (which is offsetParent of tooltip).
+      const wrapW = chartWrap.clientWidth;
+      const ttW = tooltipEl.offsetWidth || 120;
+      let left = param.point.x + 14;
+      if (left + ttW > wrapW - 4) left = param.point.x - ttW - 14;
+      const top = Math.max(6, param.point.y - 36);
+      tooltipEl.style.left = left + 'px';
+      tooltipEl.style.top  = top + 'px';
+    };
+    chart.subscribeCrosshairMove(onCrosshairMove);
+
+    onMouseLeave = () => tooltipEl.classList.remove('is-visible');
+    chartHost.addEventListener('mouseleave', onMouseLeave);
   }
-  // Defer to next frame so flex layout has computed real dimensions.
   requestAnimationFrame(mountChart);
 
   const track = mount.querySelector('.optv-days-track');
   const labelRow = mount.querySelector('.optv-month-row');
 
-  // Position month labels above their first-day button (after layout).
   const positionLabels = () => {
     const buttons = track.querySelectorAll('.optv-day');
     const trackRect = track.getBoundingClientRect();
@@ -253,7 +278,7 @@ export function renderOptionsVolatilityTab(mount, opts = {}) {
       const btn = buttons[span.start];
       if (label && btn){
         const r = btn.getBoundingClientRect();
-        label.style.left = `${(r.left - trackRect.left) + 36 /*nav width+gap*/}px`;
+        label.style.left = `${(r.left - trackRect.left) + 36}px`;
       }
     });
   };
@@ -264,8 +289,9 @@ export function renderOptionsVolatilityTab(mount, opts = {}) {
   const onClick = (e) => {
     const btn = e.target.closest('.optv-day');
     if (!btn) return;
+    const wasSelected = btn.classList.contains('is-selected');
     track.querySelectorAll('.optv-day.is-selected').forEach(n => n.classList.remove('is-selected'));
-    btn.classList.add('is-selected');
+    if (!wasSelected) btn.classList.add('is-selected');
   };
   track.addEventListener('click', onClick);
 
@@ -273,6 +299,8 @@ export function renderOptionsVolatilityTab(mount, opts = {}) {
     destroy(){
       ro.disconnect();
       try { chartRO && chartRO.disconnect(); } catch {}
+      try { onCrosshairMove && chart && chart.unsubscribeCrosshairMove(onCrosshairMove); } catch {}
+      try { onMouseLeave && chartHost && chartHost.removeEventListener('mouseleave', onMouseLeave); } catch {}
       try { chart && chart.remove(); } catch {}
       chart = null; series = null; chartRO = null;
       track.removeEventListener('click', onClick);
@@ -292,58 +320,6 @@ function renderDays(){
     const cls = `optv-day${d.selected?' is-selected':''}${d.muted?' is-muted':''}`;
     return `<button class="${cls}" data-i="${i}" data-day="${d.day}">${d.day}</button>`;
   }).join('');
-}
-
-function renderChart(){
-  // Use viewBox in pixels — scales to container via SVG.
-  const W = 1400, H = 560;
-  const padL = 20, padR = 80, padT = 12, padB = 36;
-  const plotW = W - padL - padR;
-  const plotH = H - padT - padB;
-
-  const yMin = -40, yMax = 600;
-  const xMin = 100, xMax = 8600;
-
-  const xToPx = (v) => padL + ((v - xMin) / (xMax - xMin)) * plotW;
-  const yToPx = (v) => padT + (1 - (v - yMin) / (yMax - yMin)) * plotH;
-
-  // Horizontal grid + Y labels (right-aligned with % suffix)
-  const gridLines = Y_LABELS.map(v => {
-    const y = yToPx(v);
-    return `<line class="optv-grid-line" x1="${padL}" x2="${padL+plotW}" y1="${y}" y2="${y}"/>
-            <text class="optv-axis-text" x="${padL+plotW+8}" y="${y+4}">${v.toFixed(2)}%</text>`;
-  }).join('');
-
-  // X-axis labels (below plot)
-  const xLabels = X_TICKS.map(v => {
-    const x = xToPx(v);
-    return `<text class="optv-axis-text is-x" x="${x}" y="${H-12}" text-anchor="middle">${v}</text>`;
-  }).join('');
-
-  // Strike dashed vertical
-  const sx = xToPx(STRIKE_LINE);
-  const strikeLine = `<line class="optv-strike-line" x1="${sx}" x2="${sx}" y1="${padT}" y2="${padT+plotH}"/>`;
-
-  // Curve polyline
-  const pts = CURVE.map(([x,y]) => `${xToPx(x).toFixed(1)},${yToPx(y).toFixed(1)}`).join(' ');
-  const curve = `<polyline class="optv-curve" points="${pts}"/>`;
-
-  // TradingView watermark — bottom-left, just above x-axis ticks (near 0% line).
-  const wmY = yToPx(0) + 4;
-  const watermark = `<g class="optv-watermark-g">
-    <rect x="${padL+6}" y="${wmY-12}" width="14" height="14" fill="#22a6c4" opacity="0.9"/>
-    <text class="optv-watermark" x="${padL+26}" y="${wmY}">TradingView</text>
-  </g>`;
-
-  return `
-    <svg class="optv-chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-      ${gridLines}
-      ${strikeLine}
-      ${curve}
-      ${xLabels}
-      ${watermark}
-    </svg>
-  `;
 }
 
 export default renderOptionsVolatilityTab;

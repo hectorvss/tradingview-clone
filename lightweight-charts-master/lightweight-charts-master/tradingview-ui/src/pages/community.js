@@ -285,13 +285,9 @@ function sectionUnleash() {
           ${btn('Explore ideas', { href: '#/news' })}
         </div>
         <div class="cm-card-media cm-card-media-ideas">
-          <div class="cm-mini-post"><div class="cm-mock-avatar"></div><div class="cm-mock-lines"><div class="cm-mock-line"></div><div class="cm-mock-line cm-mock-line-short"></div></div></div>
-          <div class="cm-mini-chart">
-            <svg viewBox="0 0 500 220" preserveAspectRatio="none">
-              <path d="M0,170 L80,140 L160,160 L240,100 L320,130 L400,60 L500,90" stroke="#00bce6" stroke-width="2" fill="none"/>
-              <circle cx="320" cy="130" r="4" fill="#d500f9"/>
-            </svg>
-          </div>
+          <img class="cm-card-illustration" src="${ASSETS}/illustration-ideas.png"
+               alt="Comparta ideas de trading con la comunidad"
+               loading="lazy" decoding="async"/>
         </div>
       </article>
 
@@ -302,14 +298,9 @@ function sectionUnleash() {
           ${btn('Explore los scripts de la comunidad', { href: '#/' })}
         </div>
         <div class="cm-card-media cm-card-media-scripts">
-          <pre class="cm-mock-code">//@version=5
-indicator("RSI Divergence")
-length = input.int(14)
-src = close
-rsi = ta.rsi(src, length)
-plot(rsi, color=color.aqua)
-hline(70, "Top")
-hline(30, "Bottom")</pre>
+          <img class="cm-card-illustration" src="${ASSETS}/illustration-scripts.png"
+               alt="Comparta scripts de trading con la comunidad"
+               loading="lazy" decoding="async"/>
         </div>
       </article>
 
@@ -319,175 +310,76 @@ hline(30, "Bottom")</pre>
           <p class="cm-card-desc">Participe en directo en una red social y converse sobre símbolos específicos: traders de todo el mundo se reúnen para charlar, seguir y debatir temas en tiempo real.</p>
         </div>
         <div class="cm-card-media cm-card-media-thoughts">
-          <div class="cm-bubble cm-bubble-1">¿Algún movimiento en BTC hoy?</div>
-          <div class="cm-bubble cm-bubble-2">Soporte en 28k aguanta 💪</div>
-          <div class="cm-bubble cm-bubble-3">Watch out, FED a las 14h</div>
+          <img class="cm-card-illustration cm-card-illustration--thoughts"
+               src="${ASSETS}/illustration-thoughts.png"
+               alt="Comparta pensamientos sobre el mercado con la comunidad"
+               loading="lazy" decoding="async"/>
         </div>
       </article>
     </div>
   </section>`;
 }
 
+// Render Figma 1:1 (25:180938) — galaxia cósmica + contador 16.441.124 + 3 stats
 function sectionUniverse() {
-  return `<section class="cm-sec cm-universe" data-node-id="25:180938">
-    <div class="cm-universe-glow"></div>
-    <h2 class="cm-h2 cm-h2-center cm-universe-h2"><span>Usted ha creado este</span><span>universo</span></h2>
-    <div class="cm-universe-count">16.441.124</div>
-    <div class="cm-universe-stats">
-      ${STAT_ITEMS.map(statItem).join('')}
-    </div>
+  return `<section class="cm-sec cm-sec-img cm-universe" data-node-id="25:180938">
+    <img class="cm-section-img" src="${ASSETS}/section-universe.png"
+         alt="Usted ha creado este universo — 16.441.124 publicaciones"
+         loading="lazy" decoding="async"/>
   </section>`;
 }
 
+// Render Figma 1:1 (25:180972) — "Porque las finanzas deben ser sociales" + slider Crear/Compartir/Aprenda/Colabore
 function sectionSocialFinance() {
-  return `<section class="cm-sec cm-social" data-node-id="25:180972">
-    <h2 class="cm-h2 cm-h2-center cm-social-h2"><span>Porque las finanzas</span><span>deben ser sociales</span></h2>
-    <p class="cm-social-desc">¿Quién tiene la mejor visión: un ejecutivo de Wall Street o un millón de traders conectados?</p>
-    <div class="cm-social-card">
-      <div class="cm-social-tabs">
-        <div class="cm-social-tab cm-social-tab-active">
-          <div class="cm-social-tab-title">Crear</div>
-          <p class="cm-social-tab-sub">Genere ideas, opiniones y estrategias mediante herramientas colaborativas en tiempo real. Desarrolle contenido directamente en nuestros gráficos y mercados en directo.</p>
-        </div>
-        <div class="cm-social-tab"><div class="cm-social-tab-title">Compartir</div></div>
-        <div class="cm-social-tab"><div class="cm-social-tab-title">Aprenda</div></div>
-        <div class="cm-social-tab"><div class="cm-social-tab-title">Colabore</div></div>
-      </div>
-      <div class="cm-social-media">
-        <div class="cm-social-media-inner">
-          <div class="cm-mock-toolbar"></div>
-          <svg viewBox="0 0 620 380" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="cm-ar" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#2962ff" stop-opacity="0.4"/>
-                <stop offset="100%" stop-color="#2962ff" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <path d="M0,280 L80,250 L160,260 L240,200 L320,220 L400,150 L480,180 L560,110 L620,140 L620,380 L0,380 Z" fill="url(#cm-ar)"/>
-            <path d="M0,280 L80,250 L160,260 L240,200 L320,220 L400,150 L480,180 L560,110 L620,140" stroke="#2962ff" stroke-width="2" fill="none"/>
-          </svg>
-        </div>
-      </div>
-      <div class="cm-social-controls">
-        <button class="cm-social-ctrl" aria-label="Anterior">${ICONS.arrowLeft}</button>
-        <div class="cm-social-counter">1 / 4</div>
-        <button class="cm-social-ctrl" aria-label="Siguiente">${ICONS.arrowRight}</button>
-        <button class="cm-social-ctrl cm-social-pause" aria-label="Pausar">${ICONS.pause}</button>
-      </div>
-    </div>
+  return `<section class="cm-sec cm-sec-img cm-social" data-node-id="25:180972">
+    <img class="cm-section-img" src="${ASSETS}/section-social.png"
+         alt="Porque las finanzas deben ser sociales"
+         loading="lazy" decoding="async"/>
   </section>`;
 }
 
+// Render Figma 1:1 (25:181635) — The Leap + banner gradient + 3 features
 function sectionLeap() {
-  return `<section class="cm-sec cm-leap" data-node-id="25:181635">
-    <h2 class="cm-h2 cm-h2-center">The Leap</h2>
-    <p class="cm-leap-desc">Compita sin riesgos por premios de dinero real con la mayor comunidad de<br>traders del mundo.</p>
-    <div class="cm-leap-btn-wrap">${btn('Únase a The Leap', { href: '#/', big: true })}</div>
-    <div class="cm-leap-banner">
-      <svg viewBox="0 0 1360 405" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id="cm-leap-grad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#00bce6"/>
-            <stop offset="50%" stop-color="#2962ff"/>
-            <stop offset="100%" stop-color="#d500f9"/>
-          </linearGradient>
-        </defs>
-        <path d="M40,330 C200,330 280,260 420,240 C580,220 700,290 860,260 C1020,230 1120,140 1320,80" stroke="url(#cm-leap-grad)" stroke-width="4" fill="none"/>
-        <circle cx="1320" cy="80" r="14" fill="#d500f9"/>
-        <circle cx="1320" cy="80" r="28" fill="#d500f9" opacity="0.18"/>
-        <text x="680" y="200" text-anchor="middle" fill="#ffffff" font-family="Inter, Trebuchet MS, sans-serif" font-weight="700" font-size="64" opacity="0.85">THE LEAP</text>
-      </svg>
-    </div>
-    <div class="cm-leap-features">
-      ${LEAP_FEATURES.map((f) => `<div class="cm-leap-feat">
-        <div class="cm-leap-feat-icon">${ICONS[f.icon]}</div>
-        <div class="cm-leap-feat-title">${esc(f.title)}</div>
-        <p class="cm-leap-feat-desc">${esc(f.desc)}</p>
-      </div>`).join('')}
-    </div>
+  return `<section class="cm-sec cm-sec-img cm-leap" data-node-id="25:181635">
+    <img class="cm-section-img" src="${ASSETS}/section-leap.png"
+         alt="The Leap — Compita sin riesgos por premios de dinero real"
+         loading="lazy" decoding="async"/>
   </section>`;
 }
 
+// Render Figma 1:1 (25:181947) — Pine, programando juntos + 5 chevron cards
 function sectionPine() {
-  return `<section class="cm-sec cm-pine" data-node-id="25:181947">
-    <h2 class="cm-h2 cm-h2-center"><span>Pine, programando juntos</span></h2>
-    <p class="cm-pine-desc">El poder del trading y de la programación combinados: una comunidad mundial masiva de programadores que superan los límites. Analice, aprenda y colabore para hacer realidad sus ideas de análisis de trading.</p>
-    <div class="cm-pine-tree">
-      <div class="cm-pine-orbit"></div>
-      <div class="cm-pine-orbit cm-pine-orbit-2"></div>
-      <div class="cm-pine-orbit cm-pine-orbit-3"></div>
-      <svg viewBox="0 0 400 360" class="cm-pine-svg">
-        <path d="M200 20 L100 200 L160 200 L60 340 L340 340 L240 200 L300 200 Z" fill="#0f6e2c" stroke="#22c55e" stroke-width="1"/>
-        <path d="M200 60 L130 200 L170 200 L100 320 L300 320 L230 200 L270 200 Z" fill="#15803d" opacity="0.7"/>
-        <rect x="188" y="340" width="24" height="20" fill="#4a2c14"/>
-      </svg>
-    </div>
-    <div class="cm-pine-cards">
-      ${PINE_CARDS.map(chevronCard).join('')}
-    </div>
+  return `<section class="cm-sec cm-sec-img cm-pine" data-node-id="25:181947">
+    <img class="cm-section-img" src="${ASSETS}/section-pine.png"
+         alt="Pine, programando juntos"
+         loading="lazy" decoding="async"/>
   </section>`;
 }
 
+// Render Figma 1:1 (25:182134) — Aquí hay wizards + 3 filas de avatares
 function sectionWizards() {
-  const rowHtml = (arr) =>
-    `<div class="cm-wiz-row">
-      <div class="cm-wiz-track">
-        ${arr.map(wizardItem).join('')}
-        ${arr.map(wizardItem).join('')}
-      </div>
-    </div>`;
-  return `<section class="cm-sec cm-wizards" data-node-id="25:182134">
-    <h2 class="cm-h2 cm-h2-center">Aquí hay wizards</h2>
-    <p class="cm-wiz-desc">Maestros de Pine Script™ y héroes del arte de los gráficos. Conozca a los mejores desarrolladores que diseñan herramientas para que los traders cautiven los mercados.</p>
-    <div class="cm-wiz-rows">
-      ${rowHtml(WIZARDS_ROW_1)}
-      ${rowHtml(WIZARDS_ROW_2)}
-      ${rowHtml(WIZARDS_ROW_3)}
-      <div class="cm-wiz-fade cm-wiz-fade-left"></div>
-      <div class="cm-wiz-fade cm-wiz-fade-right"></div>
-    </div>
+  return `<section class="cm-sec cm-sec-img cm-wizards" data-node-id="25:182134">
+    <img class="cm-section-img" src="${ASSETS}/section-wizards.png"
+         alt="Aquí hay wizards — Maestros de Pine Script™"
+         loading="lazy" decoding="async"/>
   </section>`;
 }
 
+// Render Figma 1:1 (25:182887) — "Dulces beneficios +$13M" + corazones y dólares
 function sectionDollars() {
-  const heartsLeft  = Array.from({ length: 6 }).map((_, i) => `<span class="cm-anim-icon cm-anim-icon-h cm-anim-icon-${i+1}">${ICONS.heart}</span>`).join('');
-  const dollarsRight = Array.from({ length: 6 }).map((_, i) => `<span class="cm-anim-icon cm-anim-icon-d cm-anim-icon-${i+1}">${ICONS.dollar}</span>`).join('');
-  return `<section class="cm-sec cm-dollars" data-node-id="25:182887">
-    <div class="cm-dollars-side cm-dollars-side-left">${heartsLeft}</div>
-    <div class="cm-dollars-side cm-dollars-side-right">${dollarsRight}</div>
-    <h2 class="cm-h2 cm-h2-center cm-dollars-h2"><span>Dulces, dulces beneficios</span><span>por parte de TradingView</span></h2>
-    <div class="cm-dollars-price">+$13M</div>
-    <p class="cm-dollars-sub">Recibidos por nuestros usuarios y sus amigos a través de nuestros programas Recomiende a un amigo y de socios.</p>
-    <div class="cm-dollars-btns">
-      ${btn('Recomendar a un amigo', { href: '#/', big: true })}
-      ${btn('Conviértase en socio',  { href: '#/', big: true })}
-    </div>
+  return `<section class="cm-sec cm-sec-img cm-dollars" data-node-id="25:182887">
+    <img class="cm-section-img" src="${ASSETS}/section-dollars.png"
+         alt="Dulces, dulces beneficios por parte de TradingView — +$13M"
+         loading="lazy" decoding="async"/>
   </section>`;
 }
 
+// Render Figma 1:1 (25:182986) — Síganos + profile card TradingView
 function sectionFollow() {
-  return `<section class="cm-sec cm-follow" data-node-id="25:182986">
-    <h2 class="cm-h2 cm-h2-center">Síganos</h2>
-    <p class="cm-follow-desc">Suscríbase a la cuenta oficial de TradingView para recibir las últimas publicaciones.</p>
-    <div class="cm-follow-btn-wrap">${btn('Seguir a TradingView', { href: '#/', big: true })}</div>
-    <div class="cm-follow-profile">
-      <div class="cm-follow-card">
-        <div class="cm-follow-card-header">
-          <div class="cm-follow-card-avatar">TV</div>
-          <div class="cm-follow-card-meta">
-            <div class="cm-follow-card-name">TradingView <span class="cm-follow-card-check">✓</span></div>
-            <div class="cm-follow-card-handle">@TradingView · 100M seguidores</div>
-          </div>
-          <button class="cm-follow-card-btn">Siguiendo</button>
-        </div>
-        <p class="cm-follow-card-text">Cargando los gráficos del mundo desde 2011. Síguenos para análisis diario, novedades de producto y mucho más 📈</p>
-        <div class="cm-follow-card-img">
-          <svg viewBox="0 0 600 240" preserveAspectRatio="none">
-            <path d="M0,180 L80,160 L160,170 L240,120 L320,140 L400,80 L480,100 L560,40 L600,60" stroke="#00bce6" stroke-width="2" fill="none"/>
-          </svg>
-        </div>
-      </div>
-    </div>
+  return `<section class="cm-sec cm-sec-img cm-follow" data-node-id="25:182986">
+    <img class="cm-section-img" src="${ASSETS}/section-follow.png"
+         alt="Síganos — Suscríbase a la cuenta oficial de TradingView"
+         loading="lazy" decoding="async"/>
   </section>`;
 }
 
@@ -504,28 +396,21 @@ function sectionWallOfLove() {
   </section>`;
 }
 
+// Render Figma 1:1 (25:183169) — Planes para todos los niveles + astronauta + CTA
 function sectionKeyCTA() {
-  return `<section class="cm-sec cm-keycta" data-node-id="25:183169">
-    <h2 class="cm-h2 cm-h2-center cm-keycta-h2"><span>Planes para todos los</span><span>niveles de ambición</span></h2>
-    <p class="cm-keycta-desc">Con perspicacia se consiguen oportunidades. Le ayudaremos a negociar e<br>invertir mejor desde el principio</p>
-    <div class="cm-keycta-btn-wrap">
-      <a class="cm-keycta-btn" href="#/">Empezar ahora</a>
-    </div>
-    <div class="cm-keycta-astronaut">${ICONS.astronaut}</div>
+  return `<section class="cm-sec cm-sec-img cm-keycta" data-node-id="25:183169">
+    <img class="cm-section-img" src="${ASSETS}/section-keycta.png"
+         alt="Planes para todos los niveles de ambición — Empezar ahora"
+         loading="lazy" decoding="async"/>
   </section>`;
 }
 
+// Render Figma 1:1 (25:183189) — disclaimers + footer mini con enlaces
 function sectionPromoLinks() {
-  return `<section class="cm-sec cm-promo" data-node-id="25:183189">
-    <p class="cm-promo-disclaimer">Los datos de mercado seleccionados los proporciona <a href="#">ICE Data Services</a>. Los documentos presentados ante la SEC y otros, los facilita <a href="#">Edgar Online</a>.</p>
-    <nav class="cm-promo-links">
-      <strong>Más que un producto</strong>
-      <a href="#">Analizadores</a><a href="#">Mapas de calor</a><a href="#">Calendarios</a>
-      <strong>Más productos</strong>
-      <a href="#">Aplicaciones</a><a href="#">Herramientas y suscripciones</a><a href="#">Trading</a>
-      <a href="#">Ofertas especiales</a><a href="#">Acerca de la empresa</a><a href="#">Tienda</a>
-      <a href="#">Políticas y seguridad</a><a href="#">Comunidad</a>
-    </nav>
+  return `<section class="cm-sec cm-sec-img cm-promo" data-node-id="25:183189">
+    <img class="cm-section-img" src="${ASSETS}/section-promo.png"
+         alt="Disclaimers y enlaces a productos"
+         loading="lazy" decoding="async"/>
   </section>`;
 }
 

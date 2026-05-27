@@ -7,6 +7,9 @@ import { resolve } from 'path';
 const SPA_PATHS = [
   /^\/community(?:\/|$)/,
   /^\/markets(?:\/|$)/,
+  /^\/ideas(?:\/|$)/,
+  /^\/scripts(?:\/|$)/,
+  /^\/screeners(?:\/|$)/,
 ];
 function spaFallback() {
   return {

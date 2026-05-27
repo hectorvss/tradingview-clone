@@ -40,17 +40,21 @@ const ROWS = [
 function styleBlock() {
   return `
   <style>
-    .optf-wrap{color:#dbdbdb;font:13px/1.4 'Trebuchet MS',-apple-system,BlinkMacSystemFont,Roboto,Ubuntu,sans-serif;padding:8px 0 24px}
-    .optf-filters{display:flex;flex-direction:column;gap:8px;padding:0 0 14px}
+    /* Root fills slot; page doesn't scroll, table scrolls internally; toolbar/filters sticky */
+    .optf-wrap{width:100%;height:100%;display:flex;flex-direction:column;color:#dbdbdb;font:13px/1.4 'Trebuchet MS',-apple-system,BlinkMacSystemFont,Roboto,Ubuntu,sans-serif;padding:8px 0 0;box-sizing:border-box;overflow:hidden}
+    .optf-filters{flex:0 0 auto;display:flex;flex-direction:column;gap:8px;padding:0 0 14px;position:sticky;top:0;background:transparent;z-index:2}
     .optf-frow{display:flex;flex-wrap:wrap;gap:8px}
     /* Filter pill: 34px tall, 17px radius, transparent bg, 1px #4a4a4a border, padding 12px */
-    .optf-pill{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid #4a4a4a;color:#dbdbdb;border-radius:17px;height:34px;padding:0 12px;font:400 13px/18px Roboto,sans-serif;cursor:pointer;user-select:none}
-    .optf-pill:hover{border-color:#8c8c8c}
+    .optf-pill{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid #4a4a4a;color:#dbdbdb;border-radius:17px;height:34px;padding:0 12px;font:400 13px/18px Roboto,sans-serif;cursor:pointer;user-select:none;transition:background .12s ease-out,border-color .12s ease-out,color .12s ease-out}
+    .optf-pill:hover{border-color:#8c8c8c;background:rgba(184,184,184,0.04)}
+    .optf-pill.is-active{border-color:#dbdbdb;background:rgba(219,219,219,0.08)}
     .optf-pill .caret{color:#b8b8b8;font-size:10px;margin-left:2px}
     .optf-pill .pill-val{color:#fff;margin-left:4px;font-weight:500}
     .optf-pill .pill-icon{color:#b8b8b8;display:inline-flex;align-items:center}
 
-    .optf-table-wrap{overflow-x:auto}
+    .optf-table-wrap{flex:1 1 auto;min-height:0;overflow-x:auto;overflow-y:auto;width:100%}
+    .optf-table-wrap::-webkit-scrollbar{width:8px;height:8px}
+    .optf-table-wrap::-webkit-scrollbar-thumb{background:#3d3d3d;border-radius:4px}
     .optf-table{width:100%;border-collapse:collapse;font:400 13px/18px Roboto,sans-serif;min-width:1280px;table-layout:fixed}
     .optf-table col.c-venc{width:110px}
     .optf-table col.c-dias{width:60px}
@@ -64,27 +68,32 @@ function styleBlock() {
     .optf-table col.c-bid{width:70px}
     .optf-table col.c-ask{width:70px}
 
+    .optf-table thead th{position:sticky;top:0;background:#0f0f0f;z-index:1}
     .optf-table th{font-weight:400;color:#b8b8b8;text-align:right;padding:14px 12px 10px;border-bottom:1px solid #2e2e2e;white-space:nowrap;font-size:13px}
     .optf-table th:nth-child(1),.optf-table th:nth-child(2),.optf-table th:nth-child(3),.optf-table th:nth-child(4){text-align:left}
-    .optf-table th.sort{color:#dbdbdb;cursor:pointer}
-    .optf-table th.sort .sort-arrow{display:inline-block;margin-right:4px;color:#dbdbdb}
+    .optf-table th.sort{color:#dbdbdb;cursor:pointer;user-select:none;transition:color .12s ease-out}
+    .optf-table th.sort:hover{color:#fff}
+    .optf-table th.sort .sort-arrow{display:inline-block;margin-right:4px;color:#dbdbdb;transition:transform .15s ease-out}
+    .optf-table th.sort.asc .sort-arrow{transform:rotate(180deg)}
     .optf-table td{padding:12px;text-align:right;border-bottom:1px solid #2e2e2e;color:#dbdbdb;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:13px}
     .optf-table td:nth-child(1),.optf-table td:nth-child(2),.optf-table td:nth-child(3),.optf-table td:nth-child(4){text-align:left}
     .optf-table tr.row-main{cursor:pointer}
+    .optf-table tr.row-main td{transition:background .12s ease-out}
     .optf-table tr.row-main:hover td{background:rgba(184,184,184,0.04)}
     .optf-table tr.row-main.is-open td{background:rgba(41,98,255,0.08)}
 
-    /* Strike chip in Fórmula column: bg rgba(179,136,255,.2), text #b388ff, 11px Bold uppercase, 4px radius */
+    /* Strike chip in Fórmula column */
     .optf-strike{display:inline-flex;align-items:center;justify-content:center;height:20px;background:rgba(179,136,255,0.20);color:#b388ff;border-radius:4px;padding:0 6px;font:700 11px/1 Roboto,sans-serif;letter-spacing:.55px;text-transform:uppercase;margin-right:4px;font-variant-numeric:tabular-nums}
 
-    /* Detail row */
+    /* Detail row — fade in on toggle */
     .optf-detail-row td{padding:0;background:rgba(41,98,255,0.08);border-bottom:1px solid #2e2e2e}
-    .optf-detail{display:grid;grid-template-columns:265px 245px 395px 1fr;gap:0;padding:14px 20px 24px;position:relative}
+    .optf-detail{display:grid;grid-template-columns:minmax(240px,265px) minmax(220px,245px) minmax(360px,1.6fr) 1fr;gap:20px;padding:14px 20px 24px;position:relative;animation:optf-fadein .18s ease-out}
+    @keyframes optf-fadein{from{opacity:0;transform:translateY(-2px)}to{opacity:1;transform:translateY(0)}}
     .optf-detail::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%) translateY(-50%) rotate(45deg);width:10px;height:10px;background:rgba(41,98,255,0.08);border-left:1px solid #2e2e2e;border-top:1px solid #2e2e2e}
     .optf-detail-title{grid-column:1/-1;display:flex;align-items:center;gap:8px;font:500 16px/24px Roboto,sans-serif;color:#dbdbdb;margin-bottom:14px}
     .optf-detail-title .chip{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-radius:4px;background:rgba(184,184,184,0.20);color:#dbdbdb;font:700 10.5px/1 Roboto,sans-serif;letter-spacing:.55px;text-transform:uppercase}
 
-    .optf-section{padding:0}
+    .optf-section{padding:0;min-width:0}
     .optf-section h4{font:500 14px/18px Roboto,sans-serif;color:#dbdbdb;margin:0 0 4px;padding:0 0 8px}
 
     .optf-kv{display:flex;flex-direction:column;gap:6px;font:400 13px/18px Roboto,sans-serif}
@@ -97,26 +106,25 @@ function styleBlock() {
     .optf-comp-table th{color:#b8b8b8;font:400 11px/16px Roboto,sans-serif;letter-spacing:.4px;text-transform:uppercase;text-align:left;padding:0 8px 6px;border:0}
     .optf-comp-table th.r,.optf-comp-table td.r{text-align:right}
     .optf-comp-table td{padding:6px 8px;color:#dbdbdb;font-variant-numeric:tabular-nums;border:0;vertical-align:middle}
-    /* LONG badge: azure 75 / azure 63 20% bg */
     .optf-action{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 6px;border-radius:4px;font:700 11px/1 Roboto,sans-serif;letter-spacing:.55px;text-transform:uppercase}
     .optf-action.long{background:rgba(68,138,255,0.20);color:#82b1ff}
     .optf-action.short{background:rgba(255,64,129,0.20);color:#ff4081}
     .optf-comp-strike{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 6px;border-radius:4px;background:rgba(179,136,255,0.20);color:#b388ff;font:700 11px/1 Roboto,sans-serif;letter-spacing:.55px;text-transform:uppercase}
 
-    /* Edit button: outlined white pill, 28px tall, 6px radius */
-    .optf-edit-btn{margin-top:14px;background:transparent;color:#dbdbdb;border:1px solid #dbdbdb;font:400 14px/18px Roboto,sans-serif;height:28px;padding:0 12px;border-radius:6px;cursor:pointer}
+    .optf-edit-btn{margin-top:14px;background:transparent;color:#dbdbdb;border:1px solid #dbdbdb;font:400 14px/18px Roboto,sans-serif;height:28px;padding:0 12px;border-radius:6px;cursor:pointer;transition:background .12s ease-out,border-color .12s ease-out}
     .optf-edit-btn:hover{background:rgba(219,219,219,0.08)}
 
     .optf-mini-chart{background:transparent;border:0;border-radius:0;padding:0;width:100%}
+    .optf-mini-chart svg{width:100%;height:auto;display:block}
   </style>`;
 }
 
-function renderPill(p) {
+function renderPill(p, active) {
   const icon = p.icon === 'cal'
     ? `<span class="pill-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>`
     : '';
   const val = p.value ? `<span class="pill-val">${p.value}</span>` : '';
-  return `<button class="optf-pill" type="button">${icon}<span>${p.label}</span>${val}<span class="caret">▾</span></button>`;
+  return `<button class="optf-pill ${active?'is-active':''}" type="button" data-pill="${p.label}">${icon}<span>${p.label}</span>${val}<span class="caret">▾</span></button>`;
 }
 
 function renderRow(r, idx, openIdx) {
@@ -140,18 +148,13 @@ function renderRow(r, idx, openIdx) {
 }
 
 function renderMiniChart(r) {
-  // Mini payoff for Bull Call Spread — axes per Figma 17:155446:
-  //   left: 200.00 / 100.00 / 0.00 (range 0..200), right: 0.40 / 0.20 / 0.00
-  //   x ticks: 7105, 7460, 7815, 8170, 8525
-  //   strike1 at ~7725, strike2 at ~8000 → +5% / +10% markers on x-axis
-  // Bull-call-spread payoff: flat low (loss) -> rise from k1 to k2 -> flat max profit
+  // Mini payoff for Bull Call Spread
   const grid = [0,1,2].map(i => `<line x1="42" y1="${20+i*60}" x2="430" y2="${20+i*60}" stroke="#2e2e2e"/>`).join('');
   const xt = ['7105','7460','7815','8170','8525'];
   const xL = xt.map((t,i)=>`<text x="${50+i*95}" y="198" font-size="10" font-family="Roboto,sans-serif" fill="#b8b8b8" text-anchor="middle">${t}</text>`).join('');
-  // x positions: strike1 (7725) ≈ x=242, strike2 (8000) ≈ x=316
   return `
   <div class="optf-mini-chart">
-    <svg viewBox="0 0 470 215" width="100%" preserveAspectRatio="none" style="display:block;height:auto;aspect-ratio:470/215">
+    <svg viewBox="0 0 470 215" preserveAspectRatio="xMidYMid meet">
       ${grid}
       <text x="38" y="24" font-size="10" font-family="Roboto,sans-serif" fill="#b8b8b8" text-anchor="end">200.00</text>
       <text x="38" y="84" font-size="10" font-family="Roboto,sans-serif" fill="#b8b8b8" text-anchor="end">100.00</text>
@@ -161,25 +164,18 @@ function renderMiniChart(r) {
       <text x="434" y="144" font-size="10" font-family="Roboto,sans-serif" fill="#b8b8b8">0.00</text>
       ${xL}
 
-      <!-- strike verticals -->
       <line x1="242" y1="20" x2="242" y2="140" stroke="#8c8c8c" stroke-dasharray="2,3"/>
       <line x1="316" y1="20" x2="316" y2="140" stroke="#8c8c8c" stroke-dasharray="2,3"/>
 
-      <!-- loss area magenta -->
       <path d="M42 140 L242 140 L242 154 L42 154 Z" fill="#d500f9" opacity="0.28"/>
       <path d="M42 140 L242 140" stroke="#d500f9" stroke-width="2"/>
 
-      <!-- payoff teal: flat at 0 -> rise 242 to 316 -> flat at top -->
       <path d="M42 140 L242 140 L316 50 L430 50" stroke="#00bce6" stroke-width="2" fill="none"/>
       <path d="M242 140 L316 50 L430 50 L430 140 Z" fill="#22ab94" opacity="0.10"/>
 
-      <!-- blue dashed S -->
       <path d="M42 138 C140 135, 210 125, 245 95 S 290 55, 320 50 L430 48" stroke="#2962ff" stroke-width="1.4" fill="none" stroke-dasharray="2,3"/>
-
-      <!-- orange dashed delta hump (peaks at k1, decays toward k2) -->
       <path d="M42 138 C140 132, 200 100, 245 60 S 305 105, 360 130 L430 138" stroke="#fb8c00" stroke-width="1.6" fill="none" stroke-dasharray="5,4"/>
 
-      <!-- +5% / +10% markers on x-axis -->
       <g transform="translate(242,156)"><rect x="-15" y="0" width="30" height="14" rx="2" fill="#22ab94"/><text x="0" y="11" font-size="10" font-family="Roboto,sans-serif" fill="#fff" text-anchor="middle">+5%</text></g>
       <g transform="translate(316,156)"><rect x="-18" y="0" width="36" height="14" rx="2" fill="#22ab94"/><text x="0" y="11" font-size="10" font-family="Roboto,sans-serif" fill="#fff" text-anchor="middle">+10%</text></g>
     </svg>
@@ -252,15 +248,18 @@ function renderDetailRow(r) {
 }
 
 export function renderOptionsFinderTab(mount, opts = {}) {
-  let openIdx = -1; // collapsed by default
+  // First row expanded by default per Figma; clicking another row collapses prior (single-open accordion)
+  let openIdx = 0;
+  let sortAsc = false;
+  let activePills = new Set();
 
   function render() {
     mount.innerHTML = `
       ${styleBlock()}
       <div class="optf-wrap">
         <div class="optf-filters">
-          <div class="optf-frow">${FILTERS_ROW_1.map(renderPill).join('')}</div>
-          <div class="optf-frow">${FILTERS_ROW_2.map(renderPill).join('')}</div>
+          <div class="optf-frow">${FILTERS_ROW_1.map(p => renderPill(p, activePills.has(p.label))).join('')}</div>
+          <div class="optf-frow">${FILTERS_ROW_2.map(p => renderPill(p, activePills.has(p.label))).join('')}</div>
         </div>
         <div class="optf-table-wrap">
           <table class="optf-table">
@@ -276,7 +275,7 @@ export function renderOptionsFinderTab(mount, opts = {}) {
               <th>Fórmula</th>
               <th>Beneficio máximo</th>
               <th>Pérdida máxima</th>
-              <th class="sort"><span class="sort-arrow">↓</span>Beneficio/Riesgo</th>
+              <th class="sort ${sortAsc?'asc':''}" data-sort="br"><span class="sort-arrow">↓</span>Beneficio/Riesgo</th>
               <th>Punto(s) de equilibrio</th>
               <th>Precio teór.</th>
               <th>Bid</th>
@@ -292,10 +291,28 @@ export function renderOptionsFinderTab(mount, opts = {}) {
     mount.querySelectorAll('tr.row-main').forEach(tr => {
       tr.addEventListener('click', () => {
         const idx = parseInt(tr.dataset.idx, 10);
+        // Single-open accordion: prior expanded row collapses automatically because render() re-emits with new openIdx
         openIdx = openIdx === idx ? -1 : idx;
         render();
       });
     });
+
+    mount.querySelectorAll('.optf-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const label = btn.dataset.pill;
+        if (activePills.has(label)) activePills.delete(label);
+        else activePills.add(label);
+        render();
+      });
+    });
+
+    const sortHeader = mount.querySelector('.optf-table th.sort');
+    if (sortHeader) {
+      sortHeader.addEventListener('click', () => {
+        sortAsc = !sortAsc;
+        render();
+      });
+    }
   }
 
   render();

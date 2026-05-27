@@ -1,0 +1,256 @@
+/* =============================================================================
+   Analizadores (Screeners) — plantilla visual idéntica al "Analizador de acciones"
+   de TradingView, compartida por las 4 páginas:
+   /screeners/etf · /screeners/bonds · /screeners/crypto · /screeners/forex
+   Prefijo .sc- para evitar colisiones.
+   ============================================================================= */
+
+.sc-root {
+  background: #0f0f0f;
+  color: #dbdbdb;
+  font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100%;
+  padding: 0 0 60px;
+  font-size: 13px;
+}
+.sc-root *, .sc-root *::before, .sc-root *::after { box-sizing: border-box; }
+.sc-root a { color: inherit; text-decoration: none; }
+.sc-root button { font-family: inherit; cursor: pointer; }
+
+.sc-container {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- Breadcrumb ---------- */
+.sc-breadcrumb {
+  padding: 14px 0 18px;
+  font-size: 13px;
+  color: #8c8c8c;
+}
+.sc-breadcrumb a { color: #8c8c8c; }
+.sc-breadcrumb a:hover { color: #dbdbdb; }
+.sc-breadcrumb .sc-bc-sep { padding: 0 6px; color: #4a4a4a; }
+.sc-breadcrumb .sc-bc-current { color: #dbdbdb; }
+
+/* ---------- Page title + right actions ---------- */
+.sc-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 0 18px;
+}
+.sc-title {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 0;
+  font-size: 32px; line-height: 40px; font-weight: 700;
+  color: #f0f3fa;
+  letter-spacing: -0.5px;
+}
+.sc-title-chev {
+  color: #8c8c8c; font-size: 14px; line-height: 1;
+  display: inline-flex;
+}
+.sc-title-actions {
+  display: inline-flex; gap: 8px;
+}
+.sc-action-btn {
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #1e222d;
+  color: #b8b8b8;
+  border: 0; border-radius: 50%;
+  transition: background 120ms, color 120ms;
+}
+.sc-action-btn:hover { background: #2a2e39; color: #dbdbdb; }
+.sc-action-btn svg { width: 16px; height: 16px; }
+
+/* ---------- Filter pills ---------- */
+.sc-pills {
+  display: flex; flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0 4px;
+}
+.sc-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 32px; padding: 0 12px;
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+  border-radius: 16px;
+  color: #dbdbdb; font-size: 13px;
+  white-space: nowrap;
+}
+.sc-pill:hover { border-color: #4a4a4a; background: #2a2e39; }
+.sc-pill .sc-pill-chev {
+  color: #787b86; font-size: 10px; margin-left: 2px;
+}
+.sc-pill.sc-pill-active { background: #2962ff; border-color: #2962ff; color: #fff; }
+.sc-pill-flag {
+  width: 18px; height: 18px;
+  border-radius: 50%; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #2a2e39;
+}
+.sc-pill-flag svg { width: 100%; height: 100%; display: block; }
+.sc-pill-icon { display: inline-flex; color: #ffc107; }
+.sc-pill-icon svg { width: 14px; height: 14px; }
+.sc-pill-square {
+  width: 32px; height: 32px; padding: 0;
+  justify-content: center;
+}
+.sc-pill-square svg { width: 14px; height: 14px; color: #b8b8b8; }
+
+/* ---------- Tab bar (Resumen / Rendimiento / etc.) ---------- */
+.sc-tabs-wrap {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 0 12px;
+  border-bottom: 1px solid #2a2e39;
+}
+.sc-view-toggle {
+  display: inline-flex; gap: 0;
+  margin-right: 6px;
+}
+.sc-view-toggle button {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: 0; color: #787b86;
+  border-radius: 4px;
+}
+.sc-view-toggle button:hover { background: #1e222d; color: #dbdbdb; }
+.sc-view-toggle button.is-active { background: #2a2e39; color: #fff; }
+.sc-view-toggle button svg { width: 14px; height: 14px; }
+
+.sc-tabs {
+  display: flex; flex-wrap: nowrap;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sc-tabs::-webkit-scrollbar { display: none; }
+.sc-tab {
+  display: inline-flex; align-items: center;
+  height: 36px; padding: 0 14px;
+  background: transparent; border: 0;
+  color: #b8b8b8;
+  font-size: 14px; font-weight: 500;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.sc-tab:hover { color: #dbdbdb; }
+.sc-tab.is-active { color: #f0f3fa; border-bottom-color: #2962ff; }
+
+/* ---------- Result count ---------- */
+.sc-result-count {
+  padding: 14px 0 10px;
+  font-size: 13px; color: #787b86;
+}
+
+/* ---------- Table ---------- */
+.sc-table-wrap {
+  overflow-x: auto;
+}
+.sc-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+  min-width: 1200px;
+}
+.sc-table thead th {
+  text-align: right;
+  padding: 10px 12px;
+  color: #787b86;
+  font-size: 12px; font-weight: 600;
+  border-bottom: 1px solid #2a2e39;
+  white-space: nowrap;
+  background: #0f0f0f;
+  position: sticky; top: 0;
+}
+.sc-table thead th:first-child {
+  text-align: left;
+  padding-left: 24px;
+}
+.sc-table thead th.sc-th-sorted {
+  color: #f0f3fa;
+}
+.sc-table thead th .sc-sort-arrow {
+  margin-left: 4px; color: #787b86; font-size: 10px;
+}
+.sc-table tbody td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #1e222d;
+  text-align: right;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: #dbdbdb;
+  font-variant-numeric: tabular-nums;
+}
+.sc-table tbody td:first-child {
+  text-align: left;
+  padding-left: 24px;
+}
+.sc-table tbody tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+/* Symbol cell — logo + ticker + name */
+.sc-sym {
+  display: flex; align-items: center; gap: 12px;
+  min-width: 280px;
+}
+.sc-sym-logo {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 11px;
+  background: #2962ff;
+  overflow: hidden;
+}
+.sc-sym-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sc-sym-ticker {
+  font-weight: 700; color: #f0f3fa;
+  min-width: 56px;
+}
+.sc-sym-name {
+  color: #b8b8b8;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 240px;
+}
+
+/* Price + currency */
+.sc-price-cell {
+  display: inline-flex; align-items: baseline; gap: 4px;
+  justify-content: flex-end;
+}
+.sc-price-cur { color: #787b86; font-size: 11px; text-transform: uppercase; }
+
+/* Change pill — green / red */
+.sc-chg {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 78px; padding: 3px 10px;
+  border-radius: 4px;
+  font-weight: 700; font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.sc-chg.sc-pos { background: rgba(8,153,129,0.16); color: #08b58a; }
+.sc-chg.sc-neg { background: rgba(242,54,69,0.16); color: #f23645; }
+.sc-chg.sc-flat { background: rgba(140,140,140,0.16); color: #b8b8b8; }
+
+.sc-pos-text { color: #08b58a; font-weight: 600; }
+.sc-neg-text { color: #f23645; font-weight: 600; }
+.sc-muted { color: #787b86; }
+
+/* Pagination / "Mostrando X de Y" footer link */
+.sc-footer-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 18px;
+  color: #2962ff; font-size: 13px; font-weight: 500;
+}
+.sc-footer-cta:hover { text-decoration: underline; }
+
+/* Right rail icons (placeholder for the vertical TradingView app sidebar
+   already rendered by the global chrome — leave empty here) */

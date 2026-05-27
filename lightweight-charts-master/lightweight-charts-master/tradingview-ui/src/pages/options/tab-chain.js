@@ -26,11 +26,45 @@ const STYLE_ID = 'opt-chain-style';
 const STYLES = `
 .opt-chain-wrap {
   display: flex; flex-direction: column;
+  width: 100%; height: 100%;
   background: #0f0f0f;
   font-family: Roboto, 'Trebuchet MS', Arial, sans-serif;
   color: #dbdbdb;
   font-size: 14px;
   line-height: 18px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.opt-chain-wrap * { box-sizing: border-box; }
+
+/* Top bits (controls, side labels, open expiry row, accordion) stay put;
+   only the chain table scrolls. */
+.opt-chain-controls,
+.opt-chain-side-labels,
+.opt-chain-wrap > .opt-acc-row,
+.opt-accordion-list { flex: 0 0 auto; }
+
+/* LIVE pulsing dot near the symbol pill */
+.opt-live-dot {
+  display: inline-block;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #22ab94;
+  margin-right: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 0 0 rgba(34,171,148,0.6);
+  animation: opt-live-pulse 1.6s ease-out infinite;
+}
+.opt-live-label {
+  display: inline-block; vertical-align: middle;
+  font: 700 10px/1 Roboto, Arial, sans-serif;
+  color: #22ab94;
+  letter-spacing: 0.6px;
+  margin-right: 8px;
+}
+@keyframes opt-live-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34,171,148,0.55); }
+  70%  { box-shadow: 0 0 0 8px rgba(34,171,148,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,171,148,0); }
 }
 
 /* ------- top control row (pills + icons) ------- */
@@ -72,8 +106,11 @@ const STYLES = `
 
 /* ------- main horizontally-scrolling table ------- */
 .opt-chain-scroll {
-  overflow-x: auto;
-  overflow-y: visible;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
 }
 .opt-chain-table {
   border-collapse: separate;
@@ -83,9 +120,9 @@ const STYLES = `
   font: 400 14px/18px Roboto, Arial, sans-serif;
   color: #dbdbdb;
 }
-/* HEADER */
+/* HEADER — sticky vertically so it stays in view when scrolling expiries */
 .opt-chain-table thead th {
-  position: sticky; top: 0; z-index: 2;
+  position: sticky; top: 0; z-index: 5;
   background: #000;
   color: #8c8c8c;
   font: 400 14px/18px Roboto, Arial, sans-serif;
@@ -94,13 +131,32 @@ const STYLES = `
   text-align: right;
   white-space: nowrap;
   vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
 }
+.opt-chain-table thead th .opt-sort-arrow {
+  display: inline-block;
+  width: 0; opacity: 0;
+  margin-left: 4px;
+  font-size: 9px;
+  color: #8c8c8c;
+  transition: opacity 0.15s ease, width 0.15s ease;
+}
+.opt-chain-table thead th:hover .opt-sort-arrow,
+.opt-chain-table thead th.opt-sorted .opt-sort-arrow {
+  width: 10px; opacity: 1;
+}
+.opt-chain-table thead th.opt-sorted { color: #dbdbdb; }
+/* Sticky STRIKE column — header sits at the crossing of vertical+horizontal */
 .opt-chain-table thead th.opt-th-strike {
+  position: sticky; top: 0; left: 50%;
+  z-index: 7;
   background: #1f1f1f;
   color: #dbdbdb;
   font-weight: 500;
   text-align: center;
   min-width: 86px;
+  cursor: default;
 }
 .opt-chain-table thead th.opt-th-strike .opt-th-strike-inner {
   display: inline-flex; align-items: center; gap: 2px;
@@ -121,11 +177,14 @@ const STYLES = `
   vertical-align: middle;
 }
 .opt-chain-table tbody td.opt-td-strike {
+  position: sticky; left: 50%;
+  z-index: 3;
   text-align: center;
   font-weight: 500;
   color: #dbdbdb;
   background: #1f1f1f;
   min-width: 86px;
+  cursor: pointer;
 }
 .opt-chain-table tbody tr.opt-row-active td {
   background: #0a0a0a;
@@ -133,9 +192,20 @@ const STYLES = `
 .opt-chain-table tbody tr.opt-row-active td.opt-td-strike {
   background: #2e2e2e;
 }
-.opt-chain-table tbody tr:not(.opt-row-active):not(.opt-expiry-header):hover td {
-  background: #0d0d0d;
+.opt-chain-table tbody tr.opt-row-selected td {
+  background: rgba(41,98,255,0.10);
 }
+.opt-chain-table tbody tr.opt-row-selected td.opt-td-strike {
+  background: #2962ff;
+  color: #fff;
+}
+.opt-chain-table tbody tr:not(.opt-row-active):not(.opt-row-selected):not(.opt-symbol-row):hover td {
+  background: rgba(255,255,255,0.03);
+}
+.opt-chain-table tbody tr:not(.opt-row-active):not(.opt-row-selected):not(.opt-symbol-row):hover td.opt-td-strike {
+  background: #2a2a2a;
+}
+.opt-chain-table tbody tr { cursor: pointer; }
 
 /* Expiry header row inside the scrolling table (used for the active expiry).
    Holds the symbol banner pill, centered. */
@@ -194,6 +264,19 @@ const STYLES = `
   text-align: right;
   padding: 11px 12px;
 }
+/* The put-side IV bar (first put column) is also sticky, anchored just past STRIKE */
+.opt-chain-table tbody td.opt-iv-bar-cell.opt-iv-sticky {
+  position: sticky; left: calc(50% + 86px);
+  z-index: 2;
+  background: #000;
+}
+.opt-chain-table thead th.opt-th-iv-sticky {
+  position: sticky; top: 0; left: calc(50% + 86px);
+  z-index: 6;
+  background: #000;
+}
+.opt-chain-table tbody tr.opt-row-active td.opt-iv-bar-cell.opt-iv-sticky { background: #0a0a0a; }
+.opt-chain-table tbody tr.opt-row-selected td.opt-iv-bar-cell.opt-iv-sticky { background: #0d1a3a; }
 .opt-iv-bar-cell .opt-iv-bar-inner {
   display: inline-flex; align-items: center; gap: 8px;
   vertical-align: middle;
@@ -250,6 +333,16 @@ const STYLES = `
   transform: rotate(-90deg);
 }
 .opt-acc-row.open .opt-acc-caret { transform: rotate(0deg); }
+.opt-acc-body {
+  overflow: hidden;
+  max-height: 0;
+  padding: 0 18px 0 40px;
+  transition: max-height 0.28s ease, padding 0.2s ease;
+}
+.opt-acc-body.open {
+  max-height: 240px;
+  padding: 10px 18px 14px 40px;
+}
 .opt-acc-date {
   font: 700 14px/18px Roboto, Arial, sans-serif;
   color: #dbdbdb;
@@ -277,7 +370,6 @@ const STYLES = `
   text-transform: uppercase;
 }
 .opt-acc-body {
-  padding: 10px 18px 14px 40px;
   background: #0a0a0a;
   color: #8c8c8c;
   font: 400 12px/16px Roboto, Arial, sans-serif;
@@ -417,8 +509,8 @@ function cellValue(strike, key, side) {
   }
 }
 
-function renderCell(strike, col, side) {
-  if (col.type === 'ivbar') return renderIvBarCell(strike, side);
+function renderCell(strike, col, side, isFirstPut) {
+  if (col.type === 'ivbar') return renderIvBarCell(strike, side, isFirstPut);
   const v = cellValue(strike, col.key, side);
   let txt;
   switch (col.type) {
@@ -428,18 +520,17 @@ function renderCell(strike, col, side) {
     case 'int':   txt = fmtInt(v); break;
     default:      txt = String(v);
   }
-  return `<td>${txt}</td>`;
+  return `<td data-col="${col.key}" data-side="${side}" data-val="${v}">${txt}</td>`;
 }
 
-function renderIvBarCell(strike, side) {
+function renderIvBarCell(strike, side, isFirstPut) {
   const dist = Math.abs(strike - ACTIVE_STRIKE);
   // pct = fraction of bar filled
   const fillPct = Math.max(8, Math.min(92, 60 - dist * 3));
   const val = (seedNum(strike, 'iv' + side, 4, 14)).toFixed(2);
-  const fillStyle = side === 'call'
-    ? `width:${fillPct}%`
-    : `width:${fillPct}%`;
-  return `<td class="opt-iv-bar-cell">
+  const fillStyle = `width:${fillPct}%`;
+  const stickyCls = isFirstPut ? ' opt-iv-sticky' : '';
+  return `<td class="opt-iv-bar-cell${stickyCls}" data-col="ivBar" data-side="${side}" data-val="${val}">
     <span class="opt-iv-bar-inner">
       <span class="opt-iv-bar ${side}"><span class="opt-iv-bar-fill" style="${fillStyle}"></span></span>
       <span class="opt-iv-bar-val">${val}%</span>
@@ -451,12 +542,16 @@ function fmtStrike(s) {
   return String(s).replace(/(\d)(\d{3})$/, '$1.$2');
 }
 
-function headerThs(cols) {
-  return cols.map(c => `<th style="min-width:${c.w}px;width:${c.w}px">${c.label}</th>`).join('');
+function headerThs(cols, side) {
+  return cols.map((c, idx) => {
+    const isFirstPut = side === 'put' && idx === 0 && c.type === 'ivbar';
+    const stickyCls = isFirstPut ? ' opt-th-iv-sticky' : '';
+    return `<th class="opt-th-col${stickyCls}" data-col="${c.key}" data-side="${side}" style="min-width:${c.w}px;width:${c.w}px">${c.label}<span class="opt-sort-arrow">▼</span></th>`;
+  }).join('');
 }
 
 function rowTds(strike, cols, side) {
-  return cols.map(c => renderCell(strike, c, side)).join('');
+  return cols.map((c, idx) => renderCell(strike, c, side, side === 'put' && idx === 0 && c.type === 'ivbar')).join('');
 }
 
 // Symbol banner row — the active strike row replaces the standard tr with a
@@ -469,6 +564,8 @@ function symbolRow(totalCols) {
       <td colspan="${totalCols}">
         <div class="opt-symbol-pill-wrap">
           <span class="opt-symbol-pill">
+            <span class="opt-live-dot" title="Datos en tiempo real"></span>
+            <span class="opt-live-label">LIVE</span>
             <span class="opt-symbol-icon">S&amp;P</span>
             <span class="opt-symbol-name">ESM2026</span>
             <span class="opt-symbol-price">${fmtN(SYMBOL_PRICE, 2)}</span>
@@ -598,14 +695,14 @@ export function renderOptionsChainTab(mount /*, opts */) {
         <table class="opt-chain-table">
           <thead>
             <tr>
-              ${headerThs(CALL_COLS)}
+              ${headerThs(CALL_COLS, 'call')}
               <th class="opt-th-strike">
                 <span class="opt-th-strike-inner">
                   <span class="opt-th-strike-caret">▼</span>
                   <span>Strike</span>
                 </span>
               </th>
-              ${headerThs(PUT_COLS)}
+              ${headerThs(PUT_COLS, 'put')}
             </tr>
           </thead>
           <tbody>
@@ -620,23 +717,82 @@ export function renderOptionsChainTab(mount /*, opts */) {
     </div>
   `;
 
-  // Accordion toggle (only for the non-open rows).
+  // Accordion toggle with smooth max-height transition.
   const list = mount.querySelector('.opt-accordion-list');
   list.addEventListener('click', (ev) => {
     const row = ev.target.closest('.opt-acc-row');
     if (!row) return;
     const isOpen = row.classList.toggle('open');
-    const next = row.nextElementSibling;
+    let next = row.nextElementSibling;
     if (isOpen) {
       if (!next || !next.classList.contains('opt-acc-body')) {
         const body = document.createElement('div');
         body.className = 'opt-acc-body';
         body.textContent = 'Cargando strikes para este vencimiento…';
         row.after(body);
+        next = body;
       }
-    } else {
-      if (next && next.classList.contains('opt-acc-body')) next.remove();
+      // Force reflow so the transition runs from max-height:0.
+      requestAnimationFrame(() => next.classList.add('open'));
+    } else if (next && next.classList.contains('opt-acc-body')) {
+      next.classList.remove('open');
+      const node = next;
+      setTimeout(() => { if (node && !node.classList.contains('open')) node.remove(); }, 280);
     }
+  });
+
+  // Row click → toggle is-selected on the strike row (mock only).
+  const tbody = mount.querySelector('.opt-chain-table tbody');
+  tbody.addEventListener('click', (ev) => {
+    const tr = ev.target.closest('tr');
+    if (!tr || tr.classList.contains('opt-symbol-row')) return;
+    const wasSelected = tr.classList.contains('opt-row-selected');
+    tbody.querySelectorAll('tr.opt-row-selected').forEach(r => r.classList.remove('opt-row-selected'));
+    if (!wasSelected) tr.classList.add('opt-row-selected');
+  });
+
+  // Header click → simulate sort (visual rearrange of data rows by data-val).
+  const table = mount.querySelector('.opt-chain-table');
+  const thead = table.querySelector('thead');
+  let sortState = { col: null, side: null, dir: 1 };
+  thead.addEventListener('click', (ev) => {
+    const th = ev.target.closest('th.opt-th-col');
+    if (!th) return;
+    const col = th.dataset.col;
+    const side = th.dataset.side;
+    if (sortState.col === col && sortState.side === side) {
+      sortState.dir = -sortState.dir;
+    } else {
+      sortState = { col, side, dir: 1 };
+    }
+    thead.querySelectorAll('th.opt-sorted').forEach(e => e.classList.remove('opt-sorted'));
+    th.classList.add('opt-sorted');
+    th.querySelector('.opt-sort-arrow').textContent = sortState.dir > 0 ? '▲' : '▼';
+
+    // Collect data rows (skip symbol-row), sort by parsed cell value, reinsert.
+    const tb = table.querySelector('tbody');
+    const symRow = tb.querySelector('.opt-symbol-row');
+    const dataRows = Array.from(tb.querySelectorAll('tr')).filter(r => !r.classList.contains('opt-symbol-row'));
+    dataRows.sort((a, b) => {
+      const ca = a.querySelector(`td[data-col="${col}"][data-side="${side}"]`);
+      const cb = b.querySelector(`td[data-col="${col}"][data-side="${side}"]`);
+      const va = parseFloat(ca && ca.dataset.val) || 0;
+      const vb = parseFloat(cb && cb.dataset.val) || 0;
+      return (va - vb) * sortState.dir;
+    });
+    // Re-append in sorted order; symbol row goes back after the originally active strike.
+    const frag = document.createDocumentFragment();
+    let symbolInserted = false;
+    for (const r of dataRows) {
+      frag.appendChild(r);
+      if (!symbolInserted && r.classList.contains('opt-row-active') && symRow) {
+        frag.appendChild(symRow);
+        symbolInserted = true;
+      }
+    }
+    if (!symbolInserted && symRow) frag.appendChild(symRow);
+    tb.innerHTML = '';
+    tb.appendChild(frag);
   });
 
   return {

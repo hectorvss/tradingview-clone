@@ -25,6 +25,10 @@ import { renderCommunity } from './pages/community.js';
 import { renderMarkets } from './pages/markets.js';
 import { renderMarketsSpain } from './pages/markets-spain.js';
 import { renderCorporateActions } from './pages/corporate-actions.js';
+import { renderScreenerETF } from './pages/screener-etf.js';
+import { renderScreenerBonds } from './pages/screener-bonds.js';
+import { renderScreenerCrypto } from './pages/screener-crypto.js';
+import { renderScreenerForex } from './pages/screener-forex.js';
 import { renderMarketsWorldEconomyMaps } from './pages/markets-world-economy-maps.js';
 import { renderIdeasRecent } from './pages/ideas-recent.js';
 import { renderScriptsEditorsPicks } from './pages/scripts-editors-picks.js';
@@ -41,6 +45,10 @@ const PATH_ROUTES = [
   { test: /^\/markets\/?$/,                         title: 'Mercados',                                 render: renderMarkets },
   { test: /^\/ideas\/recent\/?$/,                   title: 'Ideas de la comunidad — TradingView',    render: renderIdeasRecent },
   { test: /^\/scripts\/editors-picks\/?$/,          title: 'Indicadores y estrategias — TradingView', render: renderScriptsEditorsPicks },
+  { test: /^\/screeners\/etf\/?$/,                  title: 'Analizador de ETFs — TradingView',        render: renderScreenerETF },
+  { test: /^\/screeners\/bonds\/?$/,                title: 'Analizador de bonos — TradingView',       render: renderScreenerBonds },
+  { test: /^\/screeners\/crypto\/?$/,               title: 'Analizador de criptos — TradingView',     render: renderScreenerCrypto },
+  { test: /^\/screeners\/forex\/?$/,                title: 'Analizador de Forex — TradingView',       render: renderScreenerForex },
 ];
 
 const app = document.getElementById('app');
@@ -303,7 +311,7 @@ function _pageWrap(title) {
 const KNOWN_ROUTES = [
   '#/', '#/chart', '#/screener', '#/crypto-coins-screener', '#/fx', '#/crypto-hm', '#/yield',
   '#/mtf', '#/news', '#/news-old', '#/calendar', '#/calculators', '#/paper', '#/pine',
-  '#/fundamental-graphs', '#/symbols', '#/portfolio',
+  '#/fundamental-graphs', '#/symbols', '#/portfolio', '#/pricing',
   '#/brokers', '#/options',
 ];
 
@@ -366,6 +374,15 @@ async function navigate() {
       const mod = await import('./pages/portfolio.js');
       if (token !== _navToken) return;
       const w = mod.createPortfolioPage(app, {});
+      if (typeof w.render === 'function') w.render();
+      _activePageDestroy = w && w.destroy;
+      return;
+    }
+    if (hash.startsWith('#/pricing')) {
+      _teardown();
+      const mod = await import('./pages/pricing.js');
+      if (token !== _navToken) return;
+      const w = mod.createPricingPage(app, {});
       if (typeof w.render === 'function') w.render();
       _activePageDestroy = w && w.destroy;
       return;

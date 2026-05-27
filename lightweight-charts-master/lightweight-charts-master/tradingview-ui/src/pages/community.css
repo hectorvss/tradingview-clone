@@ -270,6 +270,35 @@
 .cm-bubble-2 { align-self: center;     background: linear-gradient(135deg, #2962ff, #00bce6); color: #fff; }
 .cm-bubble-3 { align-self: flex-end;   }
 
+/* Ilustraciones reales del Figma (25:180890 / 25:180909 / 25:180931) */
+.cm-card-illustration {
+  display: block;
+  width: 100%;
+  max-width: 550px;
+  height: auto;
+  object-fit: contain;
+}
+.cm-card-illustration--thoughts {
+  max-width: 567px;
+}
+
+/* Secciones reemplazadas por render Figma 1:1 (universe/social/leap/pine/wizards/dollars/follow/keycta/promo) */
+.cm-sec-img {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0;
+  display: block;
+}
+.cm-section-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+.cm-sec-img.cm-promo .cm-section-img { max-width: 1360px; margin: 0 auto; }
+
 /* ---------- Botón genérico ---------- */
 .cm-btn {
   display: inline-flex;

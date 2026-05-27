@@ -1,7 +1,12 @@
-// /options — shell (header + title + ticker pill + sub-tab pills + tab content slot).
+// /options — shell (header + title + symbol info bar + sticky sub-tab pills + tab content slot).
 // Figma 17:130797 (file 2QhXqtb66hdeKvlZAZE4fS). Default tab = chain.
 // Other tabs (builder/finder/volatility/volume) are dynamically imported from sibling
 // files owned by parallel agents; if missing or broken, render a "Próximamente" placeholder.
+//
+// Visual target: https://es.tradingview.com/options/chain/?symbol=CME_MINI:ES1!
+// The shell renders the chrome around the active tab and is responsible for the
+// symbol header (ticker + live price + change + intraday stats) and the sticky
+// tab strip so the chain table below can scroll under it.
 
 const STYLE_ID = 'opt-shell-style';
 
@@ -15,9 +20,11 @@ const STYLES = `
   min-height: 100vh;
   font-family: var(--font-ui, 'Trebuchet MS', Arial, sans-serif);
   display: flex; flex-direction: column;
+  position: relative;
 }
-body.has-global-header  .opt-page  { min-height: calc(100vh - 48px); }
-body.has-global-header  .opt-header { display: none !important; }
+body.has-global-header   .opt-page { min-height: calc(100vh - 48px); height: calc(100vh - 48px); }
+body.has-global-rightbar .opt-page { padding-right: 45px; }
+body.has-global-header   .opt-header { display: none !important; }
 .opt-page .opt-logo, .opt-page .opt-logo-mark { display: none !important; }
 .opt-header img { max-width: 100%; max-height: 100%; }
 .opt-header {
@@ -61,9 +68,12 @@ body.has-global-header  .opt-header { display: none !important; }
   color: #fff; font-weight: 700; font-size: 13px;
   border: none; border-radius: 4px; cursor: pointer;
 }
+
+/* ---- Title row (Opciones + TradeStation badge) ---- */
 .opt-titlebar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px 6px;
+  padding: 10px 16px 4px;
+  flex: 0 0 auto;
 }
 .opt-title {
   font-size: 28px; line-height: 1; font-weight: 400; color: #fff;
@@ -75,11 +85,65 @@ body.has-global-header  .opt-header { display: none !important; }
   background: linear-gradient(135deg,#00bce6,#22ab94);
   display: inline-block;
 }
-.opt-tabrow {
-  display: flex; align-items: center; gap: 8px;
-  padding: 4px 18px 10px;
+
+/* ---- Symbol info bar (between title and tabs) ---- */
+.opt-symbol-bar {
+  display: flex; align-items: flex-start; gap: 18px;
+  padding: 6px 16px 10px;
+  flex: 0 0 auto;
+}
+.opt-symbol-main {
+  display: flex; align-items: baseline; gap: 10px;
   flex-wrap: wrap;
 }
+.opt-symbol-flag {
+  width: 14px; height: 10px; display: inline-block;
+  background: linear-gradient(to bottom, #c8102e 0 33%, #ffffff 33% 66%, #c8102e 66% 100%);
+  border-radius: 1px;
+  transform: translateY(2px);
+  margin-right: 4px;
+}
+.opt-symbol-name {
+  color: #fff; font-size: 14px; font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.opt-symbol-price {
+  color: #fff; font-size: 22px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.opt-symbol-ccy {
+  color: var(--grey-55, #8c8c8c); font-size: 12px; font-weight: 600;
+}
+.opt-symbol-change {
+  color: #22ab94; font-size: 14px; font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.opt-symbol-change.neg { color: #f23645; }
+.opt-symbol-stats {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  color: var(--grey-55, #8c8c8c);
+  font-size: 12px;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.opt-symbol-stats .opt-stat b {
+  color: var(--grey-86, #dbdbdb); font-weight: 500;
+  margin-left: 4px;
+}
+.opt-symbol-block { display: flex; flex-direction: column; gap: 2px; }
+
+/* ---- Tab row (sticky under the global header) ---- */
+.opt-tabrow {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 16px 8px;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+  background: var(--grey-6, #0f0f0f);
+  border-bottom: 1px solid var(--grey-18, #2e2e2e);
+  position: sticky; top: 0; z-index: 5;
+}
+body.has-global-header .opt-tabrow { top: 0; }
 .opt-ticker-pill {
   display: inline-flex; align-items: center; gap: 6px;
   height: 28px; padding: 0 10px;
@@ -106,7 +170,13 @@ body.has-global-header  .opt-header { display: none !important; }
   background: var(--grey-86, #dbdbdb); color: var(--grey-6, #0f0f0f);
   font-weight: 700;
 }
-.opt-tab-content { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+
+/* ---- Content slot (the only scrollable region) ---- */
+.opt-tab-content {
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column;
+  overflow: auto;
+}
 .opt-soon {
   margin: 40px 18px; padding: 60px 24px;
   background: var(--grey-12, #1f1f1f);
@@ -125,6 +195,24 @@ const TABS = [
   { id: 'volume',     label: 'Volumen' },
 ];
 
+// Mock quote — Spanish locale (`.` thousands, `,` decimal). Values mirror what
+// the live page shows for CME_MINI:ES1! around mid-session.
+const QUOTE = {
+  symbol:   'CME_MINI:ES1!',
+  price:    '5.842,25',
+  currency: 'USD',
+  change:   '+12,50',
+  changePc: '+0,21%',
+  positive: true,
+  stats: [
+    { label: 'Apertura',    value: '5.829,75' },
+    { label: 'Máx.',        value: '5.846,50' },
+    { label: 'Mín.',        value: '5.825,00' },
+    { label: 'Cierre ant.', value: '5.829,75' },
+    { label: 'Vol.',        value: '1,2M' },
+  ],
+};
+
 function injectStyle() {
   if (document.getElementById(STYLE_ID)) return;
   const el = document.createElement('style');
@@ -136,6 +224,11 @@ function injectStyle() {
 function renderShell(mount, activeTab) {
   const tabsHTML = TABS.map(t =>
     `<button class="opt-tab-pill ${t.id === activeTab ? 'active' : ''}" data-tab="${t.id}">${t.label}</button>`
+  ).join('');
+
+  const changeClass = QUOTE.positive ? '' : ' neg';
+  const statsHTML = QUOTE.stats.map(s =>
+    `<span class="opt-stat">${s.label}<b>${s.value}</b></span>`
   ).join('');
 
   mount.innerHTML = `
@@ -163,6 +256,20 @@ function renderShell(mount, activeTab) {
         <div class="opt-tradestation">
           <span class="opt-ts-mark"></span>
           <span>TradeStation</span>
+        </div>
+      </div>
+
+      <div class="opt-symbol-bar">
+        <div class="opt-symbol-block">
+          <div class="opt-symbol-main">
+            <span class="opt-symbol-flag" title="USA"></span>
+            <span class="opt-symbol-name">${QUOTE.symbol}</span>
+            <span class="opt-symbol-price">${QUOTE.price}</span>
+            <span class="opt-symbol-ccy">${QUOTE.currency}</span>
+            <span class="opt-symbol-change${changeClass}">${QUOTE.change}</span>
+            <span class="opt-symbol-change${changeClass}">${QUOTE.changePc}</span>
+          </div>
+          <div class="opt-symbol-stats">${statsHTML}</div>
         </div>
       </div>
 
